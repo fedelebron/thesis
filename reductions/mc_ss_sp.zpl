@@ -19,8 +19,10 @@ maximize quality:
     x[c, l, p, k] * q[c, p];
 
 subto professor_availability:
-    forall <c, l, p, w> in C * {1 .. L} * P * D:
-      sum<k> in R: x[c, l, p, k] <= a[p, w];
+  forall <c, l, p, w> in C * L_ * P * D:
+    if d[c, l, w] >= 1 then
+      sum<k> in R: x[c, l, p, k] <= a[p, w]
+    end;
 subto one_class_per_day_max:
     forall <p, w> in P * D:
       sum<i, j, k> in C * L_ * R:
