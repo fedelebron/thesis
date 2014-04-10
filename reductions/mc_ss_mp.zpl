@@ -51,7 +51,7 @@ subto busy_l_coherency:
 
 subto busy_coherency:
   forall <p, c, l, d> in P * C * L_ * D:
-    busy[p, c, d] =  busy_l[p, c, l] * class_date[c, l, d];
+    busy[p, c, d] >= busy_l[p, c, l] + class_date[c, l, d] - 1;
   
 subto professor_availability:
   forall <p, d> in P * D:
