@@ -31,10 +31,12 @@ instance Generatable Professor where
                          roles = roles,
                          quality = quality}
 
--- !! i gives the day of the ith class
 type WeeklyPlan = [Integer]
 instance Generatable WeeklyPlan where
   generate gen = filterM (const $ uniform gen) [0..6]
+
+toYearlyDates :: WeeklyPlan -> [Integer]
+toYearlyDates = concat . zipWith map (map (+) [0,7..365]) . repeat
 
 type ClassRequirement = [(Role, Integer)]
 instance Generatable ClassRequirement where
