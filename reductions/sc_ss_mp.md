@@ -27,3 +27,6 @@ Restriction
 * If a professor teaches a class with role k, then the professor needs to be able to act in the role k.
 * For every class, the number of professors for each role are satisfied.
 * No professor teaches the same class with two roles.
+
+Objective function (max):
+  \sum_{i, j, k} x[i, j, k] * q[j]
