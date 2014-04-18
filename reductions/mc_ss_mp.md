@@ -4,6 +4,9 @@ MULTIPLE COURSE, SINGLE START DATE, MULTIPLE WEEKLY PATTERN
 Variables:
 *  bool x[i, j, k, l] = ith course, jth class, kth professor, lth role.
 *  bool cp[i, j] = ith course has chosen the jth weekly plan
+*  bool class_date[i, j, k] = ith course has its jth class on the kth day
+*  bool busy[i, j, k] = ith prof is busy teaching the jth course on the kth day
+*  bool busy_l[i, k, k] = ith prof is busy teaching the jth course on its kth class
 
 Constants:
 * We have a set P of professors.
