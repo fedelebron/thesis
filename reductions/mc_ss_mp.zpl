@@ -17,7 +17,7 @@ param pp[C * S] := 1;
 #ds[i, j, k] = 1 means that the ith weekly plan
 #                has the jth class on the kth
 #                day of the year.
-param ds[S * D * L_] := 1;
+param ds[S * L_ * D] := 1;
 
 #cp[i, j] = 1 means that the ith course
 #             has chosen the jth weekly plan
@@ -47,7 +47,7 @@ subto class_date_coherency:
 
 subto busy_l_coherency:
   forall <c, l, p> in C * L_ * P:
-    sum<k> in K: x[c, l, p, k] = busy_l[p, c, l];
+    sum<k> in R: x[c, l, p, k] = busy_l[p, c, l];
 
 subto busy_coherency:
   forall <p, c, l, d> in P * C * L_ * D:
@@ -62,7 +62,7 @@ subto one_class_per_day_max:
     sum<c> in C: busy[p, c, d] <= 1;
 
 subto valid_role:
-    forall <c, l, p, k> in C * {1 .. L} * P * R:
+    forall <c, l, p, k> in C * L_ * P * R:
       x[c, l, p, k] <= r[p, k];
 
 subto satisfied_roles:
@@ -71,7 +71,7 @@ subto satisfied_roles:
         x[c, l, p, k] >= m[c, l, k];
 
 subto no_duplicate_profs:
-    forall <c, l, p> in C * {1 .. L} * P:
+    forall <c, l, p> in C * L_ * P:
       sum<k> in R: x[c, l, p, k] <= 1;
 
 subto legal_weekly_pattern:
