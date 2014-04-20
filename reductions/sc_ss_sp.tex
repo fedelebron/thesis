@@ -35,29 +35,23 @@ we can create the following flow network, where capacities are in blue, and cost
 \node[v] (d11) at (9, 3) {$\beta_1 \gamma_1$};
 \node[v] (d12) at (9, -1) {$\beta_d \gamma_m$};
 
-\node[v] (d_i) at (12, 1) {$\beta_i$};
-\node (d13) at (12, 0) {$\vdots$};
-\node (d14) at (12, 2) {$\vdots$};
-\node[v] (d15) at (12, 3) {$\beta_1$};
-\node[v] (d16) at (12, -1) {$\beta_d$};
-
-\node[v] (t) at (15, 1) {$t$};
+\node[v] (t) at (12, 1) {$t$};
 
 \draw[->] (s) to node[above,blue] {$\infty$} node[below,red] {$q_j$} (p_j);
-\draw[e] ($(s)!0.5cm!(d3)$) -> ($(s)!1cm!(d3)$); 
+\draw[e] ($(s)!0.5cm!(d3)$) -> ($(s)!1cm!(d3)$);
 \draw[e] ($(s)!0.5cm!(d4)$) -> ($(s)!1cm!(d4)$);
 \draw[->] (p_j) to node[above,blue] {$a_{j, i}$} node[below,red] {$0$} (p_jd_i);
 
-\draw[e] ($(d3)!0.5cm!(d7)$) -> ($(d3)!1cm!(d7)$); 
-\draw[e] ($(d3)!0.5cm!(p_jd_i)$) -> ($(d3)!1cm!(p_jd_i)$); 
-\draw[e] ($(d3)!0.5cm!(d8)$) -> ($(d3)!1cm!(d8)$); 
+\draw[e] ($(d3)!0.5cm!(d7)$) -> ($(d3)!1cm!(d7)$);
+\draw[e] ($(d3)!0.5cm!(p_jd_i)$) -> ($(d3)!1cm!(p_jd_i)$);
+\draw[e] ($(d3)!0.5cm!(d8)$) -> ($(d3)!1cm!(d8)$);
 
-\draw[e] ($(d4)!0.5cm!(d7)$) -> ($(d4)!1cm!(d7)$); 
-\draw[e] ($(d4)!0.5cm!(p_jd_i)$) -> ($(d4)!1cm!(p_jd_i)$); 
-\draw[e] ($(d4)!0.5cm!(d8)$) -> ($(d4)!1cm!(d8)$); 
+\draw[e] ($(d4)!0.5cm!(d7)$) -> ($(d4)!1cm!(d7)$);
+\draw[e] ($(d4)!0.5cm!(p_jd_i)$) -> ($(d4)!1cm!(p_jd_i)$);
+\draw[e] ($(d4)!0.5cm!(d8)$) -> ($(d4)!1cm!(d8)$);
 
-\draw[e] ($(p_j)!0.5cm!(d7)$) -> ($(p_j)!1cm!(d7)$); 
-\draw[e] ($(p_j)!0.5cm!(d8)$) -> ($(p_j)!1cm!(d8)$); 
+\draw[e] ($(p_j)!0.5cm!(d7)$) -> ($(p_j)!1cm!(d7)$);
+\draw[e] ($(p_j)!0.5cm!(d8)$) -> ($(p_j)!1cm!(d8)$);
 
 \draw[->] (p_jd_i) to node[above,blue] {$r_{j, k}$} node[below,red] {$0$} (d_ir_k);
 
@@ -70,23 +64,9 @@ we can create the following flow network, where capacities are in blue, and cost
 \draw[e] ($(p_jd_i)!0.5cm!(d11)$) -> ($(p_jd_i)!1cm!(d11)$);
 \draw[e] ($(p_jd_i)!0.5cm!(d12)$) -> ($(p_jd_i)!1cm!(d12)$);
 
-\draw[->] (d_ir_k) to node[above,blue] {$n'_{i, k}$} node[below,red] {$0$} (d_i);
-
-
-\draw[e] ($(d_ir_k)!0.5cm!(d15)$) -> ($(d_ir_k)!1cm!(d15)$);
-\draw[e] ($(d_ir_k)!0.5cm!(d16)$) -> ($(d_ir_k)!1cm!(d16)$);
-
-\draw[e] ($(d11)!0.5cm!(d15)$) -> ($(d11)!1cm!(d15)$);
-\draw[e] ($(d11)!0.5cm!(d16)$) -> ($(d11)!1cm!(d16)$);
-\draw[e] ($(d12)!0.5cm!(d15)$) -> ($(d12)!1cm!(d15)$);
-\draw[e] ($(d12)!0.5cm!(d16)$) -> ($(d12)!1cm!(d16)$);
-\draw[e] ($(d11)!0.5cm!(d_i)$) -> ($(d11)!1cm!(d_i)$);
-\draw[e] ($(d12)!0.5cm!(d_i)$) -> ($(d12)!1cm!(d_i)$);
-
-\draw[->] (d_i) to node[above,blue] {$\infty$} node[below,red] {$0$} (t);
-\draw[e] ($(d15)!0.5cm!(t)$) -> ($(d15)!1cm!(t)$);
-\draw[e] ($(d16)!0.5cm!(t)$) -> ($(d16)!1cm!(t)$);
-
+\draw[->] (d_ir_k) to node[above,blue] {$n'_{i, k}$} node[below,red] {$0$} (t);
+\draw[e] ($(d11)!0.5cm!(t)$) -> ($(d11)!1cm!(t)$);
+\draw[e] ($(d12)!0.5cm!(t)$) -> ($(d12)!1cm!(t)$);
 \end{tikzpicture}
 
 Formally, the network is $G = (V, E)$, with
@@ -96,12 +76,10 @@ V = &\{s\} \cup \{t\}\\
 &\cup \{\alpha_j \mid 1 \le j \le p\}\\
 &\cup \{\alpha_j \beta_i \mid 1 \le j \le p, 1 \le i \le d\}\\
 &\cup \{\beta_i \gamma_k \mid 1 \le i \le d, 1 \le j \le m\}\\
-&\cup \{\beta_i \mid 1 \le i \le d\}\\
 E = &\{(s, \alpha_j)\ \forall\ j\}\\
     &\cup \{(\alpha_j, \alpha_j \beta_i)\ \forall\ i, j \}\\
     &\cup \{(\alpha_j \beta_i, \beta_i \gamma_k)\ \forall\ j, i, k\}\\
-    &\cup \{(\beta_i \gamma_k, \beta_i)\ \forall\ i, k \}\\
-    &\cup \{(\beta_i, t)\ \forall\ i\}
+    &\cup \{(\beta_i \gamma_k, t)\ \forall\ i, k \}
 \end{align*}
 
 capacity function $c:E \to \mathbb{R} \cup \{\infty\}$, such that
@@ -109,11 +87,10 @@ capacity function $c:E \to \mathbb{R} \cup \{\infty\}$, such that
 c(s, \alpha_j) &= \infty\ \forall\ j\\
 c(\alpha_j, \alpha_j \beta_i) &= a_{j, i}\ \forall\ i, j\\
 c(\alpha_j \beta_i, \beta_i \gamma_k) &= r_{j, k}\ \forall\ i, j, k\\
-c(\beta_i \gamma_k, \beta_i) &= n'_{i, k}\ \forall\ i, k\\
-c(\beta_i, t) &= \infty\ \forall\ i
+c(\beta_i \gamma_k, t) &= n'_{i, k}\ \forall\ i, k
 \end{align*}
 
-and cost function $w:E \to \mathbb{R} \cup \{\infty\}$, such that 
+and cost function $w:E \to \mathbb{R} \cup \{\infty\}$, such that
 
 $$
 w(e) =
@@ -129,11 +106,11 @@ A professor cannot teach on an unavailable day, since flow can only go from the 
 
 He also cannot work in a role that is unavailable to him, since in order for flow to go from $\alpha_j \beta_i$ to $\beta_i \gamma_k$, meaning ``the $j$th professor teaches on the $i$th day'' to ``the $i$th day has one $k$th role position covered'', unless $r_{j, k} = 1$, so one cannot consider an instance of that role covered for that day unless the professor from which that unit of flow came indeed can work in that role.
 
-Lastly, the number of instances of the $k$th role that a given $\beta_i \gamma_k$ provides to the $i$th day, $\beta_i$, can not be greater than $n'_{i, k}$.
+Lastly, the number of instances of the $k$th role that a given $\beta_i \gamma_k$ needs for the $i$th day can not be greater than $n'_{i, k}$.
 
-A flow $f$ in $G$ will be a valid assignment of professors exactly when $f(s, t) \ge \sum_{i, k} n'_{i, k}$. The constraints going into $d_i$ guarantee this implies $f(\beta_i \gamma_k, \beta_i) = r_{i, k}\ \forall i, k$, which means each day's requirements of each role are met.
+A flow $f$ in $G$ will be a valid assignment of professors exactly when $f(s, t) \ge \sum_{i, k} n'_{i, k}$. The constraints going into $t$ guarantee this implies $f(\beta_i \gamma_k, t) = r_{i, k}\ \forall i, k$, which means each day's requirements of each role are met.
 
-In such a solution, if a unit of flow goes from $s$, to $\alpha_j$, through $\alpha_j \beta_i$, then through $\beta_i \gamma_k$, and finally to $\beta_i$, to exit out of $t$, we consider that the $j$th professor teaches on the $i$th day with the $k$th role. The quality of this assignment is thus $q_j$.
+In such a solution, if a unit of flow goes from $s$, to $\alpha_j$, through $\alpha_j \beta_i$, then through $\beta_i \gamma_k$, and finally to $t$, we consider that the $j$th professor teaches on the $i$th day with the $k$th role. The quality of this assignment is thus $q_j$.
 
 Furthermore, to obtain an optimal solution, that is, a maximum sum of the qualities of the assignments, we need to maximize the cost of this flow, because this will mean the maximum value of the units going into (hence out of) the $\alpha_j$, which is the quality of the assignments we are making.
 
