@@ -1,0 +1,121 @@
+\subsection{Multiple course, single start date, single weekly pattern}
+
+This reduction is also squarely in \textsc{P}, again shown via a maximum-cost maximum-flow algorithm.
+
+For every course, there's a single weekly pattern it has chosen. Thus we can precompute a function $f(l, h)$, which for every course $l$, returns the day of the $h$th class.
+
+We note
+\begin{itemize}
+  \item $p$ the number of professors,
+  \item $d$ the number of days,
+  \item $m$ the number of roles,
+  \item $c$ the number of courses,
+  \item $v$ an upper bound on the number of classes of each course,
+  \item $n_{k, l, h}$ the number of professors of role $k$ needed on the $h$th class of the $l$th course
+\end{itemize}
+
+We can construct the following flow network:
+
+\begin{center}
+\begin{tikzpicture}
+
+\tikzstyle{v}=[draw, circle, inner sep=0pt, font=\small, align=center, minimum size=0.75cm];
+\tikzstyle{e}=[->, dashed];
+
+\node[v] (s) at (1, 1) {$s$};
+\node[v] (alpha_i) at (4, 1) {$\alpha_i$};
+\node (d1) at (4, 0) {$\vdots$};
+\node (d2) at (4, 2) {$\vdots$};
+\node[v] (alpha_1) at (4, 3) {$\alpha_1$};
+\node[v] (alpha_p) at (4, -1) {$\alpha_p$};
+
+\node[v] (alpha_i_beta_j) at (7, 1) {$\beta_{i, j}$};
+\node (d3) at (7, 0) {$\vdots$};
+\node (d4) at (7, 2) {$\vdots$};
+\node[v] (alpha_1_beta_1) at (7, 3) {$\beta_{1, 1}$};
+\node[v] (alpha_p_beta_d) at (7, -1) {$\beta_{p, d}$};
+
+\node[v] (gamma_k_delta_l_beta_j) at (10, 1) {$\gamma_{k, l, h}$};
+\node (d5) at (10, 0) {$\vdots$};
+\node (d6) at (10, 2) {$\vdots$};
+
+\node[v] (gamma_111) at (10, 3) {$\gamma_{1, 1, 1}$};
+\node[v] (gamma_mcv) at (10, -1)  {$\gamma_{m, c, v}$};
+
+\node[v] (t) at (13, 1) {$t$};
+
+\draw[->] (s) to node[blue, above] {$\infty$} node[red, below] {$0$} (alpha_i);
+
+
+\draw[e] ($(s)!0.5cm!(alpha_1)$) -> ($(s)!1cm!(alpha_1)$);
+\draw[e] ($(s)!0.5cm!(alpha_p)$) -> ($(s)!1cm!(alpha_p)$);
+
+\draw[->] (alpha_i) to node[blue, above] {$a_{i, j}$} node[red, below] {$0$} (alpha_i_beta_j);
+
+\draw[e] ($(alpha_1)!0.5cm!(alpha_1_beta_1)$) -> ($(alpha_1)!1cm!(alpha_1_beta_1)$);
+\draw[e] ($(alpha_1)!0.5cm!(alpha_i_beta_j)$) -> ($(alpha_1)!1cm!(alpha_i_beta_j)$);
+\draw[e] ($(alpha_1)!0.5cm!(alpha_p_beta_d)$) -> ($(alpha_1)!1cm!(alpha_p_beta_d)$);
+\draw[e] ($(alpha_i)!0.5cm!(alpha_1_beta_1)$) -> ($(alpha_i)!1cm!(alpha_1_beta_1)$);
+\draw[e] ($(alpha_i)!0.5cm!(alpha_p_beta_d)$) -> ($(alpha_i)!1cm!(alpha_p_beta_d)$);
+\draw[e] ($(alpha_p)!0.5cm!(alpha_i_beta_j)$) -> ($(alpha_p)!1cm!(alpha_i_beta_j)$);
+\draw[e] ($(alpha_p)!0.5cm!(alpha_1_beta_1)$) -> ($(alpha_p)!1cm!(alpha_1_beta_1)$);
+\draw[e] ($(alpha_p)!0.5cm!(alpha_p_beta_d)$) -> ($(alpha_p)!1cm!(alpha_p_beta_d)$);
+
+\draw[->] (alpha_i_beta_j) to node[blue, above] {$r_{i, k}$} node[red, below] {$q_{i, l}$} (gamma_k_delta_l_beta_j);
+
+\draw[e] ($(alpha_1_beta_1)!0.5cm!(gamma_111)$) -> ($(alpha_1_beta_1)!1cm!(gamma_111)$);
+\draw[e] ($(alpha_1_beta_1)!0.5cm!(gamma_k_delta_l_beta_j)$) -> ($(alpha_1_beta_1)!1cm!(gamma_k_delta_l_beta_j)$);
+\draw[e] ($(alpha_1_beta_1)!0.5cm!(gamma_mcv)$) -> ($(alpha_1_beta_1)!1cm!(gamma_mcv)$);
+
+\draw[e] ($(alpha_p_beta_d)!0.5cm!(gamma_111)$) -> ($(alpha_p_beta_d)!1cm!(gamma_111)$);
+\draw[e] ($(alpha_p_beta_d)!0.5cm!(gamma_k_delta_l_beta_j)$) -> ($(alpha_p_beta_d)!1cm!(gamma_k_delta_l_beta_j)$);
+\draw[e] ($(alpha_p_beta_d)!0.5cm!(gamma_mcv)$) -> ($(alpha_p_beta_d)!1cm!(gamma_mcv)$);
+
+\draw[e] ($(alpha_i_beta_j)!0.5cm!(gamma_111)$) -> ($(alpha_i_beta_j)!1cm!(gamma_111)$);
+\draw[e] ($(alpha_i_beta_j)!0.5cm!(gamma_mcv)$) -> ($(alpha_i_beta_j)!1cm!(gamma_mcv)$);
+
+\draw[e] ($(gamma_111)!0.5cm!(t)$) -> ($(gamma_111)!1cm!(t)$);
+\draw[e] ($(gamma_k_delta_l_beta_j)!0.5cm!(t)$) -> ($(gamma_k_delta_l_beta_j)!1cm!(t)$);
+\draw[e] ($(gamma_mcv)!0.5cm!(t)$) -> ($(gamma_mcv)!1cm!(t)$);
+
+
+\draw[->] (gamma_k_delta_l_beta_j) to node[blue, above] {$n_{k, l, h}$} node[red, below] {$0$} (t);
+\end{tikzpicture}
+\end{center}
+
+Formally, this is $G = (V, E)$, such that
+
+\begin{align*}
+  V = &\{s\} \cup \{t\}\\
+      &\cup \{\alpha_i \mid 1 \le i \le p\}\\
+      &\cup \{\beta_{i, j} \mid 1 \le i \le p, 1 \le j \le d\}\\
+      &\cup \{\gamma_{k, l, h} \mid 1 \le k \le m, 1 \le l \le c, 1 \le h \le n(l)\}\\
+  E = &\{(s, \alpha_i)\ \forall\ i\}\\
+      &\cup \{(\alpha_i, \beta_{i, j}) \ \forall\ i, j\}\\
+      &\cup \{(\beta_{i, j}, \gamma_{k, l, h})\ \forall\ i, j, k, l, h \mid f(l, h) = j\}\\
+      &\cup \{(\gamma_{k, l, h}, t) \ \forall\ k, l, h\}
+\end{align*}
+
+with capacity function $c:E \to \mathbb{R} \cup \{\infty\}$ such that
+\begin{align*}
+  c(s, \alpha_i) &= \infty\\
+  c(\alpha_i, \beta_{i, j}) &= a_{i, j}\\
+  c(\beta_{i, j}, \gamma_{k, l, h}) &= r_{i, k}\\
+  c(\gamma_{k, l, h}, t) &= n_{k, l, h}
+\end{align*}
+
+and weighed by $w:E \to \mathbb{R}$, such that
+\begin{align*}
+  w(e) = \begin{cases}
+    q_{i, l} & \text{ if } e = (\beta_{i, j}, \gamma_{k, l, h})\\
+    0 & \text{otherwise}
+  \end{cases}
+\end{align*}
+
+This solves the problem in a similar way as the single course day. A unit of flow going through $(\alpha_i, \beta_{i, j})$ repersents professor $i$ working on the $j$th day. If this unit flows through $(\beta_{i, j}, \gamma_{k, l, h})$, this represents working as the $k$th role on the $h$th class of the $l$th course.
+
+The constraints on the outgoing flow for $\gamma_{k, l, h}$ imply that the only way to obtain a flow of $\sum_{k, l, h} n_{k, l, h}$ units is that each outgoing edge is saturated. Thus a maximum flow of that magnitude is equivalent to a valid assignment of professors to roles in each class of each course.
+
+Furthermore, we wish to maximize the quality of each professor teaching each course. This means maximizing the sum of the $q_{i, l}$, since this represents that the $i$th professor is teaching a class of the $l$th course. Thus among these maximum flows, we want the one of maximum cost.
+
+Since this problem is solvable in polynomial time in the number of nodes and edges of the network, and in our case these are also in $O(poly(p, d, m, v, c))$, the problem is solvable in polynomial time, and thus is also in \textsc{P}.
