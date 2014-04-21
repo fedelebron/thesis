@@ -4,7 +4,21 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage[margin=1in]{geometry}
-
+\newcommand{\dottedarrow}[2]{\draw[e] ($(#1)!0.5cm!(#2)$) -> ($(#1)!1cm!(#2)$)}
+\newcommand{\dottedarrows}[4]{
+  \foreach \i in #1 {
+    \foreach \j in #2 {
+      \ifnum\pdfstrcmp{\i}{#3}=0
+        \ifnum\pdfstrcmp{\j}{#4}=0
+        \else
+          \dottedarrow{\i}{\j};
+        \fi
+      \else
+        \dottedarrow{\i}{\j};
+      \fi
+    }
+  }
+}
 \begin{document}
 \section{Complexity of reduced cases}
 \input{sc_ss_sp.tex}

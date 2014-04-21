@@ -29,13 +29,13 @@ We can construct the following flow network:
 \node[v] (alpha_1) at (4, 3) {$\alpha_1$};
 \node[v] (alpha_p) at (4, -1) {$\alpha_p$};
 
-\node[v] (alpha_i_beta_j) at (7, 1) {$\beta_{i, j}$};
+\node[v] (beta_ij) at (7, 1) {$\beta_{i, j}$};
 \node (d3) at (7, 0) {$\vdots$};
 \node (d4) at (7, 2) {$\vdots$};
-\node[v] (alpha_1_beta_1) at (7, 3) {$\beta_{1, 1}$};
-\node[v] (alpha_p_beta_d) at (7, -1) {$\beta_{p, d}$};
+\node[v] (beta_11) at (7, 3) {$\beta_{1, 1}$};
+\node[v] (beta_pd) at (7, -1) {$\beta_{p, d}$};
 
-\node[v] (gamma_k_delta_l_beta_j) at (10, 1) {$\gamma_{k, l, h}$};
+\node[v] (gamma_klj) at (10, 1) {$\gamma_{k, l, h}$};
 \node (d5) at (10, 0) {$\vdots$};
 \node (d6) at (10, 2) {$\vdots$};
 
@@ -46,40 +46,19 @@ We can construct the following flow network:
 
 \draw[->] (s) to node[blue, above] {$\infty$} node[red, below] {$0$} (alpha_i);
 
+\dottedarrows{{s}}{{alpha_1, alpha_p}};
 
-\draw[e] ($(s)!0.5cm!(alpha_1)$) -> ($(s)!1cm!(alpha_1)$);
-\draw[e] ($(s)!0.5cm!(alpha_p)$) -> ($(s)!1cm!(alpha_p)$);
+\draw[->] (alpha_i) to node[blue, above] {$a_{i, j}$} node[red, below] {$0$} (beta_ij);
 
-\draw[->] (alpha_i) to node[blue, above] {$a_{i, j}$} node[red, below] {$0$} (alpha_i_beta_j);
+\dottedarrows{{alpha_1, alpha_i, alpha_p}}{{beta_11, beta_ij, beta_pd}}{alpha_i}{beta_ij};
 
-\draw[e] ($(alpha_1)!0.5cm!(alpha_1_beta_1)$) -> ($(alpha_1)!1cm!(alpha_1_beta_1)$);
-\draw[e] ($(alpha_1)!0.5cm!(alpha_i_beta_j)$) -> ($(alpha_1)!1cm!(alpha_i_beta_j)$);
-\draw[e] ($(alpha_1)!0.5cm!(alpha_p_beta_d)$) -> ($(alpha_1)!1cm!(alpha_p_beta_d)$);
-\draw[e] ($(alpha_i)!0.5cm!(alpha_1_beta_1)$) -> ($(alpha_i)!1cm!(alpha_1_beta_1)$);
-\draw[e] ($(alpha_i)!0.5cm!(alpha_p_beta_d)$) -> ($(alpha_i)!1cm!(alpha_p_beta_d)$);
-\draw[e] ($(alpha_p)!0.5cm!(alpha_i_beta_j)$) -> ($(alpha_p)!1cm!(alpha_i_beta_j)$);
-\draw[e] ($(alpha_p)!0.5cm!(alpha_1_beta_1)$) -> ($(alpha_p)!1cm!(alpha_1_beta_1)$);
-\draw[e] ($(alpha_p)!0.5cm!(alpha_p_beta_d)$) -> ($(alpha_p)!1cm!(alpha_p_beta_d)$);
+\draw[->] (beta_ij) to node[blue, above] {$r_{i, k}$} node[red, below] {$q_{i, l}$} (gamma_klj);
 
-\draw[->] (alpha_i_beta_j) to node[blue, above] {$r_{i, k}$} node[red, below] {$q_{i, l}$} (gamma_k_delta_l_beta_j);
+\dottedarrows{{beta_11, beta_pd, beta_ij}}{{gamma_111, gamma_mcv, gamma_klj}}{beta_ij}{gamma_klj};
 
-\draw[e] ($(alpha_1_beta_1)!0.5cm!(gamma_111)$) -> ($(alpha_1_beta_1)!1cm!(gamma_111)$);
-\draw[e] ($(alpha_1_beta_1)!0.5cm!(gamma_k_delta_l_beta_j)$) -> ($(alpha_1_beta_1)!1cm!(gamma_k_delta_l_beta_j)$);
-\draw[e] ($(alpha_1_beta_1)!0.5cm!(gamma_mcv)$) -> ($(alpha_1_beta_1)!1cm!(gamma_mcv)$);
+\dottedarrows{{gamma_111, gamma_mcv}}{{t}};
 
-\draw[e] ($(alpha_p_beta_d)!0.5cm!(gamma_111)$) -> ($(alpha_p_beta_d)!1cm!(gamma_111)$);
-\draw[e] ($(alpha_p_beta_d)!0.5cm!(gamma_k_delta_l_beta_j)$) -> ($(alpha_p_beta_d)!1cm!(gamma_k_delta_l_beta_j)$);
-\draw[e] ($(alpha_p_beta_d)!0.5cm!(gamma_mcv)$) -> ($(alpha_p_beta_d)!1cm!(gamma_mcv)$);
-
-\draw[e] ($(alpha_i_beta_j)!0.5cm!(gamma_111)$) -> ($(alpha_i_beta_j)!1cm!(gamma_111)$);
-\draw[e] ($(alpha_i_beta_j)!0.5cm!(gamma_mcv)$) -> ($(alpha_i_beta_j)!1cm!(gamma_mcv)$);
-
-\draw[e] ($(gamma_111)!0.5cm!(t)$) -> ($(gamma_111)!1cm!(t)$);
-\draw[e] ($(gamma_k_delta_l_beta_j)!0.5cm!(t)$) -> ($(gamma_k_delta_l_beta_j)!1cm!(t)$);
-\draw[e] ($(gamma_mcv)!0.5cm!(t)$) -> ($(gamma_mcv)!1cm!(t)$);
-
-
-\draw[->] (gamma_k_delta_l_beta_j) to node[blue, above] {$n_{k, l, h}$} node[red, below] {$0$} (t);
+\draw[->] (gamma_klj) to node[blue, above] {$n_{k, l, h}$} node[red, below] {$0$} (t);
 \end{tikzpicture}
 \end{center}
 

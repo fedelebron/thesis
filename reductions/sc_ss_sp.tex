@@ -38,35 +38,21 @@ we can create the following flow network, where capacities are in blue, and cost
 \node[v] (t) at (12, 1) {$t$};
 
 \draw[->] (s) to node[above,blue] {$\infty$} node[below,red] {$q_j$} (p_j);
-\draw[e] ($(s)!0.5cm!(d3)$) -> ($(s)!1cm!(d3)$);
-\draw[e] ($(s)!0.5cm!(d4)$) -> ($(s)!1cm!(d4)$);
+
+\dottedarrows{{s}}{{d3, d4}};
+
 \draw[->] (p_j) to node[above,blue] {$a_{j, i}$} node[below,red] {$0$} (p_jd_i);
 
-\draw[e] ($(d3)!0.5cm!(d7)$) -> ($(d3)!1cm!(d7)$);
-\draw[e] ($(d3)!0.5cm!(p_jd_i)$) -> ($(d3)!1cm!(p_jd_i)$);
-\draw[e] ($(d3)!0.5cm!(d8)$) -> ($(d3)!1cm!(d8)$);
-
-\draw[e] ($(d4)!0.5cm!(d7)$) -> ($(d4)!1cm!(d7)$);
-\draw[e] ($(d4)!0.5cm!(p_jd_i)$) -> ($(d4)!1cm!(p_jd_i)$);
-\draw[e] ($(d4)!0.5cm!(d8)$) -> ($(d4)!1cm!(d8)$);
-
-\draw[e] ($(p_j)!0.5cm!(d7)$) -> ($(p_j)!1cm!(d7)$);
-\draw[e] ($(p_j)!0.5cm!(d8)$) -> ($(p_j)!1cm!(d8)$);
+\dottedarrows{{d3, d4, p_j}}{{d7, p_jd_i, d8}}{p_j}{p_jd_i};
 
 \draw[->] (p_jd_i) to node[above,blue] {$r_{j, k}$} node[below,red] {$0$} (d_ir_k);
 
-\draw[e] ($(d7)!0.5cm!(d11)$) -> ($(d7)!1cm!(d11)$);
-\draw[e] ($(d7)!0.5cm!(d_ir_k)$) -> ($(d7)!1cm!(d_ir_k)$);
-\draw[e] ($(d7)!0.5cm!(d12)$) -> ($(d7)!1cm!(d12)$);
-\draw[e] ($(d8)!0.5cm!(d11)$) -> ($(d8)!1cm!(d11)$);
-\draw[e] ($(d8)!0.5cm!(d_ir_k)$) -> ($(d8)!1cm!(d_ir_k)$);
-\draw[e] ($(d8)!0.5cm!(d12)$) -> ($(d8)!1cm!(d12)$);
-\draw[e] ($(p_jd_i)!0.5cm!(d11)$) -> ($(p_jd_i)!1cm!(d11)$);
-\draw[e] ($(p_jd_i)!0.5cm!(d12)$) -> ($(p_jd_i)!1cm!(d12)$);
+\dottedarrows{{d7, d8, p_jd_i}}{{d11, d12, d_ir_k}}{p_jd_i}{d_ir_k};
 
 \draw[->] (d_ir_k) to node[above,blue] {$n'_{i, k}$} node[below,red] {$0$} (t);
-\draw[e] ($(d11)!0.5cm!(t)$) -> ($(d11)!1cm!(t)$);
-\draw[e] ($(d12)!0.5cm!(t)$) -> ($(d12)!1cm!(t)$);
+
+\dottedarrows{{d11, d12}}{{t}};
+
 \end{tikzpicture}
 \end{center}
 
