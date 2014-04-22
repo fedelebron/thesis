@@ -4,16 +4,26 @@ import System.Random.MWC
 import Control.Monad.Primitive (PrimMonad, PrimState)
 import Control.Monad (filterM, liftM, replicateM)
 
-class Generatable t where
-  generate :: PrimMonad m => Gen (PrimState m) -> m t
+type WeeklyPattern = [Integer]
+data Context = Context { numberOfProfessors :: Int,
+                         numberOfDays :: Int,
+                         numberOfCourses :: Int,
+                         numberOfPatterns :: Int,
+                         numberOfRoles :: Int,
+                         numberOfPlans :: Int,
+                         maxNumberOfClasses :: Int
+                       }
 
-data Role = Ay2 | Ay1 | JTP | Prof deriving (Enum, Show)
+class Generatable t where
+  generate :: PrimMonad m => Context -> Gen (PrimState m) -> m t
+
+type Role = Int
 instance Generatable Role where
-  generate gen = toEnum `liftM` uniformR (0, 3) gen
+  generate ctx = uniformR (1, numberOfRoles ctx)
 
 data Professor = Professor { availability :: [Bool],
                              roles :: [Role],
-                             quality :: Course -> Integer
+                             quality :: Course -> Int
                            }
 instance Show Professor where
   show p = let available = let pairs = zip [1..] (availability p)
@@ -22,42 +32,44 @@ instance Show Professor where
            in "{roles = " ++ r ++ ", available = " ++ available ++ "}"
 
 instance Generatable Professor where
-  generate gen = do
-    availability <- replicateM 365 (uniform gen)
-    i <- uniformR (-1, 3) gen
-    let roles = map toEnum [0 .. i]
+  generate ctx gen = do
+    availability <- replicateM (numberOfDays ctx) (uniform gen)
+    i <- uniformR (0, numberOfRoles ctx - 1) gen
+    let roles = [0 .. i]
     let quality = const 8
     return $ Professor { availability = availability,
                          roles = roles,
                          quality = quality}
 
-type WeeklyPlan = [Integer]
+type WeeklyPlan = [Int]
 instance Generatable WeeklyPlan where
-  generate gen = filterM (const $ uniform gen) [0..6]
+  generate _ gen = filterM (const $ uniform gen) [0..6]
 
-toYearlyDates :: WeeklyPlan -> [Integer]
+toYearlyDates :: WeeklyPlan -> [Int]
 toYearlyDates = concat . zipWith map (map (+) [0,7..365]) . repeat
 
-type ClassRequirement = [(Role, Integer)]
+type ClassRequirement = [(Role, Int)]
 instance Generatable ClassRequirement where
-  generate gen = do
-    i <- uniformR (1, 3) gen
-    let roles = map (toEnum . (3 -)) [0 .. i]
-    counts :: [Int] <- replicateM i (uniformR (1, 3) gen)
-    return . zip roles . map fromIntegral $ counts
+  generate ctx gen = do
+    i <- uniformR (0, numberOfRoles ctx - 1) gen
+    let roles = [0 .. i]
+    counts <- replicateM i (uniformR (1, 3) gen)
+    return $ zip roles counts
 
-data Course = Course { name :: String,
-                       availablePatterns :: [Integer],
+data Course = Course { availablePatterns :: [Int],
                        perClassRequirements :: [ClassRequirement],
-                       numberOfClasses :: Integer
+                       numberOfClasses :: Int
                      } deriving Show
 
 instance Generatable Course where
-  generate gen = do
-    patterns <- filterM (const $ uniform gen) [0..10]
-    numberOfClasses :: Int <-  uniformR (1, 20) gen
-    reqs <- replicateM numberOfClasses $ generate gen
-    return $ Course { name = "Foo", availablePatterns = patterns, perClassRequirements = reqs, numberOfClasses = fromIntegral numberOfClasses}
+  generate ctx gen = do
+    patterns <- filterM (const $ uniform gen) [0.. numberOfPatterns ctx - 1]
+    numberOfClasses <-  uniformR (1, maxNumberOfClasses ctx) gen
+    reqs <- replicateM numberOfClasses $ generate ctx gen
+    return $ Course { availablePatterns = patterns,
+                      perClassRequirements = reqs,
+                      numberOfClasses = numberOfClasses
+                    }
 
 
 data Problem = Problem {
@@ -66,15 +78,19 @@ data Problem = Problem {
                          plans :: [WeeklyPlan]
                        } deriving Show
 instance Generatable Problem where
-  generate gen = do
-    courses <- replicateM 4 $ generate gen
-    professors <- replicateM 20 $ generate gen
-    plans <- replicateM 7 $ generate gen
-    return $ Problem { courses = courses, professors = professors, plans = plans }
+  generate ctx gen = do
+    courses <- replicateM (numberOfCourses ctx) $ generate ctx gen
+    professors <- replicateM (numberOfProfessors ctx) $ generate ctx gen
+    plans <- replicateM (numberOfPlans ctx) $ generate ctx gen
+    return $ Problem { courses = courses,
+                       professors = professors,
+                       plans = plans
+                     }
 generateCourse :: GenIO -> IO [Int]
-generateCourse = \gen -> do
-  v <- uniform gen
-  return [v]
+generateCourse = \gen -> undefined
+
+toZimpl :: Problem -> String
+toZimpl p = undefined
 
 main :: IO ()
 main = return ()
