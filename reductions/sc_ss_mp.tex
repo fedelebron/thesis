@@ -1,0 +1,10 @@
+\subsection{Single course, single start date, multiple pattern}
+
+This reduction is again in \textsc{P}, merely by a reduction to the single pattern case. Indeed, having fixed the rest of the input, and given $n$ possible patterns $p_1, \dots, p_n$, if $f(p_i)$ is the function that solves the problem for a single pattern $p_i$, then we can compute the solution to the multiple pattern version as simply
+$$
+\max_{1 \le i \le n} f(p_i)
+$$
+
+This is a polynomial number of calls to what we saw above was a function which runs in polynomial time in the input size. Thus this version also falls inside \textsc{P}.
+
+This is, however, not particularly satisfying, since it does not immediately yield a formulation in terms of a known problem, nor do we obtain polyhedral information from this formulation.

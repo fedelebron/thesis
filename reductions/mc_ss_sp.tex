@@ -1,5 +1,6 @@
 \subsection{Multiple course, single start date, single weekly pattern}
 
+\subsubsection{As a maximum-cost maximum-flow problem}
 This reduction is also squarely in \textsc{P}, again shown via a maximum-cost maximum-flow algorithm.
 
 For every course, there's a single weekly pattern it has chosen. Thus we can precompute a function $f(l, h)$, which for every course $l$, returns the day of the $h$th class.
@@ -98,3 +99,71 @@ The constraints on the outgoing flow for $\gamma_{k, l, h}$ imply that the only 
 Furthermore, we wish to maximize the quality of each professor teaching each course. This means maximizing the sum of the $q_{i, l}$, since this represents that the $i$th professor is teaching a class of the $l$th course. Thus among these maximum flows, we want the one of maximum cost.
 
 Since this problem is solvable in polynomial time in the number of nodes and edges of the network, and in our case these are also in $O(poly(p, d, m, v, c))$, the problem is solvable in polynomial time, and thus is also in \textsc{P}.
+
+
+\subsubsection{As a maximum-weight perfect bipartite matching}
+We can also view this reduction as a maximum-weight perfect matching on a bipartite graph. The construction is similar to the single course case:
+
+\begin{center}
+\begin{tikzpicture}
+  \node[v] (a11) at (0, 4) {$\alpha_{1, 1}$};
+  \node (d1) at (0, 3) {$\vdots$};
+  \node[v] (aij) at (0, 2) {$\alpha_{i, j}$};
+  \node (d2) at (0, 1) {$\vdots$};
+  \node[v] (ant) at (0, 0) {$\alpha_{p, d}$};
+
+  \node[v] (b1111) at (3, 4) {$\beta_{1, 1, 1, 1}$};
+  \node (d3) at (3, 3) {$\vdots$};
+  \node[v] (bjklv) at (3, 2) {$\beta_{j, k, l, v}$};
+  \node (d4) at (3, 1) {$\vdots$};
+  \node[v] (btcmncm) at (3, 0) {$\beta_{d, c, m, n'_{c, m}}$};
+
+  \node[v] (c1) at (3, -2) {$\gamma_1$};
+  \node (d5) at (3, -3) {$\vdots$};
+  \node[v] (cz) at (3, -4) {$\gamma_z$};
+
+  \draw[->] (aij) to node[above, red] {Only if $r_{i, l}$} node[below, blue] {$q_{i, k}$} (bjklv);
+  \dottedarrows{{a11, aij, ant}}{{b1111, bjklv, btcmncm, c1, cz}}{aij}{bjklv};
+\end{tikzpicture}
+\end{center}
+
+Formally, we have a graph $G = (V, E)$, where
+
+\begin{align*}
+  V = & \{\alpha_{i, j} \mid 1 \le i \le p, 1 \le j \le d, a_{i, j} = 1\}\\
+    & \cup \{\beta_{j, k, l, v} \mid 1 \le j \le d, 1 \le k \le c, 1 \le l \le m, 1 \le v \le n'_{c, l}\}\\
+    & \cup \{\gamma_i \mid 1 \le i \le z\}\\
+  E = & \{\{\alpha_{i, j}, \beta_{j, k, l, v}\}\ \forall\ i, j, k, l, v, r_{i, l} = 1\}\\
+      & \cup \{\{\alpha_{i, j}, \gamma_k\} \mid \ \forall\ i, j, k\}
+\end{align*}
+
+where we have defined, as before, $x = \sum_{i = 1}^p |\{j \mid 1 \le j \le d, a_{i, j} = 1\}|$, $y = \sum_{k = 1}^c \sum_{l = 1}^m n'_{k, l}$, and $z = x - y$.
+
+We also have a cost function $w:E \to \mathbb{R}$, such that:
+
+\begin{align*}
+  w(\alpha_{i, j}, \beta_{j, k, l, v}) &= q_{i, k}\\
+  w(\alpha_{i, j}, \gamma_k) &= 0
+\end{align*}
+
+Conceptually, we see this as assigning proffesors $i$, on day $j$, to either teach the $k$th course, on the $l$th role (being the $v$th instance of this role for that class), or to have a ``holiday'', when they're assigned to some $\gamma$. The cost of assigning a professor to teach a class is the quality the professor has for that class, hence what we want to maximize is the sum of the costs of the professor assignments in this bipartite graph.
+
+This formulation again provides us with an integer linear programming formulation, noting by $B$ the incidence matrix of $G$:
+
+\begin{alignat*}{2}
+  \text{maximize }   & q^t x \\
+  \text{subject to } & Bx \le \mathbf{1}\\
+                     & x ge \mathbf{0}\\
+                     & x \in \mathbb{Z}^M
+\end{alignat*}
+
+which, by unimodularity of $B$ since $G$ is bipartite,  has an integral linear relaxation:
+
+\begin{alignat*}{2}
+  \text{maximize }   & q^t x \\
+  \text{subject to } & Bx \le \mathbf{1}\\
+                     & x \ge \mathbf{0}\\
+                     & x \in \mathbb{R}^M\\
+\end{alignat*}
+
+and thus an optimal solution can be found in polynomial time in the size of $B$, which by our construction of $G$ is in $O(poly(p, t))$.
