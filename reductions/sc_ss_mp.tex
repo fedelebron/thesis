@@ -7,4 +7,64 @@ $$
 
 This is a polynomial number of calls to what we saw above was a function which runs in polynomial time in the input size. Thus this version also falls inside \textsc{P}.
 
-This is, however, not particularly satisfying, since it does not immediately yield a formulation in terms of a known problem (that is, it is not a polynomial reduction in the sense of Karp), nor do we obtain polyhedral information from this formulation.
+This is, however, not particularly satisfying, since it does not immediately yield a formulation in terms of a known problem (that is, it is not a polynomial reduction in the sense of Karp). However, due to the polyhedral formulations for the single pattern case, we can obtain a polyhedral formulation for this reduction as well.
+
+Consider the linear programming formulation of the single-pattern case, with the pattern fixed to $p_i$:
+
+\begin{alignat*}{2}
+  \text{maximize } & q_i^t x \\
+  \text{subject to } & B_i x \le \mathbf{1}\\
+                     & x \ge \mathbf{0}
+\end{alignat*}
+
+where $q_i, x \in \mathbb{R}^M$, and $B_i \in \mathbb{R}^{N \times M}$. We can consider the following equivalent linear program $Q_i$:
+
+\begin{alignat*}{2}
+  \text{minimize } & {q'}_i^t x \\
+  \text{subject to } & B_i x \le \mathbf{1}\\
+                     & x \ge \mathbf{0}
+\end{alignat*}
+
+where $q'_i = -q_i$, and the optimal solution is unchanged. Thus we can express the single-pattern case as a linear minimization; this shall be important in what follows.
+
+We can construct the following linear program:
+\begin{alignat*}{2}
+  \text{minimize } & y\\
+  \text{subject to } & B_i x_i \le \mathbf{1}\ \forall\ i\\
+                     & y \ge {q'}_i^t x_i\\
+                     & x_i \ge 0\\
+                     & y \ge 0\\
+                     & y \in \mathbb{R}\\
+                     & x_i \in \mathbb{R}^M\\
+\end{alignat*}
+
+If we were to express this as a single matrix, we would obtain something like this:
+
+\begin{align*}
+A &= \begin{pmatrix}
+B_1 & 0   & 0   & \dots & 0 & 0\\
+0   & B_2 & 0   & \dots & 0 & 0\\
+0   & 0   & B_3 & \dots & 0 & 0\\
+\vdots & \vdots & \vdots & \dots & \vdots & \vdots\\
+0 & 0 & 0 & \dots & B_n & 0\\
+{q'}_1^t & 0 & 0 & \dots & 0 & -1\\
+0 & {q'}_2^t & 0 & \dots & 0 & -1\\
+0 & 0 & {q'}_3^t & \dots & 0 & -1\\
+\vdots & \vdots & \vdots & \dots & \vdots & \vdots\\
+0 & 0 & 0 & \dots & {q'}_n^t & -1\\
+\end{pmatrix}\\
+b &= (\mathbf{1}, \mathbf{1}, \mathbf{1}, \dots, \mathbf{1}, 0, 0, 0, \dots, 0)^t\\
+c &= (0, 0, 0, \dots, 0, 1)
+\end{align*}
+
+And the linear program could be expressed as
+\begin{alignat*}{2}
+  \text{minimize } & c^t x\\
+  \text{subject to } & Ax \le b\\
+                     & x \ge 0
+\end{alignat*}
+
+
+It's clear that in order to minimize $y$, we need to minimize the constraints of the form ${q'}_i^t x_i$, and we must have $B_i x_i \le 1\ \forall\ i$, thus solving the linear programs $Q_i$. It's also clear that $y$ will be the maximum of those values, which as we had seen were the optimal solutions to our original single-pattern restrictions.
+
+Thus we have a linear programming solution to this case as well.
