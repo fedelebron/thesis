@@ -1,5 +1,6 @@
 \subsection{Single course, single start date, multiple pattern}
 
+\subsubsection{As an ad-hoc program}
 This reduction is again in \textsc{P}, merely by a reduction to the single pattern case. Indeed, having fixed the rest of the input, and given $n$ possible patterns $p_1, \dots, p_n$, if $f(p_i)$ is the function that solves the problem for a single pattern $p_i$, then we can compute the solution to the multiple pattern version as simply
 $$
 \max_{1 \le i \le n} f(p_i)
@@ -7,6 +8,7 @@ $$
 
 This is a polynomial number of calls to what we saw above was a function which runs in polynomial time in the input size. Thus this version also falls inside \textsc{P}.
 
+\subsubsection{As a linear program}
 This is, however, not particularly satisfying, since it does not immediately yield a formulation in terms of a known problem (that is, it is not a polynomial reduction in the sense of Karp). However, due to the polyhedral formulations for the single pattern case, we can obtain a polyhedral formulation for this reduction as well.
 
 Consider the linear programming formulation of the single-pattern case, with the pattern fixed to $p_i$:
