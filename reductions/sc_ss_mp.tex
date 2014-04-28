@@ -67,4 +67,4 @@ And the linear program could be expressed as
 
 It's clear that in order to minimize $y$, we need to minimize the constraints of the form ${q'}_i^t x_i$, and we must have $B_i x_i \le 1\ \forall\ i$, thus solving the linear programs $Q_i$. It's also clear that $y$ will be the maximum of those values, which as we had seen were the optimal solutions to our original single-pattern restrictions.
 
-Thus we have a linear programming solution to this case as well.
+Thus we have a linear programming solution to this case as well. Since we knew each matrix size was in $O(poly(p, d))$, $n$ of them as diagonals are in $O(poly(n, p, d))$. Thus solving this linear program is also a polynomial solution to this reduction.
