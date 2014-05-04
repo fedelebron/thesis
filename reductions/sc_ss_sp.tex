@@ -22,17 +22,17 @@ This case can be solved in polynomial time when thought of as a case of maximum-
 \node[v] (d3) at (3, 3) {$\alpha_1$};
 \node[v] (d4) at (3, -1) {$\alpha_p$};
 
-\node[v] (p_jd_i) at (6, 1) {$\alpha_j \beta_i$};
+\node[v] (p_jd_i) at (6, 1) {$\beta_{j, i}$};
 \node (d5) at (6, 0) {$\vdots$};
 \node (d6) at (6, 2) {$\vdots$};
-\node[v] (d7) at (6, 3) {$\alpha_1 \beta_1$};
-\node[v] (d8) at (6, -1) {$\alpha_p \beta_d$};
+\node[v] (d7) at (6, 3) {$\beta_{1, 1}$};
+\node[v] (d8) at (6, -1) {$\beta_{p, d}$};
 
-\node[v] (d_ir_k) at (9, 1) {$\beta_i \gamma_k$};
+\node[v] (d_ir_k) at (9, 1) {$\gamma_{i, k}$};
 \node (d9) at (9, 0) {$\vdots$};
 \node (d10) at (9, 2) {$\vdots$};
-\node[v] (d11) at (9, 3) {$\beta_1 \gamma_1$};
-\node[v] (d12) at (9, -1) {$\beta_d \gamma_m$};
+\node[v] (d11) at (9, 3) {$\gamma_{1, 1}$};
+\node[v] (d12) at (9, -1) {$\gamma_{d, m}$};
 
 \node[v] (t) at (12, 1) {$t$};
 
@@ -59,21 +59,21 @@ Formally, the network is $G = (V, E)$, with
 
 \begin{align*}
 V = &\{s\} \cup \{t\}\\
-&\cup \{\alpha_j \mid 1 \le j \le p\}\\
-&\cup \{\alpha_j \beta_i \mid 1 \le j \le p, 1 \le i \le d\}\\
-&\cup \{\beta_i \gamma_k \mid 1 \le i \le d, 1 \le j \le m\}\\
+&\cup \{\alpha_j \mid 1 \le j \le p\}\\
+&\cup \{\beta_{j, i} \mid 1 \le j \le p, 1 \le i \le d\}\\
+&\cup \{\gamma_{i, k} \mid 1 \le i \le d, 1 \le j \le m\}\\
 E = &\{(s, \alpha_j)\ \forall\ j\}\\
-    &\cup \{(\alpha_j, \alpha_j \beta_i)\ \forall\ i, j \}\\
-    &\cup \{(\alpha_j \beta_i, \beta_i \gamma_k)\ \forall\ j, i, k\}\\
-    &\cup \{(\beta_i \gamma_k, t)\ \forall\ i, k \}
+    &\cup \{(\alpha_j, \beta_{j, i})\ \forall\ i, j \}\\
+    &\cup \{(\beta_{j, i}, \gamma_{i, k})\ \forall\ j, i, k\}\\
+    &\cup \{(\gamma_{i, k}, t)\ \forall\ i, k \}
 \end{align*}
 
 capacity function $c:E \to \mathbb{R} \cup \{\infty\}$, such that
 \begin{align*}
 c(s, \alpha_j) &= \infty\ \forall\ j\\
-c(\alpha_j, \alpha_j \beta_i) &= a_{j, i}\ \forall\ i, j\\
-c(\alpha_j \beta_i, \beta_i \gamma_k) &= r_{j, k}\ \forall\ i, j, k\\
-c(\beta_i \gamma_k, t) &= n'_{i, k}\ \forall\ i, k
+c(\alpha_j, \beta_{j, i}) &= a_{j, i}\ \forall\ i, j\\
+c(\beta_{j, i}, \gamma_{i, k}) &= r_{j, k}\ \forall\ i, j, k\\
+c(\gamma_{i, k}, t) &= n'_{i, k}\ \forall\ i, k
 \end{align*}
 
 and cost function $w:E \to \mathbb{R}$, such that
@@ -90,13 +90,13 @@ We can think of the flow in this network as ``time'' dedicated by a professor at
 
 A professor cannot teach on an unavailable day, since flow can only go from the $j$th professor to the $i$th day if $a_{i, j} = 1$, and only one unit may go through in that case. This last fact ensures a professor cannot work twice in a single day, even under different roles.
 
-He also cannot work in a role that is unavailable to him, since in order for flow to go from $\alpha_j \beta_i$ to $\beta_i \gamma_k$, meaning ``the $j$th professor teaches on the $i$th day'' to ``the $i$th day has one $k$th role position covered'', unless $r_{j, k} = 1$, so one cannot consider an instance of that role covered for that day unless the professor from which that unit of flow came indeed can work in that role.
+He also cannot work in a role that is unavailable to him, since in order for flow to go from $\beta_{j, i}$ to $\gamma_{i, k}$, meaning ``the $j$th professor teaches on the $i$th day'' to ``the $i$th day has one $k$th role position covered'', unless $r_{j, k} = 1$, so one cannot consider an instance of that role covered for that day unless the professor from which that unit of flow came indeed can work in that role.
 
-Lastly, the number of instances of the $k$th role that a given $\beta_i \gamma_k$ needs for the $i$th day can not be greater than $n'_{i, k}$.
+Lastly, the number of instances of the $k$th role that a given $\gamma_{i, k}$ needs for the $i$th day can not be greater than $n'_{i, k}$.
 
-A flow $f$ in $G$ will be a valid assignment of professors exactly when $f(s, t) \ge \sum_{i, k} n'_{i, k}$. The constraints going into $t$ guarantee this implies $f(\beta_i \gamma_k, t) = r_{i, k}\ \forall i, k$, which means each day's requirements of each role are met.
+A flow $f$ in $G$ will be a valid assignment of professors exactly when $f(s, t) \ge \sum_{i, k} n'_{i, k}$. The constraints going into $t$ guarantee this implies $f(\gamma_{i, k}, t) = r_{i, k}\ \forall i, k$, which means each day's requirements of each role are met.
 
-In such a solution, if a unit of flow goes from $s$, to $\alpha_j$, through $\alpha_j \beta_i$, then through $\beta_i \gamma_k$, and finally to $t$, we consider that the $j$th professor teaches on the $i$th day with the $k$th role. The quality of this assignment is thus $q_j$.
+In such a solution, if a unit of flow goes from $s$, to $\alpha_j$, through $\beta_{j, i}$, then through $\gamma_{i, k}$, and finally to $t$, we consider that the $j$th professor teaches on the $i$th day with the $k$th role. The quality of this assignment is thus $q_j$.
 
 Furthermore, to obtain an optimal solution, that is, a maximum sum of the qualities of the assignments, we need to maximize the cost of this flow, because this will mean the maximum value of the units going into (hence out of) the $\alpha_j$, which is the quality of the assignments we are making.
 
