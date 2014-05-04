@@ -133,9 +133,9 @@ Formally, we have the graph $G = (V, E)$, such that
 \begin{align*}
 V = & \{\alpha_{i, j} \mid 1 \le i \le p, 1 \le j \le d, a_{i, j} = 1\}\\
     & \cup \{\beta_{k, l, v} \mid 1 \le k \le c, 1 \le l \le m, 1 \le v \le n'_{k, l}\}\\
-    & \cup \{h_i \mid 1 \le i \le z\}\\
+    & \cup \{h_i \mid 1 \le i \le z\}\\
 E = & \{\{\alpha_{i, j}, \beta_{k, l, v}\}\ \forall\ i, j, k, l, v \mid r_{i, l} = 1\}\\
-    & \cup \{\{\alpha_{i, j}, h_s\}\ \forall\ i, j, s\}
+    & \cup \{\{\alpha_{i, j}, h_s\}\ \forall\ i, j, s\}
 \end{align*}
 
 with a cost function $w: E \to \mathbb{R}$, such that
@@ -161,8 +161,8 @@ Moreover, given this formulation we have a very neat integer linear program. We 
 
 \begin{alignat*}{2}
   \text{maximize }   & q^t x \\
-  \text{subject to } & \sum_{j=1}^M x_j \le 1, \ & 1 \le i \le N\\
-                     & x_j \in \{0, 1\}, \ & 1 \le j \le M\\
+  \text{subject to } & \sum_{j=1}^M x_j \le 1, \ & 1 \le i \le N\\
+                     & x_j \in \{1, 1\}, \ & 1 \le j \le M\\
 \end{alignat*}
 
 One thing we can remark is that $x_j \le 1$ is guaranteed by the first constraint, as any higher value would forcibly violate some constraint, namely the ones corresponding to each of the two incident vertices to that edge. Thus we can simply ask that $x_j \ge 0$
