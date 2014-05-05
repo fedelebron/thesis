@@ -64,3 +64,7 @@ subto no_duplicate_profs:
 subto legal_weekly_pattern:
   forall <c, s> in C * S:
     cp[c, s] <= pp[c, s];
+
+subto legal_start_date:
+  forall <c, sd> in C * SD:
+    csd[c, sd] <= psd[c, sd];
