@@ -1,0 +1,254 @@
+\section{Multiple course, single start date, multiple weekly pattern}
+
+This reduction is in \nph. Hence, we see that the addition of a variable number of patterns appears to significantly increase the complexity of the solution space.
+
+\subsection{Reduction from EXACT-COVER}
+Recall the decision problem EXACT-COVER, the problem of exactly covering a set by subsets:
+
+\decision{EXACT COVER}{Set $X$ and a collecion $C$ of subsets of $X$.}{Does $C$ contain an exact cover for $X$, i.e., a subcollection $C' \subseteq C$ such that every element of $X$ occurs in exactly one member of $C'$?}
+
+The idea for the reduction is that the set of courses will be $X$, and for each subset $S$ in $C$, $|S|$ new weekly patterns will be created, one for each course in $S$, designed in such a way that if one of the courses picks its pattern to be this new one, \emph{every} other course in $S$ picks this new pattern.
+
+Since every course must pick a pattern, this will amount to every element being in some subset, since there is one pattern-set per subset $S$ in $C$. Since one element of the subset picking this new pattern will imply all others doing the same, this will ensure that all elements of a subset agree on whether it was \emph{that} subset the one that they all will be elements of, in $C'$.
+
+\subsubsection{Example}
+Before the reduction algorithm, we should look at an example.
+
+Suppose we have the following instance of EXACT-COVER:
+
+\begin{align*}
+X &= \{1, 2, 3, 4, 5, 6, 7\}\\
+C &= \{{\color{BrickRed}C_1}, {\color{Blue}C_2}, {\color{Fuchsia}C_3}, {\color{ForestGreen}C_4}, {\color{BurntOrange}C_5}, {\color{Tan}C_6}\}\\
+{\color{BrickRed} C_1} &= {\color{BrickRed} \{1, 4, 7\}}\\
+{\color{Blue} C_2} &= {\color{Blue}\{ 1, 4 \} }\\
+{\color{Fuchsia} C_3} &= {\color{Fuchsia} \{ 4, 5, 7\} }\\
+{\color{ForestGreen} C_4} &= {\color{ForestGreen} \{ 3, 5, 6\} }\\
+{\color{BurntOrange} C_5} &= {\color{BurntOrange} \{ 2, 3, 6, 7 \}}\\
+{\color{Tan} C_6} &= {\color{Tan} \{2, 7\}}
+\end{align*}
+
+Then we shall have $7$ courses, $1 \dots 7$. For each course, we will have one ``schedule template'', which will be an assignment of each of the course's classes to days. Every schedule for a given course will be equal to its schedule template, save for a single class, which will be assigned a different day.
+
+Let's take {\color{BrickRed}$C_1$} as an example. We will create the following four things:
+\begin{itemize}
+\item A professor, $p_1$.
+\item A schedule for each of the $3$ elements of {\color{BrickRed}$C_1$}.
+\item A new class for each course.
+\item An assignment in the default schedule for each course's new class.
+\end{itemize}
+
+Throughout this process, we will keep a counter $k$, which will monotonically increase as we add schedules, and starts at $1$.
+
+Professor $p_1$ will have a single possible role, which we will denote $1$. He will also be available exactly on the following days of the year: $\{k, k + 1, k + 2\} = \{1, 2, 3\}$.
+
+Courses $1$, $4$, and $7$ will each get a new class added. This class requires one professor with role $1$, and nothing else. Let us call $c_{1, 1}$, $c_{4, 1}$, and $c_{7, 1}$ these new classes.
+
+Now we modify the schedule template:
+\begin{itemize}
+\item In the schedule template for class $1$, $c_{1, 1}$ will be assigned day $k = 1$.
+\item In the schedule template for class $4$, $c_{4, 1}$ will be assigned day $k + 1 = 2$.
+\item In the schedule template for class $7$, $c_{7, 1}$ will be assigned day $k + 2 = 3$.
+\end{itemize}
+
+Next, we add a new schedule for each of these three classes, let us call these schedules $s_{1, 1}$, $s_{4, 1}$, and $s_{7, 1}$.
+\begin{itemize}
+\item Schedule $s_{1, 1}$ assigns to $c_{1, 1}$ the day $k + 1 = 2$.
+\item Schedule $s_{4, 1}$ assigns to $c_{4, 1}$ the day $k + 2 = 3$.
+\item Schedule $s_{7, 1}$ assigns to $c_{7, 1}$ the day $k = 1$.
+\end{itemize}
+
+Graphically, we have the following schedules, where a {\color{BrickRed}red} background means the new schedules, and a {\color{gray}gray} background means the schedule template:
+
+\begin{center}
+\resizebox{8cm}{!}{
+\begin{tabular}{l||c|c|c}
+  \hline
+  $3$ & & \cellcolor{BrickRed}$c_{4, 1}$ & \cellcolor{gray}$c_{7, 1}$\\
+  \hline
+  $2$ & \cellcolor{BrickRed}$c_{1, 1}$ &\cellcolor{gray}$c_{4, 1}$ & \\
+  \hline
+  $1$ & \cellcolor{gray}$c_{1, 1}$ & & \cellcolor{BrickRed}$c_{7, 1}$\\
+  \hline
+  & 1 & 4 & 7
+\end{tabular}
+}
+\end{center}
+
+Finally, we increment $k$ by $3$, to arrive at $k = 4$. This concludes the work for {\color{BrickRed}$C_1$}.
+
+Let us now consider {\color{Blue}$C_2$}. It has two elements, $1$ and $4$.
+
+We add a new professor, $p_2$. $p_2$ has a single role, which we'll denote $2$. He is available exactly on the days $\{k, k + 1\} = \{4, 5\}$.
+
+We add a class for each course in {\color{Blue}$C_2$}. Let us call them $c_{1, 2}$ and $c_{4, 2}$, since they are the second classes of both courses $1$ and $4$. These classes both require a single professor acting with role $2$.
+
+The schedules created will be as follows, where a {\color{Blue}blue} background means the new schedules, and a {\color{gray}gray} background means the schedule template:
+
+\begin{center}
+\resizebox{8cm}{!}{
+\begin{tabular}{l||c|c}
+  \hline
+  $5$ & \cellcolor{Blue}$c_{1, 2}$ &\cellcolor{gray}$c_{4, 2}$ \\
+  \hline
+  $4$ & \cellcolor{gray}$c_{1, 2}$ & \cellcolor{Blue}$c_{4, 2}$\\
+  \hline
+  & 1 & 7
+\end{tabular}
+}
+\end{center}
+
+As before, we now increase $k$ by $2$, and have $k = 6$. This concludes the work for {\color{Blue}$C_2$}.
+
+For {\color{Fuchsia} $C_3$}, we have the elements $4$, $5$, and $7$. 
+
+Again we add a professor $p_3$, with a single possible role, $3$. $p_3$'s availability will be exactly the days $\{k, k + 1, k + 2\} = \{6, 7, 8\}$. 
+
+We add a single class to each of the three courses $4$, $5$, and $7$. We will call these $c_{4, 3}$, $c_{5, 1}$, and $c_{7, 3}$, since they are the third, first, and third classes of their courses respectively.
+
+The schedules will look as follows, where a {\color{Fuchsia}fuchsia} background means the new schedules, and a {\color{gray}gray} background means the schedule template:
+
+
+\begin{center}
+\resizebox{8cm}{!}{
+\begin{tabular}{l||c|c|c}
+  \hline
+  $8$ & & \cellcolor{Fuchsia}$c_{5, 1}$ & \cellcolor{gray}$c_{7, 3}$\\
+  \hline
+  $7$ & \cellcolor{Fuchsia}$c_{4, 3}$ &\cellcolor{gray}$c_{5, 1}$ & \\
+  \hline
+  $6$ & \cellcolor{gray}$c_{4, 3}$ & & \cellcolor{Fuchsia}$c_{7, 3}$\\
+  \hline
+  & 4 & 5 & 7
+\end{tabular}
+}
+\end{center}
+
+And we increment $k$ by $3$, and have $k = 9$.
+
+If we do the same for every $C_i$, we will obtain the following schedules:
+
+\begin{center}
+\begin{tabular}{l|c|c|c|c|c|c|c}
+  \hline
+  $17$ & & \cellcolor{Tan}$c_{2, 2}$  & & & & &  \cellcolor{light-gray}$c_{7, 4}$ \\
+  \hline
+  $16$ & & \cellcolor{light-gray}$c_{2, 2}$  & & & & & \cellcolor{Tan}$c_{7, 4}$  \\
+  \hline
+  $15$ & &   &   & & & \cellcolor{BurntOrange}$c_{6, 2}$  & \cellcolor{light-gray}$c_{7, 3}$  \\
+  \hline
+  $14$ & &   & \cellcolor{BurntOrange}$c_{3, 2}$  & & & \cellcolor{light-gray}$c_{6, 2}$  &   \\
+  \hline
+  $13$ & & \cellcolor{BurntOrange}$c_{2, 1}$  & \cellcolor{light-gray}$c_{3, 2}$  & & &   &   \\
+  \hline
+  $12$ & & \cellcolor{light-gray}$c_{2, 1}$  &   & & &   & \cellcolor{BurntOrange}$c_{7, 3}$  \\
+  \hline
+  $11$ & & &  & & \cellcolor{ForestGreen}$c_{5, 2}$  & \cellcolor{light-gray}$c_{6, 1}$ &\\
+  \hline
+  $10$ & & & \cellcolor{ForestGreen}$c_{3, 1}$  & & \cellcolor{light-gray}$c_{5, 2}$  &  &\\
+  \hline
+  $9$ & & & \cellcolor{light-gray}$c_{3, 1} $ & &   & \cellcolor{ForestGreen}$c_{6, 1}$ &\\
+  \hline
+  $8$ & & & & & \cellcolor{Fuchsia}$c_{5, 1}$ & & \cellcolor{light-gray}$c_{7, 3}$\\
+  \hline
+  $7$ & & & & \cellcolor{Fuchsia}$c_{4, 3}$ & \cellcolor{light-gray}$c_{5, 1}$ & & \\
+  \hline
+  $6$ & & & & \cellcolor{light-gray}$c_{4, 3}$ & & & \cellcolor{Fuchsia}$c_{7, 3}$\\
+  \hline
+  $5$ & \cellcolor{Blue}{\color{white} $c_{1, 2}$} & & & \cellcolor{light-gray}$c_{4, 2}$ & & & \\
+  \hline
+  $4$ & \cellcolor{light-gray}$c_{1, 2}$ & & & \cellcolor{Blue}{\color{white}$c_{4, 2}$} & & & \\
+  \hline
+  $3$ & & & & \cellcolor{BrickRed}$c_{4, 1}$ & & & \cellcolor{light-gray}$c_{7, 1}$\\
+  \hline
+  $2$ & \cellcolor{BrickRed}$c_{1, 1}$ & & & \cellcolor{light-gray}$c_{4, 1}$ & & &  \\
+  \hline
+  $1$ & \cellcolor{light-gray}$c_{1, 1}$ & & & & & &  \cellcolor{BrickRed}$c_{7, 1}$\\
+  \hline
+  & 1 & 2 & 3 & 4 & 5 & 6 & 7
+\end{tabular}
+\end{center}
+
+In this scenario, a week would have $14$ days.
+
+Recall that a course can only choose a single schedule. For example, if course $4$ chooses the {\color{Fuchsia}fuchsia} schedule, this means it will have its $1$st class on the $2$nd day, its $2$nd class on the $5$th day, and its $3$rd class on the $7$th day. In essence, choosing a schedule for a course amounts to picking a single color $w$ from its column. Every class except the $w$-colored one will be assigned as in its schedule template (the {\color{gray}gray} squares), and the one colored $w$ will be assigned whichever row the $w$-colored cell belongs to.
+
+
+Now note that if course $4$ chooses the {\color{Fuchsia}fuchsia} schedule, it \emph{must} be the case that courses $5$ and $7$ do as well:
+\begin{itemize}
+\item If course $5$ had not chosen the {\color{Fuchsia}fuchsia} schedule, then its $1$st class would be on day $7$. But on day $7$ the professor $p_3$, which is the only one who can teach this class due to his unique role, is busy teaching course $4$. Thus course $5$ choose the {\color{Fuchsia}fuchsia} schedule.
+\item Since course $5$ chose the {\color{Fuchsia}fuchsia} schedule, its $1$st class is on day $8$. But then course $7$ cannot schedule its $3$rd class on day $8$, since the only professor which can teach that class, $p_3$, is busy teaching course $5$. Thus course $7$ cannot use any other schedule than the {\color{Fuchsia}fuchsia} one, since all others assign (via the schedule template) the $3$rd class to the $8$th day.
+\end{itemize}
+
+From this we can see that either \emph{none} of the courses in {\color{Fuchsia}$C_3$} picked the {\color{Fuchsia}fuchsia} schedule, or they \emph{all} did.
+
+Thus by considering the schedule colors that were selected, we obtain an exact cover of $X$, the courses, by $C$, the schedules. In this case, we can see that we can choose schedules {\color{Blue} $C_2$}, {\color{ForestGreen} $C_4$}, and {\color{Tan} $C_6$}, which are an exact cover of $X$.
+
+
+
+
+
+
+\newpage
+\subsubsection{Algorithm}
+Formally, the following is the reduction:
+
+\begin{codebox}
+\Procname{$\proc{Reduction}(X, C)$}
+\li $k \gets 1$
+\li $P \gets \emptyset$
+\li \For $x \in X$:
+\li \Do $\delta[x] \gets \emptyset$
+\li     $\kappa[x] \gets \emptyset$
+\li     $\pi[x] \gets \emptyset$
+\li     $S[x] \gets \emptyset$
+\End
+\li \For $C_i \in C$:
+\li \Do $l \gets |C_i|$
+\li     $P \gets P \cup \{\id{types}: [i],$
+\li\>\>          $\ \id{avail}: [k, k + 1, \dots, k + l]\}$
+\li     \For $j \gets 1$ \To $l$
+\li     \Do $c \gets C_i[j]$
+\li         $\pi[c] \gets \pi[c] \cup \{\id{reqs} : [(i, 1)]\}$
+\li         $\delta[c] \gets \delta[c] \cup \{(|\pi[c]|, k + (j \bmod{l}))\}$
+\li         $\kappa[c] \gets \kappa[c] \cup \{(|\pi[c]|, k + j - 1)\}$
+\End
+\li     $k \gets k + l$
+\End
+\li \For $x \in X$:
+\li \Do $n \gets |\pi[x]|$
+\li     \For $j \gets 1$ \To $n$:
+\li     \Do Let $i$ be such that $(j, i) \in \delta[x]$.
+\li         Let $i'$ be such that $(j, i') \in \kappa[x]$.
+\li         $s \gets \kappa[x] \setminus (j, i') \cup (j, i)$
+\li         $S[x] \gets S[x] \cup \{s\}$
+        \End
+\End
+\li $\mathcal{C} \gets X$
+\li $\mathcal{P} \gets P$
+\li $\mathcal{T} \gets [1, 2, \dots, |C|]$
+\li $\mathcal{D} \gets k$
+\li $\mathcal{M} \gets \bigcup_{x \in X} S[x]$
+\li $\mathcal{S} \gets \{1\}$
+\li $\mathcal{W}(c) = \{1\}\ \forall\ c \in \mathcal{C}$
+\li $n(c) = |\pi[c]|\ \forall\ c \in \mathcal{C}$
+\li $\max(c, n, t) = \min(c, n, t) = \begin{cases}
+1 & \text{ if } \pi[c][n] \isequal \{\id{reqs} : (i, 1)\}\\
+0 & \text{ otherwise}
+\end{cases}$
+\li \>\>$\forall\ c \in \mathcal{C}, 1 \le n \le n(c), t \in \mathcal{T}$
+\li $M_c = S[c]\ \forall\ c \in \mathcal{C}$
+\li $T_p = \attrib{p}{types}\ \forall\ p \in \mathcal{P}$
+\li $A_p = \attrib{p}{avail}\ \forall\ p \in \mathcal{P}$
+\li $q_{p, c} = 1\ \forall\ p \in \mathcal{P}, c \in \mathcal{C}$
+\li $\max_c(p) = |\mathcal{C}|\ \forall\ p \in \mathcal{P}$
+\li \Return $\langle \mathcal{C}, \mathcal{P}, \mathcal{T}, \mathcal{D}, \mathcal{M}, \mathcal{S}, \mathcal{W}, n, \max, \min, M, T, A, q, \max_c \rangle$
+\end{codebox}
+
+%As an example, suppose we have the following instance EXACT-3-COVER:
+
+
+%\begin{align*}
+%X &= \{a, b, c, d, e, f, g\}\\
+%C &= \{\{a, b, d\}, \{e, f, c\}\}
+%\end{align*}
+

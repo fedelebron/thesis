@@ -1,4 +1,4 @@
-\subsection{Single course, single start date, single weekly pattern}
+\section{Single course, single start date, single weekly pattern}
 Let us define a few convenience varibles first. Let
 \begin{itemize}
 \item $p$ be the number of professors,
@@ -9,7 +9,7 @@ Let us define a few convenience varibles first. Let
 \end{itemize}
 
 We will now see a few different ways of thinking about this reduction.
-\subsubsection{As a maximum cost maximum flow problem}
+\subsection{As a maximum cost maximum flow problem}
 
 This case can be solved in polynomial time when thought of as a case of maximum-cost maximum-flow problem. Specifically, we can create the following flow network, where capacities are in blue, and costs are in red:
 
@@ -102,7 +102,7 @@ Furthermore, to obtain an optimal solution, that is, a maximum sum of the qualit
 
 Since maximum-cost maximum-flow on $G$ is in $O(poly(|V|, |E|))$, and we can see our $|V|$ and $|E|$ are polynomials in $p, d, m$, we coclude this reduction can be solved in time $O(poly(p, d, m))$, and thus is in \textsc{P}.
 
-\subsubsection{As an assignment problem}
+\subsection{As an assignment problem}
 
 Another way to model this reduction is as an assignment problem. For convenience, let us note $x = \sum_{i = 1}^p |\{j \mid 1 \le j \le t, a_{i, j} = 1\}|$, $y = \sum_{k = 1}^c \sum_{l = 1}^m n'_{k, l}$, and $z = x - y$. We will see what these mean shortly. Now we create the following bipartite graph:
 

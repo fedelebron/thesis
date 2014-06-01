@@ -1,6 +1,6 @@
-\subsection{Multiple course, single start date, single weekly pattern}
+\section{Multiple course, single start date, single weekly pattern}
 
-\subsubsection{As a maximum-cost maximum-flow problem}
+\subsection{As a maximum-cost maximum-flow problem}
 This reduction is also squarely in \textsc{P}, again shown via a maximum-cost maximum-flow algorithm.
 
 For every course, there's a single weekly pattern it has chosen. Thus we can precompute a function $f(l, h)$, which for every course $l$, returns the day of the $h$th class.
@@ -69,7 +69,7 @@ Formally, this is $G = (V, E)$, such that
   V = &\{s\} \cup \{t\}\\
       &\cup \{\alpha_i \mid 1 \le i \le p\}\\
       &\cup \{\beta_{i, j} \mid 1 \le i \le p, 1 \le j \le d\}\\
-      &\cup \{\gamma_{k, l, h} \mid 1 \le k \le m, 1 \le l \le c, 1 \le h \le n(l)\}\\
+      &\cup \{\gamma_{k, l, h} \mid 1 \le k \le m, 1 \le l \le c, 1 \le h \le n(l)\}\\
   E = &\{(s, \alpha_i)\ \forall\ i\}\\
       &\cup \{(\alpha_i, \beta_{i, j}) \ \forall\ i, j\}\\
       &\cup \{(\beta_{i, j}, \gamma_{k, l, h})\ \forall\ i, j, k, l, h \mid f(l, h) = j\}\\
@@ -101,7 +101,7 @@ Furthermore, we wish to maximize the quality of each professor teaching each cou
 Since this problem is solvable in polynomial time in the number of nodes and edges of the network, and in our case these are also in $O(poly(p, d, m, v, c))$, the problem is solvable in polynomial time, and thus is also in \textsc{P}.
 
 
-\subsubsection{As a maximum-weight perfect bipartite matching}
+\subsection{As a maximum-weight perfect bipartite matching}
 We can also view this reduction as a maximum-weight perfect matching on a bipartite graph. The construction is similar to the single course case:
 
 \begin{center}
@@ -131,13 +131,13 @@ Formally, we have a graph $G = (V, E)$, where
 
 \begin{align*}
   V = & \{\alpha_{i, j} \mid 1 \le i \le p, 1 \le j \le d, a_{i, j} = 1\}\\
-    & \cup \{\beta_{j, k, l, v} \mid 1 \le j \le d, 1 \le k \le c, 1 \le l \le m, 1 \le v \le n'_{c, l}\}\\
+    & \cup \{\beta_{j, k, l, v} \mid 1 \le j \le d, 1 \le k \le c, 1 \le l \le m, 1 \le v \le n'_{c, l}\}\\
     & \cup \{\gamma_i \mid 1 \le i \le z\}\\
   E = & \{\{\alpha_{i, j}, \beta_{j, k, l, v}\}\ \forall\ i, j, k, l, v, r_{i, l} = 1\}\\
       & \cup \{\{\alpha_{i, j}, \gamma_k\} \mid \ \forall\ i, j, k\}
 \end{align*}
 
-where we have defined, as before, $x = \sum_{i = 1}^p |\{j \mid 1 \le j \le d, a_{i, j} = 1\}|$, $y = \sum_{k = 1}^c \sum_{l = 1}^m n'_{k, l}$, and $z = x - y$.
+where we have defined, as before, $x = \sum_{i = 1}^p |\{j \mid 1 \le j \le d, a_{i, j} = 1\}|$, $y = \sum_{k = 1}^c \sum_{l = 1}^m n'_{k, l}$, and $z = x - y$.
 
 We also have a cost function $w:E \to \mathbb{R}$, such that:
 

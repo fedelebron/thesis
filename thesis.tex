@@ -1,0 +1,171 @@
+\documentclass[a4paper,11pt]{amsbook}
+%\usepackage[utf8]{inputenc}
+
+
+\usepackage{amsmath, amscd, amssymb, amsthm, latexsym}
+\usepackage[usenames,dvipsnames,table]{xcolor}
+\usepackage{graphicx}
+\usepackage{cite}
+\usepackage{fontspec}
+\setmainfont[SmallCapsFont = Fontin SmallCaps]{Fontin}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{hyperref}
+\usepackage{clrscode3e}
+%\usepackage{fullpage}
+% \usepackage{clrscode3e}	--algun paquete de algoritmos
+\newtheorem{defn}{Definition}
+\newtheorem{prop}{Proposition}
+\newtheorem{thm}{Theorem}
+\newtheorem{lem}{Lemma}
+\newtheorem{cor}{Corollary}
+\newtheorem{obs}{Observation}
+\newtheorem{eg}{Example}
+
+%For \autoref to add the word before number
+\newcommand*{\defnautorefname}{Definition}
+\newcommand*{\propautorefname}{Proposition}
+\newcommand*{\thmautorefname}{Theorem}
+\newcommand*{\lemautorefname}{Lemma}
+\newcommand*{\corautorefname}{Corollary}
+\newcommand*{\obsautorefname}{Observation}
+\newcommand*{\egautorefname}{Example}
+\def\sectionautorefname{Section}
+\def\chapterautorefname{Chapter}
+
+\tikzset{
+  v/.style={draw, circle, inner sep=0pt, font=\small, align=center, minimum size=0.75cm},
+  e/.style={->, dashed}
+}
+\newcommand{\dottedarrow}[2]{\draw[e] ($(#1)!0.5cm!(#2)$) -> ($(#1)!1cm!(#2)$)}
+\newcommand{\dottedarrows}[4]{
+  \foreach \i in #1 {
+    \foreach \j in #2 {
+      \ifnum\pdfstrcmp{\i}{#3}=0
+        \ifnum\pdfstrcmp{\j}{#4}=0
+        \else
+          \dottedarrow{\i}{\j};
+        \fi
+      \else
+        \dottedarrow{\i}{\j};
+      \fi
+    }
+  }
+}
+
+\newlength{\problemoffset}
+\setlength{\problemoffset}{0.5in}
+\newcommand{\decision}[3]{%     \decision{NAME}{INSTANCE}{QUESTION}
+\begin{list}{}{
+\setlength{\leftmargin}{\problemoffset}
+\setlength{\rightmargin}{\problemoffset}
+\setlength{\parsep}{0pt}
+\setlength{\itemsep}{2pt}
+\setlength{\topsep}{\itemsep}
+\setlength{\partopsep}{\itemsep}
+}
+\item
+{\textsc{#1}}
+\item
+{INSTANCE: #2}
+\item
+{QUESTION: #3}
+\end{list}
+}
+
+\definecolor{light-gray}{gray}{0.75}
+
+\newcommand{\bigoh}{\ensuremath{\mathcal{O} }}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Nz}{\mathbb{N}_0}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+%\newcommand{\G}{\mathcal{G}}
+\newcommand{\Parts}{\mathcal{P}}
+\newcommand{\dist}{{\rm dist}}
+\newcommand{\adj}{{\rm Adj}}
+\newcommand{\symdiff}{\bigtriangleup}
+\newcommand{\npc}{\ensuremath{\mathcal{NP}{\text{-complete}}} }
+\newcommand{\npces}{\ensuremath{\mathcal{NP}{\text{-completo}}} }
+\newcommand{\nph}{\ensuremath{\mathcal{NP}{\text{-hard}}} }
+\newcommand{\np}{\ensuremath{\mathcal{NP}} }
+\newcommand{\p}{\ensuremath{\mathcal{P}} }
+\newcommand{\gic}{\ensuremath{\mathcal{GI}{\text{-complete}}} }
+\newcommand{\gih}{\ensuremath{\mathcal{GI}{\text{-hard}}} }
+\newcommand{\gi}{\ensuremath{\mathcal{GI}} }
+\newcommand{\mcesp}{{\textsc{MCESP} }}
+\newcommand{\mincesp}{{\textsc{MinCESP} }}
+\newcommand{\maxcut}{{\textsc{Max-Cut} }}
+\newcommand{\yes}{{\textsc{Yes}} }
+\newcommand{\no}{{\textsc{No}} }
+\DeclareMathOperator{\tr}{tr}
+\newcommand{\todo}[1]{\textcolor{red}{TODO : #1}}
+\newcommand{\note}[1]{\textcolor{blue}{NOTA : #1}}
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\renewcommand\qedsymbol{\ensuremath{\blacksquare}}
+\renewcommand*{\subsectionautorefname}{Subsection}
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+  \left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+  #1 % the function
+  \vphantom{\big|} % pretend it's a little taller at normal size
+  \right|_{#2} % this is the delimiter
+  }}
+
+
+\hypersetup{
+linkcolor = blue,
+colorlinks = true,
+citecolor = magenta
+}
+
+\DeclareRobustCommand{\gobblefive}[5]{}
+\newcommand*{\SkipTocEntry}{\addtocontents{toc}{\gobblefive}}
+
+
+\begin{document}
+\numberwithin{section}{chapter}
+\setcounter{section}{1}
+%\numberwithin{subsection}{section}
+\numberwithin{prop}{section}
+%\numberwithin{prop}{subsection}
+\numberwithin{lem}{section}
+%\numberwithin{lem}{subsection}
+\numberwithin{thm}{section}
+%\numberwithin{thm}{subsection}
+\numberwithin{cor}{section}
+%\numberwithin{cor}{subsection}
+\numberwithin{defn}{section}
+%\numberwithin{defn}{subsection}
+\numberwithin{equation}{section} %sets equation numbers <chapter>.<section>.<index>
+%\numberwithin{equation}{subsection} %sets equation numbers <chapter>.<section>.<subsection>.<index>
+%\numberwithin{equation}{subsubsection} %sets equation numbers <chapter>.<section>.<subsection>.<subsubsection>.<index>
+\numberwithin{obs}{section} %sets equation numbers <chapter>.<section>.<index>
+%\numberwithin{obs}{subsection} %sets equation numbers <chapter>.<section>.<subsection>.<index>
+\numberwithin{figure}{section} %sets equation numbers <chapter>.<section>.<index>
+%\numberwithin{figure}{subsection} %sets equation numbers <chapter>.<section>.<subsection>.<index>
+%\maketitle
+
+\input{title}
+\setcounter{tocdepth}{3} %temporal
+
+\pagenumbering{roman}
+%\SkipTocEntry \chapter*{Abstract}
+%\input{abstract-es}
+\SkipTocEntry \chapter*{Abstract}
+\input{abstract-en}
+%\SkipTocEntry \chapter*{Acknowledgments}
+%blahblah
+
+
+\tableofcontents
+\newpage
+\pagenumbering{arabic}
+\include{preliminaries}
+\include{reductions/reductions}
+
+\bibliography{references}{}
+\bibliographystyle{plain}
+
+
+\end{document}
