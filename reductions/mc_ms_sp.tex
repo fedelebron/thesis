@@ -1,0 +1,15 @@
+\section{Multiple course, multiple start date, single weekly pattern}
+\subsubsection{Idea}
+This reduction is again in \npc, this time via reduction from 3-COLORING.
+
+The idea is to construct an instance where the courses will be the nodes in the graph we wish to color. Each course will have a single class, and the only week will be 3 days long. In addition, each course will have 3 possible starting days (that is, every possible day of that 3-day week).
+
+When we see an edge $e_k = (v_i, v_j)$ in $E(G)$, where $G$ is the graph we wish to 3-color, we will add a requirement that the only class of course $v_i$ needs a professor of type $k$. In the same way, the only class of course $v_j$ also needs a professor of type $k$.
+
+For each $1 \le k \le |E(G)|$ we will have a single professor $p_k$ whose only type is $k$, and who is available all three days.
+
+In this way, if we obtain a timetable, if course $v_i$ starts on day $t$, then we will color node $v_i$ with color $t$, where $1 \le t \le 3$. In the same manner, every coloring of the graph's nodes into colors $1$, $2$, and $3$ is a valid timetable, when we interpret node $v_i$ having color $t$ as course $v_i$ starting on day $t$.
+
+\subsubsection{Example}
+
+\subsubsection{Algorithm}
