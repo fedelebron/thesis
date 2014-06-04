@@ -1,0 +1,20 @@
+\section{Definition}
+
+A timetabling problem involves assigning start dates and weekly schedules to courses, and assigning professors to each class of each course, subject to a set of restrictions. The restrictions are as follows:
+
+\begin{itemize}
+\item Each professor can only teach on certain days, and at most once per day.
+\item Each professor can give classes only as certain ``types'' of professor (TA, lecturer, etc.).
+\item Each class of each course has a certain minimum and maximum number of professors of each type that are required to teach it.
+\item Each course has a set of weekly schedules it can be given, and a set of possible starting weeks.
+\end{itemize}
+
+Each professor has a certain ``quality'' teaching each course. The goal in such a timetabling problem is to determine when each course must start, what weekly schedule it must have, and which professor(s) will teach each class, such that the sum of the qualities of the professors in the courses they're assigned to teach is maximized.
+
+
+
+Formally, a solution to a timetabling problem is a triple $(start, schedule,$ $assignment)$, where $start: C \to S$ gives the starting week for each course, $schedule: C \to W$ gives the weekly schedule for each course, and $assignment: P \times D \times S \to C \times N \times T \cup \{\bot\}$ says, for each $(p, d, s)$, what professor $p$ does on day $d$ of week $s$:
+\begin{itemize}
+\item If $assignment(p, d, s) = (c, n, t)$, then professor $p$ on day $d$ of week $s$ teaches the $n$th class of course $c$, as the $t$th type
+\item If $assignment(p, d, s) = \bot$, then professor $p$ on day $d$ of week $s$ does not teach any courses
+\end{itemize}

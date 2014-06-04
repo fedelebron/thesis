@@ -12,6 +12,7 @@
 \usetikzlibrary{calc}
 \usepackage{hyperref}
 \usepackage{clrscode3e}
+\usepackage{import}
 %\usepackage{fullpage}
 % \usepackage{clrscode3e}	--algun paquete de algoritmos
 \newtheorem{defn}{Definition}
@@ -161,7 +162,7 @@ citecolor = magenta
 \tableofcontents
 \newpage
 \pagenumbering{arabic}
-\include{preliminaries}
+\subimport{chapters/1/}{main}
 \include{reductions/reductions}
 
 \bibliography{references}{}
