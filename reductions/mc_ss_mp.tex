@@ -18,9 +18,9 @@ Suppose we have the following instance of EXACT-COVER:
 
 \begin{align*}
 X &= \{1, 2, 3, 4, 5, 6, 7\}\\
-C &= \{{\color{BrickRed}C_1}, {\color{Blue}C_2}, {\color{Fuchsia}C_3}, {\color{ForestGreen}C_4}, {\color{BurntOrange}C_5}, {\color{Tan}C_6}\}\\
+C &= \{{\color{BrickRed}C_1}, {\color{NavyBlue}C_2}, {\color{Fuchsia}C_3}, {\color{ForestGreen}C_4}, {\color{BurntOrange}C_5}, {\color{Tan}C_6}\}\\
 {\color{BrickRed} C_1} &= {\color{BrickRed} \{1, 4, 7\}}\\
-{\color{Blue} C_2} &= {\color{Blue}\{ 1, 4 \} }\\
+{\color{NavyBlue} C_2} &= {\color{NavyBlue}\{ 1, 4 \} }\\
 {\color{Fuchsia} C_3} &= {\color{Fuchsia} \{ 4, 5, 7\} }\\
 {\color{ForestGreen} C_4} &= {\color{ForestGreen} \{ 3, 5, 6\} }\\
 {\color{BurntOrange} C_5} &= {\color{BurntOrange} \{ 2, 3, 6, 7 \}}\\
@@ -76,28 +76,28 @@ Graphically, we have the following schedules, where a {\color{BrickRed}red} back
 
 Finally, we increment $k$ by $3$, to arrive at $k = 4$. This concludes the work for {\color{BrickRed}$C_1$}.
 
-Let us now consider {\color{Blue}$C_2$}. It has two elements, $1$ and $4$.
+Let us now consider {\color{NavyBlue}$C_2$}. It has two elements, $1$ and $4$.
 
 We add a new professor, $p_2$. $p_2$ has a single role, which we'll denote $2$. He is available exactly on the days $\{k, k + 1\} = \{4, 5\}$.
 
-We add a class for each course in {\color{Blue}$C_2$}. Let us call them $c_{1, 2}$ and $c_{4, 2}$, since they are the second classes of both courses $1$ and $4$. These classes both require a single professor acting with role $2$.
+We add a class for each course in {\color{NavyBlue}$C_2$}. Let us call them $c_{1, 2}$ and $c_{4, 2}$, since they are the second classes of both courses $1$ and $4$. These classes both require a single professor acting with role $2$.
 
-The schedules created will be as follows, where a {\color{Blue}blue} background means the new schedules, and a {\color{gray}gray} background means the schedule template:
+The schedules created will be as follows, where a {\color{NavyBlue}blue} background means the new schedules, and a {\color{gray}gray} background means the schedule template:
 
 \begin{center}
 \resizebox{8cm}{!}{
 \begin{tabular}{l||c|c}
   \hline
-  $5$ & \cellcolor{Blue}$c_{1, 2}$ &\cellcolor{gray}$c_{4, 2}$ \\
+  $5$ & \cellcolor{NavyBlue}$c_{1, 2}$ &\cellcolor{gray}$c_{4, 2}$ \\
   \hline
-  $4$ & \cellcolor{gray}$c_{1, 2}$ & \cellcolor{Blue}$c_{4, 2}$\\
+  $4$ & \cellcolor{gray}$c_{1, 2}$ & \cellcolor{NavyBlue}$c_{4, 2}$\\
   \hline
   & 1 & 7
 \end{tabular}
 }
 \end{center}
 
-As before, we now increase $k$ by $2$, and have $k = 6$. This concludes the work for {\color{Blue}$C_2$}.
+As before, we now increase $k$ by $2$, and have $k = 6$. This concludes the work for {\color{NavyBlue}$C_2$}.
 
 For {\color{Fuchsia} $C_3$}, we have the elements $4$, $5$, and $7$. 
 
@@ -154,9 +154,9 @@ If we do the same for every $C_i$, we will obtain the following schedules:
   \hline
   $6$ & & & & \cellcolor{light-gray}$c_{4, 3}$ & & & \cellcolor{Fuchsia}$c_{7, 3}$\\
   \hline
-  $5$ & \cellcolor{Blue}{\color{white} $c_{1, 2}$} & & & \cellcolor{light-gray}$c_{4, 2}$ & & & \\
+  $5$ & \cellcolor{NavyBlue}{\color{white} $c_{1, 2}$} & & & \cellcolor{light-gray}$c_{4, 2}$ & & & \\
   \hline
-  $4$ & \cellcolor{light-gray}$c_{1, 2}$ & & & \cellcolor{Blue}{\color{white}$c_{4, 2}$} & & & \\
+  $4$ & \cellcolor{light-gray}$c_{1, 2}$ & & & \cellcolor{NavyBlue}{\color{white}$c_{4, 2}$} & & & \\
   \hline
   $3$ & & & & \cellcolor{BrickRed}$c_{4, 1}$ & & & \cellcolor{light-gray}$c_{7, 1}$\\
   \hline
@@ -181,7 +181,7 @@ Now note that if course $4$ chooses the {\color{Fuchsia}fuchsia} schedule, it \e
 
 From this we can see that either \emph{none} of the courses in {\color{Fuchsia}$C_3$} picked the {\color{Fuchsia}fuchsia} schedule, or they \emph{all} did.
 
-Thus by considering the schedule colors that were selected, we obtain an exact cover of $X$, the courses, by $C$, the schedules. In this case, we can see that we can choose schedules {\color{Blue} $C_2$}, {\color{ForestGreen} $C_4$}, and {\color{Tan} $C_6$}, which are an exact cover of $X$.
+Thus by considering the schedule colors that were selected, we obtain an exact cover of $X$, the courses, by $C$, the schedules. In this case, we can see that we can choose schedules {\color{NavyBlue} $C_2$}, {\color{ForestGreen} $C_4$}, and {\color{Tan} $C_6$}, which are an exact cover of $X$.
 
 
 
