@@ -1,0 +1,60 @@
+\section{Formal definition}
+An instance $\mathcal{T}$ of the timetabling problem consists of the following data:
+
+\begin{itemize}
+\item $C$ a set of courses,
+\item $P$ a set of professors,
+\item $R$ a set of professor roles,
+\item $D$ a set of days of the week,
+\item $M \subset 2^D$ a set of weekly schedules,
+\item $W$ a set of weeks in the semester,
+\item For every $c \in C$, a set $W_c \subset 2^W$, the set of available starting weeks for $c$,
+\item $n: C \to \Z_+$ a function which assigns each course the number of classes it has,
+\item For every $c \in C$, $n \in \{1 \dots n(c)\}$, and $r \in R$ we have $\max(c, n, r)$ and $\min(c, n, r): \Z+$, specifying the minimum and maximum number of professors of role $r$ required to teach the $n$th class of course $c$,
+\item For every $c \in C$, we have $M_c \subset M$, a set of allowed schedules for course $c$,
+\item For every $p \in P$, we have $R_p \subset R$, the set of allowed professor roles for professor $p$,
+\item For every $p \in P$, we have a set $A_p \subset S \times D$, the set days when professor $p$ is available,
+\item For every $p \in P$, $c \in C$, we have a number $q_{i, j} \in [0 \dots 7]$, indicating the quality of professor $p$ when teaching course $c$, and finally,
+\item For every $p \in P$, we have a number $\max_p \in \Z+$, indicating the maximum number of classes professor $p$ is willing to teach
+\end{itemize}
+
+
+Given an instance of the timetabling problem, we define $N \subset \mathbb{Z}$ as $N = \{1 \dots \max_{c \in C} n(c)\}$.
+
+
+
+Formally, a solution to a timetabling problem is a triple $\mathcal{S} = (w, m, a)$, where $w: C \to W$ gives the starting week for each course, $m: C \to M$ gives the weekly schedule for each course, and $a: P \times D \times W \to C \times N \times R \cup \{\bot\}$ says, for each $(p, d, w)$, what professor $p$ does on day $d$ of week $w$:
+\begin{itemize}
+\item If $a(p, d, w) = (c, n, r)$, then professor $p$ on day $d$ of week $w$ teaches the $n$th class of course $c$, as the $r$th role
+\item If $a(p, d, w) = \bot$, then professor $p$ on day $d$ of week $w$ does not teach any courses
+\end{itemize}
+
+A solution must also meet the requirements specified in the instance. Formally, these are
+
+\begin{itemize}
+\item Every starting week is valid: $\forall\ c\ \in C. w(c) \in W(c)$.
+\item Every weekly schedule is valid: $\forall\ c\ \in C. m(c) \in M_c$.
+\item Every professor is available on days where he works: $a(p, d, w) \ne \bot \Rightarrow (d, w) \in A_p$.
+\item Every professor can fulfil roles to which he is assigned: $a(p, d, w) = (c, n, r) \Rightarrow r \in R_p$.
+\item No professor works more days than allowed: $\forall\ p\ \in P. \sum_{\substack{d \in D\\w \in W}} \delta_{a(p, d, s) \ne \bot} \le \max_p$.
+\item The number of professors working on a given role on a given class are within the $\min$ and $\max$ parameters for that class: $\forall c \forall n \forall r. \min(c, n, r) \le \sum_{p \in P} \delta_{\exists p, w. a(p, d, w) = (c, n, r)} \le \max(c, n, r)$.
+\end{itemize}
+
+To a solution $\mathcal{S}$ we associate a value $V(\mathcal{S})$, defined as such:
+\begin{align*}
+V((w, m, a)) &= \sum_{\alpha \in a} V(\alpha)\\
+V(\alpha) &= \sum_{\substack{p \in P \\d \in D \\ w \in W}} Q(p, \alpha(p, d, w))\\
+Q(p, x) &= \begin{cases}
+q_{p, c} & \text{ if } x = (c, n, r)\\
+0 &\text{ if } x = \bot
+\end{cases}
+\end{align*}
+
+\newpage
+\subsection{Decision problem}
+We can formulate the following decision problem:
+\decision{TIMETABLING}{An instance $\mathcal{T}$ of the timetabling problem.}{Does there exist a solution $\mathcal{S}$ to $\mathcal{T}$?}
+
+\subsection{Optimization problem}
+We can also formulate the related optimization problem:
+\decision{TIMETABLING-OPT}{An instance $\mathcal{T}$ of the timetabling problem, a natural number $k$.}{Does there exist a solution $\mathcal{S}$ to $\mathcal{T}$ such that $V(\mathcal{S}) \ge k$?}
