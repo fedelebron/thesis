@@ -1,0 +1,11 @@
+\section{Type-$(1, n, m)$ instances}
+
+These instances can also be solved in polynomial time. Conceptually, what is happening is we have a function $f(i, j)$ which takes constant time to find a solution for the type-$(1, 1, 1)$ instance where the start date has been fixed to the $i$th one, and the weekly schedule has been fixed to the $j$th one, and we are trying to compute
+
+$$
+\max_{\substack{1 \le i \le m\\1 \le j \le n}} f(i, j)
+$$
+
+By the same reasoning as before, we have a (relatively large, but still polynomially sized) block matrix, made of $B_i$ blocks, where the $B_i$ come from the type-$(1, 1, 1)$ linear programs, and we are attempting to find a maximum over all of those. For the same reasons as before, we can simply compute the answer in the linear relaxation and it will be valid in the integer version.
+
+This concludes the analysis on single-course versions of the timetabling problem. All of the restrictions in this case were, as expected, solvable in polynomial time.
