@@ -1,17 +1,14 @@
-\section{Single course, single start date, single weekly pattern}
-Let us define a few convenience varibles first. Let
-\begin{itemize}
-\item $p$ be the number of professors,
-\item $d$ be the number of days,
-\item $m$ be the number of roles, and
-\item $n'_{i, k}$ be the number of professors of role $k$ that are needed on whichever class falls on the $i$th day,
-\item $a_{i, j}$ whether the $i$th professor can teach on the $j$th day
-\end{itemize}
+\section{Type-$(1, 1, 1)$ instances}
+We will show that this restriction falls squarely within the complexity class $\p$.
+
+For convenience, since there is only one weekly schedule and starting week for the single course, we may consider a number $n'_{i, k}$ to be the number of professors of role $k$ that are needed on whichever class falls on the $i$th day, of the single course. Clearly this number may be computed in constant time, recalling that all the parameters we are analyzing the complexity in terms of are constants in this restriction.
+
+Also for convenience, we will write $q_i$ for the quality the $i$th professor has in teaching the only course.
 
 We will now see a few different ways of thinking about this reduction.
 \subsection{As a maximum cost maximum flow problem}
 
-This case can be solved in polynomial time when thought of as a case of maximum-cost maximum-flow problem. Specifically, we can create the following flow network, where capacities are in blue, and costs are in red:
+One way to model these instances is as a maximum-cost maximum-flow problem. Specifically, we can create the following flow network, where capacities are in blue, and costs are in red:
 
 \begin{center}
 \begin{tikzpicture}
@@ -19,38 +16,38 @@ This case can be solved in polynomial time when thought of as a case of maximum-
 \node[v] (p_j) at (3, 1) {$\alpha_j$};
 \node (d1) at (3, 2) {$\vdots$};
 \node (d2) at (3, 0) {$\vdots$};
-\node[v] (d3) at (3, 3) {$\alpha_1$};
-\node[v] (d4) at (3, -1) {$\alpha_p$};
+%\node[v] (d3) at (3, 3) {$\alpha_1$};
+%\node[v] (d4) at (3, -1) {$\alpha_p$};
 
 \node[v] (p_jd_i) at (6, 1) {$\beta_{j, i}$};
 \node (d5) at (6, 0) {$\vdots$};
 \node (d6) at (6, 2) {$\vdots$};
-\node[v] (d7) at (6, 3) {$\beta_{1, 1}$};
-\node[v] (d8) at (6, -1) {$\beta_{p, d}$};
+%\node[v] (d7) at (6, 3) {$\beta_{1, 1}$};
+%\node[v] (d8) at (6, -1) {$\beta_{|P|, d}$};
 
 \node[v] (d_ir_k) at (9, 1) {$\gamma_{i, k}$};
 \node (d9) at (9, 0) {$\vdots$};
 \node (d10) at (9, 2) {$\vdots$};
-\node[v] (d11) at (9, 3) {$\gamma_{1, 1}$};
-\node[v] (d12) at (9, -1) {$\gamma_{d, m}$};
+%\node[v] (d11) at (9, 3) {$\gamma_{1, 1}$};
+%\node[v] (d12) at (9, -1) {$\gamma_{d, m}$};
 
 \node[v] (t) at (12, 1) {$t$};
 
 \draw[->] (s) to node[above,blue] {$\infty$} node[below,red] {$q_j$} (p_j);
 
-\dottedarrows{{s}}{{d3, d4}};
+%\dottedarrows{{s}}{{d3, d4}};
 
 \draw[->] (p_j) to node[above,blue] {$a_{j, i}$} node[below,red] {$0$} (p_jd_i);
 
-\dottedarrows{{d3, d4, p_j}}{{d7, p_jd_i, d8}}{p_j}{p_jd_i};
+\dottedarrows{{p_j}}{{p_jd_i}}{p_j}{p_jd_i};
 
 \draw[->] (p_jd_i) to node[above,blue] {$r_{j, k}$} node[below,red] {$0$} (d_ir_k);
 
-\dottedarrows{{d7, d8, p_jd_i}}{{d11, d12, d_ir_k}}{p_jd_i}{d_ir_k};
+\dottedarrows{{p_jd_i}}{{d_ir_k}}{p_jd_i}{d_ir_k};
 
 \draw[->] (d_ir_k) to node[above,blue] {$n'_{i, k}$} node[below,red] {$0$} (t);
 
-\dottedarrows{{d11, d12}}{{t}};
+%\dottedarrows{{d11, d12}}{{t}};
 
 \end{tikzpicture}
 \end{center}
@@ -59,9 +56,9 @@ Formally, the network is $G = (V, E)$, with
 
 \begin{align*}
 V = &\{s\} \cup \{t\}\\
-&\cup \{\alpha_j \mid 1 \le j \le p\}\\
-&\cup \{\beta_{j, i} \mid 1 \le j \le p, 1 \le i \le d\}\\
-&\cup \{\gamma_{i, k} \mid 1 \le i \le d, 1 \le j \le m\}\\
+&\cup \{\alpha_j \mid 1 \le j \le |P|\}\\
+&\cup \{\beta_{j, i} \mid 1 \le j \le |P|, 1 \le i \le |D|\}\\
+&\cup \{\gamma_{i, k} \mid 1 \le i \le |D|, 1 \le j \le |R|\}\\
 E = &\{(s, \alpha_j)\ \forall\ j\}\\
     &\cup \{(\alpha_j, \beta_{j, i})\ \forall\ i, j \}\\
     &\cup \{(\beta_{j, i}, \gamma_{i, k})\ \forall\ j, i, k\}\\
@@ -100,47 +97,47 @@ In such a solution, if a unit of flow goes from $s$, to $\alpha_j$, through $\be
 
 Furthermore, to obtain an optimal solution, that is, a maximum sum of the qualities of the assignments, we need to maximize the cost of this flow, because this will mean the maximum value of the units going into (hence out of) the $\alpha_j$, which is the quality of the assignments we are making.
 
-Since maximum-cost maximum-flow on $G$ is in $O(poly(|V|, |E|))$, and we can see our $|V|$ and $|E|$ are polynomials in $p, d, m$, we coclude this reduction can be solved in time $O(poly(p, d, m))$, and thus is in \textsc{P}.
+Since maximum-cost maximum-flow on $G$ is solvable in $O(poly(|V|, |E|))$ operations, and we can see our $|V|$ and $|E|$ are polynomials in $|P|, |D|, |R|$, we conclude this reduction can be solved in time $O(poly(|P|, |D|, |R|))$, and since we consider these to be constants, we have that $(1, 1, 1)$-TIMETABLING is in \textsc{P}.
 
 \subsection{As an assignment problem}
 
-Another way to model this reduction is as an assignment problem. For convenience, let us note $x = \sum_{i = 1}^p |\{j \mid 1 \le j \le t, a_{i, j} = 1\}|$, $y = \sum_{k = 1}^c \sum_{l = 1}^m n'_{k, l}$, and $z = x - y$. We will see what these mean shortly. Now we create the following bipartite graph:
+Another way to model this restriction is as an assignment problem. For convenience, let us note $x = \sum_{i = 1}^{|P|} |A_i|$, $y = \sum_{k = 1}^{|S|} \sum_{l = 1}^{|R|} n'_{k, l}$, and $z = x - y$. We will see what these mean shortly. Now we create the following bipartite graph:
 
 \begin{center}
 \begin{tikzpicture}
-\node[v] (a11) at (0, 2) {$\alpha_{1, 1}$};
+%\node[v] (a11) at (0, 2) {$\alpha_{1, 1}$};
 \node (d1) at (0, 1) {$\vdots$};
 \node[v] (aij) at (0, 0) {$\alpha_{i, j}$};
 \node (d2) at (0, -1) {$\vdots$};
-\node[v] (ant) at (0, -2) {$\alpha_{n, t}$};
+%\node[v] (ant) at (0, -2) {$\alpha_{n, t}$};
 
-\node[v] (b111) at (3, 2) {$\beta_{1, 1, 1}$};
+%\node[v] (b111) at (3, 2) {$\beta_{1, 1, 1}$};
 \node (d3) at (3, 1) {$\vdots$};
 \node[v] (bklv) at (3, 0) {$\beta_{k, l, v}$};
 \node (d4) at (3, -1) {$\vdots$};
-\node[v] (bcmw) at (3, -2) {$\beta_{c, m, n'_{c, m}}$};
+%\node[v] (bcmw) at (3, -2) {$\beta_{c, m, n'_{c, m}}$};
 
-\node[v] (h1) at (3, -3.5) {$h_1$};
-\node (d5) at (3, -4.5) {$\vdots$};
-\node[v] (hz) at (3, -5.5) {$h_z$};
+\node[v] (h1) at (3, -2) {$h_1$};
+\node (d5) at (3, -3) {$\vdots$};
+\node[v] (hz) at (3, -4) {$h_z$};
 
-\dottedarrows{{a11, aij, ant}}{{b111, bklv, bcmw, h1, hz}}{aij}{bklv};
-\draw[->] (aij) to node[below, red] {Only if $r_{i, l}$} node[above, blue] {$q_i$} (bklv);
+\dottedarrows{{aij}}{{bklv, h1, hz}}{aij}{bklv};
+\draw[->] (aij) to node[below, red] {if $l \in R_i$} node[above, blue] {$q_i$} (bklv);
 \end{tikzpicture}
 \end{center}
 
 Formally, we have the graph $G = (V, E)$, such that
 \begin{align*}
-V = & \{\alpha_{i, j} \mid 1 \le i \le p, 1 \le j \le d, a_{i, j} = 1\}\\
-    & \cup \{\beta_{k, l, v} \mid 1 \le k \le c, 1 \le l \le m, 1 \le v \le n'_{k, l}\}\\
+V = & \{\alpha_{i, j} \mid i \in P, j \in A_i\}\\
+    & \cup \{\beta_{k, l, v} \mid k \in S, l \in R, 1 \le v \le n'_{k, l}\}\\
     & \cup \{h_i \mid 1 \le i \le z\}\\
-E = & \{\{\alpha_{i, j}, \beta_{k, l, v}\}\ \forall\ i, j, k, l, v \mid r_{i, l} = 1\}\\
+E = & \{\{\alpha_{i, j}, \beta_{k, l, v}\}\ \forall\ i, j, k, l, v \mid l \in R_i\}\\
     & \cup \{\{\alpha_{i, j}, h_s\}\ \forall\ i, j, s\}
 \end{align*}
 
 with a cost function $w: E \to \mathbb{R}$, such that
 \begin{align*}
-w(\alpha_{i, j}, \beta_{k, l, v}) &= q_{i, k}\\
+w(\alpha_{i, j}, \beta_{k, l, v}) &= q_i\\
 w(\alpha_{i, j}, h_s) &= 0
 \end{align*}
 
@@ -155,7 +152,7 @@ Thus we can see that a maximum matching in this graph must attempt to assign pro
 \item If such a matching exists, then its cost is the sum of the qualities of each professor chosen to teach (since edges to an $h_s$ have cost 0), which is the objective we want to maximize
 \end{itemize}
 
-Thus, we have reduced this problem to one of maximum-weight perfect matching in a bipartite graph, which is solvable in time $O(poly(|V|, |E|))$. In our case, $|V| \le pd$, $|E| \le cm(\max_{k, l} n'_{k, l})$. We can assume without loss of generality that $n'_{k, l} \le p\ \forall\ k, l$, since otherwise no possible solution exists. Thus $|E| \le cmp$, and this is a polynomial reduction.
+Thus, we have reduced this problem to one of maximum-weight perfect matching in a bipartite graph, which is solvable in time $O(poly(|V|, |E|))$. In our case, $|V| \le |P||D|$, $|E| \le |S||R|(\max_{k, l} n'_{k, l})$. We can assume without loss of generality that $n'_{k, l} \le |P|\ \forall\ k, l$, since otherwise no possible solution exists. Thus $|E| \le |S||R||P|$, and this is a polynomial reduction, since these are constants in our analysis.
 
 Moreover, given this formulation we have a very neat integer linear program. We note $v_1, \dots, v_N$ the nodes of $G$, and $e_1, \dots, e_M$ will be edges of the graph. For any edge $e$, $q_e$ will be $w(e)$, the weight of the edge $e$.
 
