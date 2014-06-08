@@ -1,0 +1,11 @@
+\section{Restrictions}
+
+In this work we will start by analyzing the complexity of restricted versions of the timetabling problem. The classification system we use will be given by a triple $(x, y, z)$, where we call \emph{type-}$(x, y, z)$ instances where the number of courses is at most $x$, the number of starting weeks is $y$, and the number of weekly schedules is $z$. Here $x$, $y$, and $z$ may be both variables (in which case there are no restrictions placed on the magnitude of these numbers), numbers, or classes of functions (for example, ($O(1)$, 1, 1)).
+
+The input size of a type-$(x, y, z)$ instance will be $x + y + z$. That is, we are analyzing the complexity of the problem in terms of the number of courses, the number of weekly schedules, and the number of starting weeks. Other aspects, such as the number of days in the semester, the number of professors or their roles, will be assumed to be constants for our analysis.
+
+For example, a type-$(n, 3, 2)$ instance would be one where the maximum number of starting weeks for each course is $3$, the maximum number of weekly patterns for each course is $2$, and there are no limits placed on the number of courses. The input size for these instances will be $n$.
+
+Similarly, a type-$(n, O(1), m)$ instance will be one where the number of courses, schedules and starting weeks are varied, but its input size is $n + m$. This means we consider the number of starting weeks to be a constant in these instances.
+
+By $(x, y, z)$-TIMETABLING we will mean the timetabling problem restricted to instances of type $(x, y, z)$.
