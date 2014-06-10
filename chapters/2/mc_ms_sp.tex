@@ -86,7 +86,11 @@ This yields the following coloring:
 \end{tikzpicture}
 \end{center}
 
-Thus we obtain a valid 3-coloring of $G$. This shows that 3-COLORING $\le_P$ TIMETABLING, thus TIMETABLING is in \nph, since 3-COLORING is in \nph.
+Thus we obtain a valid 3-coloring of $G$.
+
+This example shows that the construction is completely general. For every graph $G$ we can construct such a timetabling instance $\mathcal{I}$, such that TIMETABLING($\mathcal{I}$) $\iff$ 3-COLOR($G$), and this construction can be carried out in polynomial time in the size of $G$.
+
+This shows that 3-COLORING $\le_P$ TIMETABLING, thus TIMETABLING is in \nph, since 3-COLORING is in \nph.
 
 \subsection{Algorithm}
 
