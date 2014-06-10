@@ -7,7 +7,7 @@ Recall the decision problem EXACT-COVER, the problem of exactly covering a set b
 
 \decision{EXACT COVER}{Set $X$ and a collecion $C$ of subsets of $X$.}{Does $C$ contain an exact cover for $X$, i.e., a subcollection $C' \subseteq C$ such that every element of $X$ occurs in exactly one member of $C'$?}
 
-The idea for the reduction is that the set of courses will be $X$, and for each subset $S$ in $C$, $|S|$ new weekly patterns will be created, one for each course in $S$, designed in such a way that if one of the courses picks its pattern to be this new one, \emph{every} other course in $S$ picks this new pattern.
+The idea for the reduction is that the set of courses will be $X$, and for each subset $S$ in $C$, a gadget consisting of $|S|$ new weekly patterns will be created, one for each course in $S$, designed in such a way that if one of the courses picks its pattern to be this new one, \emph{every} other course in $S$ picks this new pattern.
 
 Since every course must pick a pattern, this will amount to every element being in some subset, since there is one pattern-set per subset $S$ in $C$. Since one element of the subset picking this new pattern will imply all others doing the same, this will ensure that all elements of a subset agree on whether it was \emph{that} subset the one that they all will be elements of, in $C'$.
 
@@ -29,7 +29,7 @@ C &= \{{\color{BrickRed}C_1}, {\color{NavyBlue}C_2}, {\color{Fuchsia}C_3}, {\col
 
 Then we shall have $7$ courses, $1 \dots 7$. For each course, we will have one ``schedule template'', which will be an assignment of each of the course's classes to days. Every schedule for a given course will be equal to its schedule template, save for a single class, which will be assigned a different day.
 
-Let's take {\color{BrickRed}$C_1$} as an example. We will create the following four things:
+Let's take {\color{BrickRed}$C_1$} as an example. We will create the following gadget:
 \begin{itemize}
 \item A professor, $p_1$.
 \item A schedule for each of the $3$ elements of {\color{BrickRed}$C_1$}.
