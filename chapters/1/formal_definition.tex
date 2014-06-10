@@ -51,10 +51,10 @@ q_{p, c} & \text{ if } x = (c, n, r)\\
 \end{align*}
 
 \newpage
-\subsection{Decision problem}
-We can formulate the following decision problem:
-\decision{TIMETABLING}{An instance $\mathcal{T}$ of the timetabling problem.}{Does there exist a solution $\mathcal{S}$ to $\mathcal{T}$?}
+\subsection{Optimization and feasibility problems}
 
-\subsection{Optimization problem}
-We can also formulate the related optimization problem:
-\decision{TIMETABLING-OPT}{An instance $\mathcal{T}$ of the timetabling problem, a natural number $k$.}{Does there exist a solution $\mathcal{S}$ to $\mathcal{T}$ such that $V(\mathcal{S}) \ge k$?}
+Given the above definitions, we can formulate the following optimizationn problem:
+\decision{TIMETABLING-OPT}{An instance $\mathcal{T}$ of the timetabling problem.}{What is the largest $k$ such that there exists a solution $\mathcal{S}$ to $\mathcal{T}$, and $V(\mathcal{S}) = k$?}
+
+We can also formulate the associated feasibility problem:
+\decision{TIMETABLING}{An instance $\mathcal{T}$ of the timetabling problem.}{Does there exist a solution $\mathcal{S}$ to $\mathcal{T}$?}
