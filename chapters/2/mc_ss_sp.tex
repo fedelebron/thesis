@@ -1,9 +1,9 @@
-\section{Multiple course, single start date, single weekly pattern}
+\section{Type-$(n, 1, 1)$ instances}
 
 \subsection{As a maximum-cost maximum-flow problem}
-This reduction is also squarely in \textsc{P}, again shown via a maximum-cost maximum-flow algorithm.
+This restriction is also squarely in \textsc{P}, again shown via a maximum-cost maximum-flow algorithm.
 
-For every course, there's a single weekly pattern it has chosen. Thus we can precompute a function $f(l, h)$, which for every course $l$, returns the day of the $h$th class.
+For every course, there's a single weekly schedule it has chosen. Thus we can precompute a function $f(l, h)$, which for every course $l$, returns the day of the $h$th class.
 
 We note
 \begin{itemize}
@@ -27,37 +27,37 @@ We can construct the following flow network:
 \node[v] (alpha_i) at (4, 1) {$\alpha_i$};
 \node (d1) at (4, 0) {$\vdots$};
 \node (d2) at (4, 2) {$\vdots$};
-\node[v] (alpha_1) at (4, 3) {$\alpha_1$};
-\node[v] (alpha_p) at (4, -1) {$\alpha_p$};
+%\node[v] (alpha_1) at (4, 3) {$\alpha_1$};
+%\node[v] (alpha_p) at (4, -1) {$\alpha_p$};
 
 \node[v] (beta_ij) at (7, 1) {$\beta_{i, j}$};
 \node (d3) at (7, 0) {$\vdots$};
 \node (d4) at (7, 2) {$\vdots$};
-\node[v] (beta_11) at (7, 3) {$\beta_{1, 1}$};
-\node[v] (beta_pd) at (7, -1) {$\beta_{p, d}$};
+%\node[v] (beta_11) at (7, 3) {$\beta_{1, 1}$};
+%\node[v] (beta_pd) at (7, -1) {$\beta_{p, d}$};
 
 \node[v] (gamma_klj) at (10, 1) {$\gamma_{k, l, h}$};
 \node (d5) at (10, 0) {$\vdots$};
 \node (d6) at (10, 2) {$\vdots$};
 
-\node[v] (gamma_111) at (10, 3) {$\gamma_{1, 1, 1}$};
-\node[v] (gamma_mcv) at (10, -1)  {$\gamma_{m, c, v}$};
+%\node[v] (gamma_111) at (10, 3) {$\gamma_{1, 1, 1}$};
+%\node[v] (gamma_mcv) at (10, -1)  {$\gamma_{m, c, v}$};
 
 \node[v] (t) at (13, 1) {$t$};
 
 \draw[->] (s) to node[blue, above] {$\infty$} node[red, below] {$0$} (alpha_i);
 
-\dottedarrows{{s}}{{alpha_1, alpha_p}};
+%\dottedarrows{{s}}{{alpha_1, alpha_p}};
 
 \draw[->] (alpha_i) to node[blue, above] {$a_{i, j}$} node[red, below] {$0$} (beta_ij);
 
-\dottedarrows{{alpha_1, alpha_i, alpha_p}}{{beta_11, beta_ij, beta_pd}}{alpha_i}{beta_ij};
+%\dottedarrows{{alpha_1, alpha_i, alpha_p}}{{beta_11, beta_ij, beta_pd}}{alpha_i}{beta_ij};
 
 \draw[->] (beta_ij) to node[blue, above] {$r_{i, k}$} node[red, below] {$q_{i, l}$} (gamma_klj);
 
-\dottedarrows{{beta_11, beta_pd, beta_ij}}{{gamma_111, gamma_mcv, gamma_klj}}{beta_ij}{gamma_klj};
+%\dottedarrows{{beta_11, beta_pd, beta_ij}}{{gamma_111, gamma_mcv, gamma_klj}}{beta_ij}{gamma_klj};
 
-\dottedarrows{{gamma_111, gamma_mcv}}{{t}};
+%\dottedarrows{{gamma_111, gamma_mcv}}{{t}};
 
 \draw[->] (gamma_klj) to node[blue, above] {$n_{k, l, h}$} node[red, below] {$0$} (t);
 \end{tikzpicture}
@@ -67,9 +67,9 @@ Formally, this is $G = (V, E)$, such that
 
 \begin{align*}
   V = &\{s\} \cup \{t\}\\
-      &\cup \{\alpha_i \mid 1 \le i \le p\}\\
-      &\cup \{\beta_{i, j} \mid 1 \le i \le p, 1 \le j \le d\}\\
-      &\cup \{\gamma_{k, l, h} \mid 1 \le k \le m, 1 \le l \le c, 1 \le h \le n(l)\}\\
+      &\cup \{\alpha_i \mid i \in P\}\\
+      &\cup \{\beta_{i, j} \mid i \in P, j \in S\}\\
+      &\cup \{\gamma_{k, l, h} k \in R, l \in C, 1 \le h \le n(l)\}\\
   E = &\{(s, \alpha_i)\ \forall\ i\}\\
       &\cup \{(\alpha_i, \beta_{i, j}) \ \forall\ i, j\}\\
       &\cup \{(\beta_{i, j}, \gamma_{k, l, h})\ \forall\ i, j, k, l, h \mid f(l, h) = j\}\\
@@ -79,8 +79,14 @@ Formally, this is $G = (V, E)$, such that
 with capacity function $c:E \to \mathbb{R} \cup \{\infty\}$ such that
 \begin{align*}
   c(s, \alpha_i) &= \infty\\
-  c(\alpha_i, \beta_{i, j}) &= a_{i, j}\\
-  c(\beta_{i, j}, \gamma_{k, l, h}) &= r_{i, k}\\
+  c(\alpha_i, \beta_{i, j}) &= \begin{cases}
+  1 &\text{ if } j \in A_i\\
+  0 &\text{ otherwise}
+\end{cases}\\
+  c(\beta_{i, j}, \gamma_{k, l, h}) &= \begin{cases}
+  1 & \text{ if } k \in R_i\\
+  0 & \text{ otherwise}
+\end{cases}\\
   c(\gamma_{k, l, h}, t) &= n_{k, l, h}
 \end{align*}
 
