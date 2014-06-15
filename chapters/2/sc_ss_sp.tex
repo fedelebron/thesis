@@ -1,7 +1,7 @@
 \section{Type-$(1, 1, 1)$ instances}
 We will show that this restriction falls squarely within the complexity class $\p$.
 
-For convenience, since there is only one weekly schedule and starting week for the single course, we may consider a number $n'_{i, k}$ to be the number of professors of role $k$ that are needed on whichever class falls on the $i$th day, of the single course. Clearly this number may be computed in constant time, recalling that all the parameters we are analyzing the complexity in terms of are constants in this restriction.
+For convenience, since there is only one weekly schedule and starting week for the single course, we may consider a number $n'_{i, k}$ and $N'_{i, k}$ to be the minimum and maximum number of professors of role $k$ that can be assigned to whichever class falls on the $i$th day, of the single course. Clearly this number may be computed in constant time, recalling that all the parameters we are analyzing the complexity in terms of are constants in this restriction.
 
 Also for convenience, we will write $q_i$ for the quality the $i$th professor has in teaching the only course.
 
@@ -33,19 +33,19 @@ One way to model these instances is as a maximum-cost maximum-flow problem. Spec
 
 \node[v] (t) at (12, 1) {$t$};
 
-\draw[->] (s) to node[above,blue] {$\infty$} node[below,red] {$q_j$} (p_j);
+\draw[->] (s) to node[above,blue] {$\min_j$} node[below,red] {$q_j$} (p_j);
 
 %\dottedarrows{{s}}{{d3, d4}};
 
-\draw[->] (p_j) to node[above,blue] {$a_{j, i}$} node[below,red] {$0$} (p_jd_i);
+\draw[->] (p_j) to node[above,blue] {$i \in A_j$} node[below,red] {$0$} (p_jd_i);
 
 \dottedarrows{{p_j}}{{p_jd_i}}{p_j}{p_jd_i};
 
-\draw[->] (p_jd_i) to node[above,blue] {$r_{j, k}$} node[below,red] {$0$} (d_ir_k);
+\draw[->] (p_jd_i) to node[above,blue] {$k \in R_j$} node[below,red] {$0$} (d_ir_k);
 
 \dottedarrows{{p_jd_i}}{{d_ir_k}}{p_jd_i}{d_ir_k};
 
-\draw[->] (d_ir_k) to node[above,blue] {$n'_{i, k}$} node[below,red] {$0$} (t);
+\draw[->] (d_ir_k) to node[above,blue] {$(n'_{i, k}, N'_{i, k})$} node[below,red] {$0$} (t);
 
 %\dottedarrows{{d11, d12}}{{t}};
 
@@ -56,24 +56,24 @@ Formally, the network is $G = (V, E)$, with
 
 \begin{align*}
 V = &\{s\} \cup \{t\}\\
-&\cup \{\alpha_j \mid 1 \le j \le |P|\}\\
-&\cup \{\beta_{j, i} \mid 1 \le j \le |P|, 1 \le i \le |D|\}\\
-&\cup \{\gamma_{i, k} \mid 1 \le i \le |D|, 1 \le j \le |R|\}\\
+&\cup \{\alpha_j \mid j \in P\}\\
+&\cup \{\beta_{j, i} \mid j \in P, i \in S\}\\
+&\cup \{\gamma_{i, k} \mid i \in S, k \in R\}\\
 E = &\{(s, \alpha_j)\ \forall\ j\}\\
     &\cup \{(\alpha_j, \beta_{j, i})\ \forall\ i, j \}\\
     &\cup \{(\beta_{j, i}, \gamma_{i, k})\ \forall\ j, i, k\}\\
     &\cup \{(\gamma_{i, k}, t)\ \forall\ i, k \}
 \end{align*}
 
-capacity function $c:E \to \mathbb{R} \cup \{\infty\}$, such that
+; capacity function $c:E \to \left(\mathbb{R} \cup \{\infty\}\right)^2$, such that
 \begin{align*}
-c(s, \alpha_j) &= \infty\ \forall\ j\\
-c(\alpha_j, \beta_{j, i}) &= a_{j, i}\ \forall\ i, j\\
-c(\beta_{j, i}, \gamma_{i, k}) &= r_{j, k}\ \forall\ i, j, k\\
-c(\gamma_{i, k}, t) &= n'_{i, k}\ \forall\ i, k
+  c(s, \alpha_j) &= (0, \textstyle\min_j)\ \forall\ j\\
+  c(\alpha_j, \beta_{j, i}) &= (0, i \in A_j)\ \forall\ i, j\\
+  c(\beta_{j, i}, \gamma_{i, k}) &= (0, k \in R_j)\ \forall\ i, j, k\\
+  c(\gamma_{i, k}, t) &= (n'_{i, k}, N'_{i, k})\ \forall\ i, k
 \end{align*}
 
-and cost function $w:E \to \mathbb{R}$, such that
+where a capacity of $(a, b)$ means lower bound of $a$ units of flow, and upper bound of $b$ units of flow; and cost function $w:E \to \mathbb{R}$, such that
 
 $$
 w(e) =
@@ -85,13 +85,13 @@ $$
 
 We can think of the flow in this network as ``time'' dedicated by a professor at a given day, on a given role. A unit of flow goes from a professor to a given day (only if that professor is available that day), and to a given role (only if the professor could fit that role), and into fulfilling that day's quota for that role.
 
-A professor cannot teach on an unavailable day, since flow can only go from the $j$th professor to the $i$th day if $a_{i, j} = 1$, and only one unit may go through in that case. This last fact ensures a professor cannot work twice in a single day, even under different roles.
+A professor cannot teach on an unavailable day, since flow can only go from the $j$th professor to the $i$th day if $i \in A_j$, and only one unit may go through in that case. This last fact ensures a professor cannot work twice in a single day, even under different roles.
 
-He also cannot work in a role that is unavailable to him, since in order for flow to go from $\beta_{j, i}$ to $\gamma_{i, k}$, meaning ``the $j$th professor teaches on the $i$th day'' to ``the $i$th day has one $k$th role position covered'', unless $r_{j, k} = 1$, so one cannot consider an instance of that role covered for that day unless the professor from which that unit of flow came indeed can work in that role.
+He also cannot work in a role that is unavailable to him, since in order for flow to go from $\beta_{j, i}$ to $\gamma_{i, k}$, meaning ``the $j$th professor teaches on the $i$th day'' to ``the $i$th day has one $k$th role position covered'', unless $k \in R_j$, so one cannot consider an instance of that role covered for that day unless the professor from which that unit of flow came indeed can work in that role.
 
-Lastly, the number of instances of the $k$th role that a given $\gamma_{i, k}$ needs for the $i$th day can not be greater than $n'_{i, k}$.
+Lastly, the number of instances of the $k$th role that a given $\gamma_{i, k}$ needs for the $i$th day can not be smaller than $n'_{i, k}$, or greater than $N'_{i, k}$.
 
-A flow $f$ in $G$ will be a valid assignment of professors exactly when $f(s, t) \ge \sum_{i, k} n'_{i, k}$. The constraints going into $t$ guarantee this implies $f(\gamma_{i, k}, t) = r_{i, k}\ \forall i, k$, which means each day's requirements of each role are met.
+A flow $f$ in $G$ will be a valid assignment of professors exactly when $f(s, t) \ge \sum_{i, k} n'_{i, k}$. The constraints going into $t$ guarantee this implies $n'_{i, k} \le f(\gamma_{i, k}, t) \le N'_{i, k}\ \forall i, k$, which means each day's requirements of each role are met.
 
 In such a solution, if a unit of flow goes from $s$, to $\alpha_j$, through $\beta_{j, i}$, then through $\gamma_{i, k}$, and finally to $t$, we consider that the $j$th professor teaches on the $i$th day with the $k$th role. The quality of this assignment is thus $q_j$.
 
@@ -101,7 +101,7 @@ Since maximum-cost maximum-flow on $G$ is solvable in $O(poly(|V|, |E|))$ operat
 
 \subsection{As an assignment problem}
 
-Another way to model this restriction is as an assignment problem. For convenience, let us note $x = \sum_{i = 1}^{|P|} |A_i|$, $y = \sum_{k = 1}^{|S|} \sum_{l = 1}^{|R|} n'_{k, l}$, and $z = x - y$. We will see what these mean shortly. Now we create the following bipartite graph:
+In the specific case where we have no limit on classes taught by a single professor, and we have $\min(c, n, r) = \max(c, n, r)$, we can model this restriction as an assignment problem. For convenience, let us note $x = \sum_{i = 1}^{|P|} |A_i|$, $y = \sum_{k = 1}^{|S|} \sum_{l = 1}^{|R|} n'_{k, l}$, and $z = x - y$. We will see what these mean shortly. Now we create the following bipartite graph:
 
 \begin{center}
 \begin{tikzpicture}
