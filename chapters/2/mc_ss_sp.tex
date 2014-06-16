@@ -3,17 +3,7 @@
 \subsection{As a maximum-cost maximum-flow problem}
 This restriction is also squarely in \textsc{P}, again shown via a maximum-cost maximum-flow algorithm.
 
-For every course, there's a single weekly schedule it has chosen. Thus we can precompute a function $f(l, h)$, which for every course $l$, returns the day of the $h$th class.
-
-We note
-\begin{itemize}
-  \item $p$ the number of professors,
-  \item $d$ the number of days,
-  \item $m$ the number of roles,
-  \item $c$ the number of courses,
-  \item $v$ an upper bound on the number of classes of each course,
-  \item $n_{k, l, h}$ the number of professors of role $k$ needed on the $h$th class of the $l$th course
-\end{itemize}
+For every course, there's a single weekly schedule it has chosen. Thus we can precompute a function $f(l, h)$, which for every course $l$, returns the day of the $h$th class For presentation purposes, we will define $L_{l, h, k} = (\min(l, h, k), \max(l, h, k))$.
 
 We can construct the following flow network:
 
@@ -45,21 +35,21 @@ We can construct the following flow network:
 
 \node[v] (t) at (13, 1) {$t$};
 
-\draw[->] (s) to node[blue, above] {$\infty$} node[red, below] {$0$} (alpha_i);
+\draw[->] (s) to node[blue, above] {$\max_i$} node[red, below] {$0$} (alpha_i);
 
 %\dottedarrows{{s}}{{alpha_1, alpha_p}};
 
-\draw[->] (alpha_i) to node[blue, above] {$a_{i, j}$} node[red, below] {$0$} (beta_ij);
+\draw[->] (alpha_i) to node[blue, above] {$j \in A_i$} node[red, below] {$0$} (beta_ij);
 
 %\dottedarrows{{alpha_1, alpha_i, alpha_p}}{{beta_11, beta_ij, beta_pd}}{alpha_i}{beta_ij};
 
-\draw[->] (beta_ij) to node[blue, above] {$r_{i, k}$} node[red, below] {$q_{i, l}$} (gamma_klj);
+\draw[->] (beta_ij) to node[blue, above] {$k \in R_i$} node[red, below] {$q_{i, l}$} (gamma_klj);
 
 %\dottedarrows{{beta_11, beta_pd, beta_ij}}{{gamma_111, gamma_mcv, gamma_klj}}{beta_ij}{gamma_klj};
 
 %\dottedarrows{{gamma_111, gamma_mcv}}{{t}};
 
-\draw[->] (gamma_klj) to node[blue, above] {$n_{k, l, h}$} node[red, below] {$0$} (t);
+\draw[->] (gamma_klj) to node[blue, above] {$L_{l, h, k}$} node[red, below] {$0$} (t);
 \end{tikzpicture}
 \end{center}
 
@@ -71,26 +61,20 @@ Formally, this is $G = (V, E)$, such that
       &\cup \{\beta_{i, j} \mid i \in P, j \in S\}\\
       &\cup \{\gamma_{k, l, h} k \in R, l \in C, 1 \le h \le n(l)\}\\
   E = &\{(s, \alpha_i)\ \forall\ i\}\\
-      &\cup \{(\alpha_i, \beta_{i, j}) \ \forall\ i, j\}\\
-      &\cup \{(\beta_{i, j}, \gamma_{k, l, h})\ \forall\ i, j, k, l, h \mid f(l, h) = j\}\\
+      &\cup \{(\alpha_i, \beta_{i, j}) \ \forall\ i, j \mid j \in A_i\}\\
+      &\cup \{(\beta_{i, j}, \gamma_{k, l, h})\ \forall\ i, j, k, l, h \mid k \in R_i, f(l, h) = j\}\\
       &\cup \{(\gamma_{k, l, h}, t) \ \forall\ k, l, h\}
 \end{align*}
 
-with capacity function $c:E \to \mathbb{R} \cup \{\infty\}$ such that
+with capacity function $c:E \to \Z^2$ such that
 \begin{align*}
-  c(s, \alpha_i) &= \infty\\
-  c(\alpha_i, \beta_{i, j}) &= \begin{cases}
-  1 &\text{ if } j \in A_i\\
-  0 &\text{ otherwise}
-\end{cases}\\
-  c(\beta_{i, j}, \gamma_{k, l, h}) &= \begin{cases}
-  1 & \text{ if } k \in R_i\\
-  0 & \text{ otherwise}
-\end{cases}\\
-  c(\gamma_{k, l, h}, t) &= n_{k, l, h}
+  c(s, \alpha_i) &= (0, \textstyle\max_i)\\
+  c(\alpha_i, \beta_{i, j}) &= (0, j \in A_i)\\
+  c(\beta_{i, j}, \gamma_{k, l, h}) &= (0, k \in R_i)\\
+  c(\gamma_{k, l, h}, t) &= L_{l, h, k} = (\min(l, h, k), \max(l, h, k))
 \end{align*}
 
-and weighed by $w:E \to \mathbb{R}$, such that
+where a capacity of $(a, b)$ means a lower bound of $a$ and an upper bound of $b$; and weighed by $w:E \to \mathbb{R}$, such that
 \begin{align*}
   w(e) = \begin{cases}
     q_{i, l} & \text{ if } e = (\beta_{i, j}, \gamma_{k, l, h})\\
@@ -108,7 +92,7 @@ Since this problem is solvable in polynomial time in the number of nodes and edg
 
 
 \subsection{As a maximum-weight perfect bipartite matching}
-We can also view this reduction as a maximum-weight perfect matching on a bipartite graph. The construction is similar to the single course case:
+Again in the case where professors have no upper bound on the number of classes they can teach, and the role requirements for each class have the same upper and lower bounds, we can view this restriction a maximum-weight perfect matching on a bipartite graph. The construction is similar to the single course case:
 
 \begin{center}
 \begin{tikzpicture}
