@@ -96,34 +96,34 @@ Again in the case where professors have no upper bound on the number of classes 
 
 \begin{center}
 \begin{tikzpicture}
-  \node[v] (a11) at (0, 4) {$\alpha_{1, 1}$};
+  %\node[v] (a11) at (0, 4) {$\alpha_{1, 1}$};
   \node (d1) at (0, 3) {$\vdots$};
   \node[v] (aij) at (0, 2) {$\alpha_{i, j}$};
   \node (d2) at (0, 1) {$\vdots$};
-  \node[v] (ant) at (0, 0) {$\alpha_{p, d}$};
+  %\node[v] (ant) at (0, 0) {$\alpha_{p, d}$};
 
-  \node[v] (b1111) at (3, 4) {$\beta_{1, 1, 1, 1}$};
+  %\node[v] (b1111) at (3, 4) {$\beta_{1, 1, 1, 1}$};
   \node (d3) at (3, 3) {$\vdots$};
   \node[v] (bjklv) at (3, 2) {$\beta_{j, k, l, v}$};
   \node (d4) at (3, 1) {$\vdots$};
-  \node[v] (btcmncm) at (3, 0) {$\beta_{d, c, m, n'_{c, m}}$};
+  %\node[v] (btcmncm) at (3, 0) {$\beta_{d, c, m, n'_{c, m}}$};
 
-  \node[v] (c1) at (3, -2) {$\gamma_1$};
-  \node (d5) at (3, -3) {$\vdots$};
-  \node[v] (cz) at (3, -4) {$\gamma_z$};
+  \node[v] (c1) at (3, 0) {$\gamma_1$};
+  \node (d5) at (3, -1) {$\vdots$};
+  \node[v] (cz) at (3, -2) {$\gamma_z$};
 
-  \draw[->] (aij) to node[above, red] {Only if $r_{i, l}$} node[below, blue] {$q_{i, k}$} (bjklv);
-  \dottedarrows{{a11, aij, ant}}{{b1111, bjklv, btcmncm, c1, cz}}{aij}{bjklv};
+  \draw[->] (aij) to node[above, red] {if $l \in R_i$} node[below, blue] {$q_{i, k}$} (bjklv);
+  \dottedarrows{{aij}}{{bjklv, c1, cz}}{aij}{bjklv};
 \end{tikzpicture}
 \end{center}
 
 Formally, we have a graph $G = (V, E)$, where
 
 \begin{align*}
-  V = & \{\alpha_{i, j} \mid 1 \le i \le p, 1 \le j \le d, a_{i, j} = 1\}\\
+  V = & \{\alpha_{i, j} \mid 1 \le i \le p, 1 \le j \le d, j \in A_i\}\\
     & \cup \{\beta_{j, k, l, v} \mid 1 \le j \le d, 1 \le k \le c, 1 \le l \le m, 1 \le v \le n'_{c, l}\}\\
     & \cup \{\gamma_i \mid 1 \le i \le z\}\\
-  E = & \{\{\alpha_{i, j}, \beta_{j, k, l, v}\}\ \forall\ i, j, k, l, v, r_{i, l} = 1\}\\
+  E = & \{\{\alpha_{i, j}, \beta_{j, k, l, v}\}\ \forall\ i, j, k, l, v, l \in R_i\}\\
       & \cup \{\{\alpha_{i, j}, \gamma_k\} \mid \ \forall\ i, j, k\}
 \end{align*}
 
