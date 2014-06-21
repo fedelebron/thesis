@@ -1,4 +1,4 @@
-\section{Multiple course, multiple start date, single weekly pattern}
+\section{Type-$(n, m, 1)$ instances}
 \subsection{Idea}
 This reduction is again in \npc, this time via reduction from 3-COLORING.
 
@@ -92,8 +92,30 @@ This example shows that the construction is completely general. For every graph 
 
 This shows that 3-COLORING $\le_P$ TIMETABLING, thus TIMETABLING is in \nph, since 3-COLORING is in \nph.
 
+\newpage
+
 \subsection{Algorithm}
 
 \begin{codebox}
+\Procname{$\proc{Reduction}(G = (V, E))$}
+\li $\mathcal{C} \gets V$
+\li $\mathcal{D} = \{1\}$
+\li $\mathcal{M} = \{1\}$
+\li $\mathcal{P} = \{1, \dots, |E|\}$
+\li $\mathcal{R} = \{1 \dots, |E|\}$
+\li $\mathcal{W} = \{1, 2, 3\}$
+\li $\mathcal{W}_c = \mathcal{W}\ \forall\ c \in \mathcal{C}$
+\li $n(c) = 1\ \forall\ c \in \mathcal{C}$
+\li $\mathcal{M}_c = \{1\}\ \forall\ c \in \mathcal{C}$
+\li $R_i = i\ \forall\ i \in \mathcal{P}$
+\li $A_i = S\ \forall\ i \in \mathcal{P}$
+\li $q_{p, c} = 0\ \forall\ p \in \mathcal{P}, c \in \mathcal{C}$
+\li $\max_p = |E|\ \forall\ p \in \mathcal{P}$
 
+\li \For $e_k = (v_i, v_j) \in E$:
+\li \Do $\max(i, 1, k) = \min(i, 1, k) \gets 1$
+\li     $\max(j, 1, k) = \min(j, 1, k) \gets 1$
+    \End
+
+    \li \Return $\langle \mathcal{C}, \mathcal{P}, \mathcal{T}, \mathcal{D}, \mathcal{M}, \mathcal{S}, \mathcal{W}, n, \max, \min, M, T, A, q, \max_{\_} \rangle$
 \end{codebox}
