@@ -1,8 +1,8 @@
 \section{Type-$(n, 1, m)$ instances}
 
-This reduction is in \nph. Hence, we see that the addition of a variable number of patterns appears to significantly increase the complexity of the solution space.
+This reduction is in \nph. Hence, we see that the addition of a variable number of patterns appears to significantly increase the complexity of the solution space. The proof will be via reduction from EXACT-COVER.
 
-\subsection{Reduction from EXACT-COVER}
+\subsection{Idea}
 Recall the decision problem EXACT-COVER, the problem of exactly covering a set by subsets:
 
 \decision{EXACT COVER}{Set $X$ and a collecion $C$ of subsets of $X$.}{Does $C$ contain an exact cover for $X$, i.e., a subcollection $C' \subseteq C$ such that every element of $X$ occurs in exactly one member of $C'$?}
@@ -11,7 +11,7 @@ The idea for the reduction is that the set of courses will be $X$, and for each 
 
 Since every course must pick a pattern, this will amount to every element being in some subset, since there is one pattern-set per subset $S$ in $C$. Since one element of the subset picking this new pattern will imply all others doing the same, this will ensure that all elements of a subset agree on whether it was \emph{that} subset the one that they all will be elements of, in $C'$.
 
-\subsubsection{Example}
+\subsection{Example}
 Before the reduction algorithm, we should look at an example.
 
 Suppose we have the following instance of EXACT-COVER:
@@ -189,7 +189,7 @@ Thus by considering the schedule colors that were selected, we obtain an exact c
 
 
 \newpage
-\subsubsection{Algorithm}
+\subsection{Algorithm}
 Formally, the following is the reduction:
 
 \begin{codebox}
