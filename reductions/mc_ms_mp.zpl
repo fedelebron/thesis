@@ -10,11 +10,13 @@ set L_ := { 1 .. L };
 param a[P * D] := 1;
 param r[P * R] := 1;
 param q[P * C] := 1;
-param n[C];
+param n[C] := 1;
 param m[C * L_ * R] := 1;
+param M[C * L_ * R] := 1;
 param pp[C * S] := 1;
 param psd[C * SD] := 1;
 param ds[S * SD *  L_ * D] := 1;
+param maxp[P] := 1;
 
 var cp[C * S] binary;
 var csd[C * SD] binary;
@@ -30,15 +32,15 @@ maximize quality:
 
 subto class_date_coherency:
   forall<c, sd, p, l, d> in C * SD * S * L_ * D:
-    3 * class_date[c, l, d] <= psd[c, d] + pp[c, p] + ds[p, sd, l, d];
+    3 * class_date[c, l, d] <= psd[c, sd] + pp[c, p] + ds[p, sd, l, d];
 
 subto class_date_coherency_2:
   forall<c, l> in C * L_ with n[c] <= l:
-    sum<d> class_date[c, l, d] = 1;
+    sum<d> in D: class_date[c, l, d] == 1;
 
 subto busy_l_coherency:
   forall <c, l, p> in C * L_ * P:
-    sum<k> in R: x[c, l, p, k] = busy_l[p, c, l];
+    sum<k> in R: x[c, l, p, k] == busy_l[p, c, l];
 
 subto busy_coherency:
   forall <p, c, l, d> in P * C * L_ * D:
@@ -48,14 +50,25 @@ subto professor_availability:
   forall <p, d> in P*D:
     sum<c> in C: busy[p, c, d] <= a[p, d];
 
+subto professor_classes_limit:
+  forall <p> in P:
+    sum<c, d> in C * D: busy[p, c, d] <= maxp[p];
+
 subto valid_role:
     forall <c, l, p, k> in C * L_ * P * R:
       x[c, l, p, k] <= r[p, k];
 
-subto satisfied_roles:
+subto satisfied_roles_1:
     forall <c, l, k> in C * L_ * R:
       sum<p> in P:
         x[c, l, p, k] >= m[c, l, k];
+
+subto satisfied_roles_2:
+    forall <c, l, k> in C * L_ * R:
+      sum<p> in P:
+        x[c, l, p, k] <= M[c, l, k];
+
+
 
 subto no_duplicate_profs:
     forall <c, l, p> in C * L_ * P:
