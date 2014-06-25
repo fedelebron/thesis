@@ -1,3 +1,124 @@
+We begin by constructing our fixed input data. We start with an instance $\mathcal{I}$ of the timetabling problem. We define the following sets:
+
+\begin{itemize}
+\item $a_{p, d} = 1 \iff d \in A_p$, that is, if professor $p$ is available on day $d$, and $0$ otherwise.
+\item $r_{p, r} = 1 \iff r \in R_p$, that is, if professor $p$ is can fill role $r$, and $0$ otherwise.
+\item $pp_{c, s} = 1 \iff s \in M_c$, that is, if course $c$ can pick the $s$th weekly schedule.
+\item $psd_{c, w} = 1 \iff w \in W_c$, that is, if course $c$ can start on the $w$th week.
+\item $ds_{s, w, l, d} = \iff $ when choosing the $s$th weekly schedule, and starting on the $w$th week, the $l$th class falls on day $d$.
+\end{itemize}
+
+Note these are not variables in our linear program, but preprocessed input data for it. We will have six sets of variables, although three of them are just for convenience of formulation:
+
+\begin{itemize}
+\item $cp_{c, s}$ is a binary variable indicating whether course $c$ has chosen the $s$th weekly schedule.
+\item $csd_{c, w}$ is a binary variable indicating whether course $c$ has chosen to start on the $w$th week.
+\item $x_{c, l, p, k}$ is a binary variable indicating whether the $p$th professor will teach the $l$th class of the $c$th course, with role $k$.
+\end{itemize}
+
+Those are the variables we wish to solve for. The convenience variables will be as follows:
+
+\begin{itemize}
+\item $class\_date_{c, l, d}$, a binary variable indicating whether the $c$th course has its $l$th class on the $d$th day.
+\item $busy_{p, c, d}$, a binary variable indicating whether the $p$th professor teaches a class for the $c$th course on the $d$th day.
+\item $busy\_l_{p, c, l}$, a binary variable indicating whether the $p$th professor teaches the $l$th class of the $c$th course.
+\end{itemize}
+
+We will attempt to maximize the quality of all the assignments:
+$$
+\textbf{maximize } \sum_{\substack{c \in C\\1 \le l \le n(c)\\p \in P\\k \in R}} x_{c, l, p, k} \times q_{p, c}
+$$
+
+subject to some constraints. Namely, as per the problem definition, we require that each course chooses a valid starting week. Thus we obtain the following constraint:
+
+$$
+csd_{c, w} \le psd_{c, w}\ \forall\ c \in C, w \in W
+$$
+
+We also require that each course chooses a valid weekly schedule. Thus we require:
+
+$$
+cp_{c, s} \le pp_{c, s}\ \forall c \in C, s \in M
+$$
+
+Each professor must be available on the days he teaches. This implies that:
+
+$$
+\sum_{c \in C} busy_{p, c, d} \le a_{p, d}\ \forall\ d \in D, p \in P
+$$
+
+Note this last constraint also requires that a professor teaches at most one course per day.
+
+We also require each professor be able to fulfill any role he is assigned to teach in:
+
+$$
+x_{c, l, p, k} \le r_{p, k}\ \forall\ c \in C, 1 \le l \le n(c), p \in P, k \in R
+$$
+
+We require each professor $p$ to teach at most $\max_p$ classes. This means that
+
+$$
+\sum_{\substack{c \in C\\d \in D}} busy_{p, c, d} \le \textstyle{\max_p}\ \forall\ p \in P
+$$
+
+We require that the number of professors for a given class and a given role must satisfy the requirement for that role and that class:
+
+$$
+\min(c, l, k) \le \sum_{p \in P} x_{c, l, p, k} \le \max(c, l, k)\ \forall\ c \in C, 1 \le l \le n(c), k \in R
+$$
+
+Due to our formulation of $x$, we need to ensure that no ``duplicate'' professors exist - that is, that a single professor is not assigned to teach a given class in two different roles. Formally, we require:
+
+\begin{align*}
+  &\forall c \in C,\\
+  &\forall 1 \le l \le n(c),\\
+  &\forall p \in P,\\
+  &\sum_{k \in R} x_{c, l, p, k} \le 1
+\end{align*}
+
+
+That's it for the problem's constraints, we now add consistency constraints that arise from our choice of variables for this formulation.
+
+Firstly, we need to make sure that $class\_date$ makes sense. This means that $class\_date_{c, l, d}$ is $1$ exactly when, for some $w \in W$ and $m \in M$, we have $csd_{c, w} = 1, cp_{c, m} = 1,$ and $ds_{m, w, l, d} = 1$. That is, course $c$ has picked starting week $w$, schedule $m$, and we know via $ds$ that choosing those two implies the $l$th class falls on the $d$th date.
+
+We can write this constraint as:
+
+\begin{align*}
+  &\forall\ c \in C\\
+  &\forall w \in W\\
+  &\forall m \in M\\
+  &\forall 1 \le l \le n(c)\\
+  &\forall 1 \le d \le D\\
+  &ds_{m, w, l, d} \Rightarrow csd_{c, w} + cp_{c, m} - 1 \le class\_date_{c, l, d}
+\end{align*}
+
+We also require that every class of every course is scheduled to exactly one day:
+
+$$
+\forall\ c \in C, 1 \le l \le n(c), \sum_{d \in D} class\_date_{c, l, d} = 1
+$$
+
+
+$busy\_l$ can be uniquely determined given the $x$ vector, and it is used solely for convenience:
+
+\begin{align*}
+  &\forall p \in P,\\
+  &\forall c \in C,\\
+  &\forall 1\le l \le n(c),\\
+  &busy\_l_{p, c, l} = \sum_{k \in R} x_{c, l, p, k}
+\end{align*}
+
+
+Likewise, we have a convenience set of variables $busy$, which is simply the translation from class number to class date of $busy\_l$. Thus, if a course's $l$th class is on the $d$th date, and $busy\_l_{p, c, l}$, then we must have $busy_{p, c, d}$. Thus we have:
+
+\begin{align*}
+  &\forall p \in P,\\
+  &\forall c \in C,\\
+  &\forall 1 \le l \le n(c),\\
+  &busy_{p, c, d} \ge busy\_l_{p, c, l} + class\_date_{c, l, d} - 1
+\end{align*}
+
+
 \begin{verbatim}
 set P := ...;
 set R := ...;
