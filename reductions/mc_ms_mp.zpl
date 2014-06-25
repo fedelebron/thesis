@@ -32,7 +32,7 @@ maximize quality:
 
 subto class_date_coherency:
   forall<c, sd, p, l, d> in C * SD * S * L_ * D:
-    3 * class_date[c, l, d] <= psd[c, sd] + pp[c, p] + ds[p, sd, l, d];
+    3 * class_date[c, l, d] <= csd[c, sd] + cp[c, p] + ds[p, sd, l, d];
 
 subto class_date_coherency_2:
   forall<c, l> in C * L_ with n[c] <= l:
