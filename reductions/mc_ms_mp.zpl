@@ -31,8 +31,8 @@ maximize quality:
     x[c, l, p, k] * q[p, c];
 
 subto class_date_coherency:
-  forall<c, sd, p, l, d> in C * SD * S * L_ * D:
-    3 * class_date[c, l, d] <= csd[c, sd] + cp[c, p] + ds[p, sd, l, d];
+  forall<c, sd, p, l, d> in C * SD * S * L_ * D with ds[p, sd, l, d] == 1:
+    csd[c, sd] + cp[c, p] - 1 <= class_date[c, l, d];
 
 subto class_date_coherency_2:
   forall<c, l> in C * L_ with n[c] <= l:
@@ -67,8 +67,6 @@ subto satisfied_roles_2:
     forall <c, l, k> in C * L_ * R:
       sum<p> in P:
         x[c, l, p, k] <= M[c, l, k];
-
-
 
 subto no_duplicate_profs:
     forall <c, l, p> in C * L_ * P:
