@@ -31,9 +31,11 @@ $$
 
 subject to some constraints. Namely, as per the problem definition, we require that each course chooses a valid starting week. Thus we obtain the following constraint:
 
-$$
-csd_{c, w} \le psd_{c, w}\ \forall\ c \in C, w \in W
-$$
+\begin{align*}
+  &\forall c \in C,\\
+  &\forall w \in W,\\
+  &csd_{c, w} \le psd_{c, w}
+\end{align*}
 
 and the following constraint, which means exactly one starting week is chosen for each course:
 
@@ -44,9 +46,11 @@ and the following constraint, which means exactly one starting week is chosen fo
 
 We also require that each course chooses a valid weekly schedule. Thus we require:
 
-$$
-cp_{c, s} \le pp_{c, s}\ \forall c \in C, s \in M
-$$
+\begin{align*}
+  &\forall c \in C,\\
+  &\forall s \in M,\\
+  &cp_{c, s} \le pp_{c, s}
+\end{align*}
 
 and
 
@@ -57,29 +61,39 @@ and
 
 Each professor must be available on the days he teaches. This implies that:
 
-$$
-\sum_{c \in C} busy_{p, c, d} \le a_{p, d}\ \forall\ d \in D, p \in P
-$$
+\begin{align*}
+  &\forall d \in D,\\
+  &\forall p \in P,\\
+  &\sum_{c \in C} busy_{p, c, d} \le a_{p, d}
+\end{align*}
 
 Note this last constraint also requires that a professor teaches at most one course per day.
 
 We also require each professor be able to fulfill any role he is assigned to teach in:
 
-$$
-x_{c, l, p, k} \le r_{p, k}\ \forall\ c \in C, 1 \le l \le n(c), p \in P, k \in R
-$$
+\begin{align*}
+  &\forall c \in C,\\
+  &\forall 1 \le l \le n(c),\\
+  &\forall p \in P,\\
+  &\forall k \in R,\\
+  &x_{c, l, p, k} \le r_{p, k}
+\end{align*}
 
 We require each professor $p$ to teach at most $\max_p$ classes. This means that
 
-$$
-\sum_{\substack{c \in C\\d \in D}} busy_{p, c, d} \le \textstyle{\max_p}\ \forall\ p \in P
-$$
+\begin{align*}
+  &\forall p \in P,\\
+  &\sum_{\substack{c \in C\\d \in D}} busy_{p, c, d} \le \textstyle{\max_p}
+\end{align*}
 
 We require that the number of professors for a given class and a given role must satisfy the requirement for that role and that class:
 
-$$
-\min(c, l, k) \le \sum_{p \in P} x_{c, l, p, k} \le \max(c, l, k)\ \forall\ c \in C, 1 \le l \le n(c), k \in R
-$$
+\begin{align*}
+  &\forall c \in C,\\
+  &\forall 1 \le l \le n(c),\\
+  &\forall k \in R,\\
+  &\min(c, l, k) \le \sum_{p \in P} x_{c, l, p, k} \le \max(c, l, k)
+\end{align*}
 
 Due to our formulation of $x$, we need to ensure that no ``duplicate'' professors exist - that is, that a single professor is not assigned to teach a given class in two different roles. Formally, we require:
 
@@ -108,15 +122,20 @@ We can write this constraint as:
 
 We also require that every class of every course is scheduled to exactly one day:
 
-$$
-\forall\ c \in C, 1 \le l \le n(c), \sum_{d \in D} class\_date_{c, l, d} = 1
-$$
+\begin{align*}
+  &\forall c \in C,\\
+  &\forall 1 \le l \le n(c),\\
+  &\sum_{d \in D} class\_date_{c, l, d} = 1
+\end{align*}
 
 and that if the course has $k$ classes, no more than $k$ class dates are assigned:
 
-$$
-\forall\ c \in C, l > n(c), d \in D, class\_date_{c, l, d} = 0
-$$
+\begin{align*}
+  &\forall c \in C,\\
+  &\forall l > n(c),\\
+  &\forall d \in D,\\
+  &class\_date_{c, l, d} = 0
+\end{align*}
 
 $busy\_l$ can be uniquely determined given the $x$ vector, and it is used solely for convenience:
 
