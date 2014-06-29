@@ -46,9 +46,17 @@ subto busy_l_coherency:
   forall <c, l, p> in C * L_ * P:
     sum<k> in R: x[c, l, p, k] == busy_l[p, c, l];
 
+subto busy_l_coherency_2:
+  forall <c, l, p> in C * L_ * P with l > n[c]:
+    busy_l[p, c, l] == 0;
+
 subto busy_coherency:
   forall <p, c, l, d> in P * C * L_ * D:
     busy[p, c, d] >= busy_l[p, c, l] + class_date[c, l, d] - 1;
+
+subto busy_coherency_2:
+  forall<p, c> in P * C:
+    sum<d> in D: busy[p, c, d] == sum<l> in L_ with l <= n[c]: busy_l[p, c, l];
 
 subto professor_availability:
   forall <p, d> in P*D:
@@ -80,6 +88,14 @@ subto legal_weekly_pattern:
   forall <c, s> in C * S:
     cp[c, s] <= pp[c, s];
 
+subto some_weekly_pattern:
+  forall <c> in C:
+    sum<s> in S: cp[c, s] == 1;
+
 subto legal_start_date:
   forall <c, sd> in C * SD:
     csd[c, sd] <= psd[c, sd];
+
+subto some_start_date:
+  forall <c> in C:
+    sum<sd> in SD: csd[c, sd] == 1;

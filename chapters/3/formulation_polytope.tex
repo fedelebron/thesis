@@ -35,11 +35,25 @@ $$
 csd_{c, w} \le psd_{c, w}\ \forall\ c \in C, w \in W
 $$
 
+and the following constraint, which means exactly one starting week is chosen for each course:
+
+\begin{align*}
+  &\forall\ c \in C\\
+  &\sum_{w \in W} csd_{c, w} = 1
+\end{align*}
+
 We also require that each course chooses a valid weekly schedule. Thus we require:
 
 $$
 cp_{c, s} \le pp_{c, s}\ \forall c \in C, s \in M
 $$
+
+and
+
+\begin{align*}
+  &\forall\ c \in C\\
+  &\sum_{s \in M} cp_{c, s} = 1
+\end{align*}
 
 Each professor must be available on the days he teaches. This implies that:
 
@@ -113,6 +127,14 @@ $busy\_l$ can be uniquely determined given the $x$ vector, and it is used solely
   &busy\_l_{p, c, l} = \sum_{k \in R} x_{c, l, p, k}
 \end{align*}
 
+We also want the rest of $busy\_l$ to be empty on class numbers higher than a given course's total number of classes:
+
+\begin{align*}
+  &\forall p \in P,\\
+  &\forall c \in C,\\
+  &\forall l > n(c),\\
+  &busy\_l_{p, c, l} = 0
+\end{align*}
 
 Likewise, we have a convenience set of variables $busy$, which is simply the translation from class number to class date of $busy\_l$. Thus, if a course's $l$th class is on the $d$th date, and $busy\_l_{p, c, l}$, then we must have $busy_{p, c, d}$. Thus we have:
 
@@ -122,3 +144,13 @@ Likewise, we have a convenience set of variables $busy$, which is simply the tra
   &\forall 1 \le l \le n(c),\\
   &busy_{p, c, d} \ge busy\_l_{p, c, l} + class\_date_{c, l, d} - 1
 \end{align*}
+
+and since we do not want to allow $busy$ to have further nonzero entries, we will require that the sum of the busy days for professor $p$ and course $c$ is just the number of classes $p$ teaches in course $c$, since a professor is present at most once per every class:
+
+\begin{align*}
+  &\forall p \in P,\\
+  &\forall c \in C,\\
+  &\sum_{d \in D} busy_{p, c, d} = \sum_{1 \le l \le n(c)} busy\_l_{p, c, l}
+\end{align*}
+
+These two restrictions tell us that, in a sense, $busy$ is a shifting of $busy\_l$, via $class\_date$.
