@@ -98,6 +98,11 @@ $$
 \forall\ c \in C, 1 \le l \le n(c), \sum_{d \in D} class\_date_{c, l, d} = 1
 $$
 
+and that if the course has $k$ classes, no more than $k$ class dates are assigned:
+
+$$
+\forall\ c \in C, l > n(c), d \in D, class\_date_{c, l, d} = 0
+$$
 
 $busy\_l$ can be uniquely determined given the $x$ vector, and it is used solely for convenience:
 

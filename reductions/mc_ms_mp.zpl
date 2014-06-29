@@ -35,8 +35,12 @@ subto class_date_coherency:
     csd[c, sd] + cp[c, p] - 1 <= class_date[c, l, d];
 
 subto class_date_coherency_2:
-  forall<c, l> in C * L_ with n[c] <= l:
+  forall<c, l> in C * L_ with l <= n[c]:
     sum<d> in D: class_date[c, l, d] == 1;
+
+subto class_date_coherency_3:
+  forall<c, l, d> in C * L_ * D with l > n[c] and l <= L:
+    class_date[c, l, d] == 0;
 
 subto busy_l_coherency:
   forall <c, l, p> in C * L_ * P:
