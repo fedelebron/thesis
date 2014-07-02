@@ -164,7 +164,7 @@ Likewise, we have a convenience set of variables $busy$, which is simply the tra
   &busy_{p, c, d} \ge busy\_l_{p, c, l} + class\_date_{c, l, d} - 1
 \end{align*}
 
-and since we do not want to allow $busy$ to have further nonzero entries, we will require that the sum of the busy days for professor $p$ and course $c$ is just the number of classes $p$ teaches in course $c$, since a professor is present at most once per every class:
+If we wanted not to allow $busy$ to have further nonzero entries, we could require that the sum of the busy days for professor $p$ and course $c$ is just the number of classes $p$ teaches in course $c$, since a professor is present at most once per every class:
 
 \begin{align*}
   &\forall p \in P,\\
@@ -172,4 +172,4 @@ and since we do not want to allow $busy$ to have further nonzero entries, we wil
   &\sum_{d \in D} busy_{p, c, d} = \sum_{1 \le l \le n(c)} busy\_l_{p, c, l}
 \end{align*}
 
-These two restrictions tell us that, in a sense, $busy$ is a shifting of $busy\_l$, via $class\_date$.
+These two restrictions would tell us that, in a sense, $busy$ is a shifting of $busy\_l$, via $class\_date$. We choose not to add these restrictions, since they do not change the semantics of the found solutions - extra entries in $busy$ can simply be ignored, and we decrease the number of constraints for the solvers.
