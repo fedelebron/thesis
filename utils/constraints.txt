@@ -4,7 +4,6 @@ var x[C * L_ * P * R] binary;
 
 var class_date[C * L_ * D] binary;
 var busy[P * C * D] binary;
-var busy_l[P * C * L_] binary;
 
 maximize quality:
   sum<c, l, p, k> in C * L_ * P * R:
@@ -22,43 +21,50 @@ subto class_date_coherency_3:
   forall<c, l, d> in C * L_ * D with l >= n[c] and l <= L:
     class_date[c, l, d] == 0;
 
-subto busy_l_coherency:
-  forall <c, l, p> in C * L_ * P:
-    sum<k> in R: x[c, l, p, k] == busy_l[p, c, l];
-
 subto busy_l_coherency_2:
   forall <c, l, p> in C * L_ * P with l >= n[c]:
-    busy_l[p, c, l] == 0;
+    sum<k> in R: x[c, l, p, k] == 0;
 
 subto busy_coherency:
   forall <p, c, l, d> in P * C * L_ * D:
-    busy[p, c, d] >= busy_l[p, c, l] + class_date[c, l, d] - 1;
+    busy[p, c, d] >= (sum<k> in R: x[c, l, p, k]) + class_date[c, l, d] - 1;
 
-subto busy_coherency_2:
-  forall<p, c> in P * C:
-    sum<d> in D: busy[p, c, d] == sum<l> in L_ with l < n[c]: busy_l[p, c, l];
+subto professor_availability_1:
+  forall <p, d> in P*D with a[p, d] == 0:
+    forall<c> in C: busy[p, c, d] == 0;
 
-subto professor_availability:
-  forall <p, d> in P*D:
-    sum<c> in C: busy[p, c, d] <= a[p, d];
+subto professor_availability_2:
+  forall <p, d> in P*D with a[p, d] == 1:
+    sum<c> in C: busy[p, c, d] <= 1;
 
 subto professor_classes_limit:
   forall <p> in P:
     sum<c, d> in C * D: busy[p, c, d] <= maxp[p];
 
 subto valid_role:
-    forall <c, l, p, k> in C * L_ * P * R:
-      x[c, l, p, k] <= r[p, k];
+    forall <c, l, p, k> in C * L_ * P * R with r[p, k] == 0:
+      x[c, l, p, k] == 0;
 
 subto satisfied_roles_1:
     forall <c, l, k> in C * L_ * R with l < n[c]:
-      sum<p> in P:
+      sum<p> in P with r[p, k] == 1:
         x[c, l, p, k] >= m[c, l, k];
 
 subto satisfied_roles_2:
     forall <c, l, k> in C * L_ * R with l < n[c]:
-      sum<p> in P:
+      sum<p> in P with r[p, k] == 1:
         x[c, l, p, k] <= M[c, l, k];
+
+subto role_family_1:
+  forall <c, l, k> in C * L_ * R with l < n[c] and 0 == M[c, l, k]:
+    forall <p> in P:
+      x[c, l, p, k] == 0;
+
+subto role_family_2:
+  forall <c, l, k> in C * L_ * R with l < n[c] and m[c, l, k] == M[c, l, k]:
+    sum <p> in P:
+      x[c, l, p, k] == m[c, l, k];
+
 
 subto no_duplicate_profs:
     forall <c, l, p> in C * L_ * P with l < n[c]:
