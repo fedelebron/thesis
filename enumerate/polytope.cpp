@@ -145,17 +145,19 @@ void Polytope::remove_empty_constraints() {
   for (size_t i = 0; i < constraints.size(); ++i) {
     const Constraint& c = constraints[i];
     const Coefficients& coeffs = get<0>(c);
-    if (std::count(begin(coeffs), end(coeffs), 0) == coeffs.size()) {
-      const ConstraintType& ct = get<1>(c);
-      const int& val = get<2>(c);
-      if ((ct == ConstraintType::EQ && val != 0)
-          || (ct == ConstraintType::LE && val < 0)
-          || (ct == ConstraintType::GE && val > 0)) {
-          throw std::logic_error("Inconsistent constraints.");
-      }
-      constraints.erase(begin(constraints) + i);
-      --i;
+
+    if (std::count(begin(coeffs), end(coeffs), 0) < coeffs.size())
+      continue;
+
+    const ConstraintType& ct = get<1>(c);
+    const int& val = get<2>(c);
+    if ((ct == ConstraintType::EQ && val != 0)
+        || (ct == ConstraintType::LE && val < 0)
+        || (ct == ConstraintType::GE && val > 0)) {
+        throw std::logic_error("Inconsistent constraints.");
     }
+    constraints.erase(begin(constraints) + i);
+    --i;
   }
 }
 
@@ -178,91 +180,92 @@ bool Polytope::clean_trivial_constraints() {
   for (size_t i = 0; i < constraints.size(); ++i) {
     const Constraint& c = constraints[i];
     const Coefficients& coeffs = get<0>(c);
-    if (is_trivial(coeffs)) {
-      int idx = get_trivial_variable(coeffs);
-      int rhs = get<2>(c);
-      int value = (coeffs[idx] == 1) ? rhs : -rhs;
-      switch (get<1>(c)) {
-        case ConstraintType::EQ:
-          remove_variable(idx, value);
-          return true;
-        case ConstraintType::LE:
-          if (rhs == 0) {
-            if (coeffs[idx] == 1) {
-              // xi <= 0
-              remove_variable(idx, 0);
-              return true;
-            } else {
-              // -xi <= 0
-              constraints.erase(begin(constraints) + i);
-              should_clean_again = true;
-            }
-          } else if (rhs == 1) {
-            // xi <= 1
-            // -xi <= 1
+
+    if (!is_trivial(coeffs)) continue;
+
+    int idx = get_trivial_variable(coeffs);
+    int rhs = get<2>(c);
+    int value = (coeffs[idx] == 1) ? rhs : -rhs;
+    switch (get<1>(c)) {
+      case ConstraintType::EQ:
+        remove_variable(idx, value);
+        return true;
+      case ConstraintType::LE:
+        if (rhs == 0) {
+          if (coeffs[idx] == 1) {
+            // xi <= 0
+            remove_variable(idx, 0);
+            return true;
+          } else {
+            // -xi <= 0
             constraints.erase(begin(constraints) + i);
             should_clean_again = true;
-          } else if (rhs == -1) {
-            if (coeffs[idx] == -1) {
-              // -xi <= -1
-              remove_variable(idx, 1);
-              return true;
-            }
-            // xi <= -1
+          }
+        } else if (rhs == 1) {
+          // xi <= 1
+          // -xi <= 1
+          constraints.erase(begin(constraints) + i);
+          should_clean_again = true;
+        } else if (rhs == -1) {
+          if (coeffs[idx] == -1) {
+            // -xi <= -1
+            remove_variable(idx, 1);
+            return true;
+          }
+          // xi <= -1
+          throw std::logic_error("Variable " + std::to_string(translate(idx)) + " cannot be negative.");
+        } else if (rhs < -1) {
+          throw std::logic_error("Variable " + std::to_string(translate(idx)) + " cannot be negative or greater than 1.");
+          // -xi <= -4
+          // xi <= -4
+        } else {
+          // xi <= 4
+          // -xi <= 4
+          constraints.erase(begin(constraints) + i);
+          should_clean_again = true;
+        }
+        break;
+      case ConstraintType::GE:
+        if (rhs == 0) {
+          if (coeffs[idx] == 1) {
+            // xi >= 0
+            constraints.erase(begin(constraints) + i);
+            should_clean_again = true;
+          } else {
+            // -xi >= 0
+            remove_variable(idx, 0);
+            return true;
+          }
+        } else if (rhs == 1) {
+          if (coeffs[idx] == 1) {
+            // xi >= 1
+            remove_variable(idx, 1);
+            return true;
+          } else {
+            // -xi >= 1
             throw std::logic_error("Variable " + std::to_string(translate(idx)) + " cannot be negative.");
-          } else if (rhs < -1) {
-            throw std::logic_error("Variable " + std::to_string(translate(idx)) + " cannot be negative or greater than 1.");
-            // -xi <= -4
-            // xi <= -4
-          } else {
-            // xi <= 4
-            // -xi <= 4
-            constraints.erase(begin(constraints) + i);
-            should_clean_again = true;
           }
-          break;
-        case ConstraintType::GE:
-          if (rhs == 0) {
-            if (coeffs[idx] == 1) {
-              // xi >= 0
-              constraints.erase(begin(constraints) + i);
-              should_clean_again = true;
-            } else {
-              // -xi >= 0
-              remove_variable(idx, 0);
-              return true;
-            }
-          } else if (rhs == 1) {
-            if (coeffs[idx] == 1) {
-              // xi >= 1
-              remove_variable(idx, 1);
-              return true;
-            } else {
-              // -xi >= 1
-              throw std::logic_error("Variable " + std::to_string(translate(idx)) + " cannot be negative.");
-            }
-          } else if (rhs == -1) {
-            // xi >= -1
-            // -xi >= -1
-            constraints.erase(begin(constraints) + i);
-            should_clean_again = true;
-          } else if (rhs < -1) {
+        } else if (rhs == -1) {
+          // xi >= -1
+          // -xi >= -1
+          constraints.erase(begin(constraints) + i);
+          should_clean_again = true;
+        } else if (rhs < -1) {
+          // xi >= -4
+          // -xi >= -4
+          constraints.erase(begin(constraints) + i);
+          should_clean_again = true;
+        } else {
+          if (coeffs[idx] == 1) {
+            // xi >= 4
+            remove_variable(idx, 1);
+            return true;
+          } else {
             // xi >= -4
-            // -xi >= -4
             constraints.erase(begin(constraints) + i);
             should_clean_again = true;
-          } else {
-            if (coeffs[idx] == 1) {
-              // xi >= 4
-              remove_variable(idx, 1);
-              return true;
-            } else {
-              // xi >= -4
-              constraints.erase(begin(constraints) + i);
-              should_clean_again = true;
-            }
           }
-      }
+        }
     }
   }
   return should_clean_again;
