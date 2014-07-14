@@ -1,8 +1,8 @@
-#include "polytope.h"
-
 #include <iostream>
-#include <fstream>
 #include <string>
+#include <fstream>
+
+#include "polytope.h"
 using namespace std;
 
 int main(int argc, char** argv) {

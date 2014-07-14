@@ -1,15 +1,15 @@
 #include "polytope.h"
 
-#include <istream>
-#include <ostream>
-#include <iostream>
-#include <locale>
-#include <boost/optional.hpp>
-#include <tuple>
+#include <ctype.h>
 #include <algorithm>
-#include <stdexcept>
-#include <iomanip>
+#include <boost/optional/optional.hpp>
+#include <iostream>
+#include <iterator>
 #include <numeric>
+#include <stdexcept>
+#include <string>
+#include <tuple>
+#include <utility>
 using std::istream;
 using std::string;
 using boost::optional;
