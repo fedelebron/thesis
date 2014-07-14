@@ -282,7 +282,7 @@ bool Polytope::clean_zero_equalities() {
     if (get<2>(c) == 0
         && (is_equality(c) || get<1>(c) == ConstraintType::LE)
         && is_nonnegative(coeffs)) {
-      for (size_t j = 0; j < coeffs.size(); ++j) {
+      for (size_t j = 1; j < coeffs.size(); ++j) {
         if (!coeffs[j]) continue;
         remove_variable(j, 0);
         // we return here since remove_variable
