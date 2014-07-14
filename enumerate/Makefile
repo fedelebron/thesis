@@ -1,5 +1,5 @@
 CXX=clang++
-CXXFLAGS=-std=c++11 -stdlib=libc++ -O3 -Wall
+CXXFLAGS=-std=c++1y -stdlib=libc++ -O3 -Wall
 CC=clang++
 LDFLAGS=-stdlib=libc++
 

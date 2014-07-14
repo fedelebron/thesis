@@ -47,8 +47,7 @@ void Polytope::compute_inverse_translation() {
   }
 }
 
-bool Polytope::necessarily_violated_constraint(int i) const {
-  const Constraint& c = constraints[i];
+bool Polytope::necessarily_violated_constraint(const Constraint& c) const {
   const Coefficients& coeff = get<0>(c);
   int sum = 0;
   for (int j = 1; j < coeff.size(); ++j) {
@@ -72,10 +71,10 @@ bool Polytope::necessarily_violated_constraint(int i) const {
 }
 
 bool Polytope::necessarily_invalid_recursive_state() const {
-  for (size_t i = 0; i < constraints.size(); ++i) {
-    if (necessarily_violated_constraint(i)) return true;
-  }
-  return false;
+  // must use a lambda since the predicate is a member function
+  return std::any_of(begin(constraints), end(constraints), [this](auto x) {
+    return this->necessarily_violated_constraint(x);
+  });
 }
 
 void Polytope::print_poi(ostream& o) const {
@@ -142,31 +141,36 @@ int Polytope::untranslate(int idx) const {
 }
 
 void Polytope::remove_empty_constraints() {
-  for (size_t i = 0; i < constraints.size(); ++i) {
-    const Constraint& c = constraints[i];
+  auto is_empty = [](const Constraint& c) {
     const Coefficients& coeffs = get<0>(c);
-
-    if (std::count(begin(coeffs), end(coeffs), 0) < coeffs.size())
-      continue;
-
     const ConstraintType& ct = get<1>(c);
     const int& val = get<2>(c);
+    if (std::count(begin(coeffs), end(coeffs), 0) < coeffs.size())
+      return false;
+    // the constraint is empty on the left hand side,
+    // but if the operator and right hand side are
+    // not feasible, then the set of constraints is
+    // inconsistent.
     if ((ct == ConstraintType::EQ && val != 0)
         || (ct == ConstraintType::LE && val < 0)
         || (ct == ConstraintType::GE && val > 0)) {
         throw std::logic_error("Inconsistent constraints.");
     }
-    constraints.erase(begin(constraints) + i);
-    --i;
-  }
+
+    return true;
+  };
+  constraints.erase(std::remove_if(begin(constraints),
+                                   end(constraints),
+                                   is_empty),
+                    end(constraints));
 }
 
 void Polytope::remove_variable(int idx, int value) {
-  for (size_t i = 0; i < constraints.size(); ++i) {
-    Coefficients& c = get<0>(constraints[i]);
-    int coeff = c[idx];
-    c.erase(begin(c) + idx);
-    get<2>(constraints[i]) -= coeff * value;
+  for (auto& c : constraints) {
+    Coefficients& coeffs = get<0>(c);
+    int coeff = coeffs[idx];
+    coeffs.erase(begin(coeffs) + idx);
+    get<2>(c) -= coeff * value;
   }
   determined[translate(idx)] = value;
   fix_translation_table(idx);

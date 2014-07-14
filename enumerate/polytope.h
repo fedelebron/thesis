@@ -36,7 +36,7 @@ struct Polytope {
   bool clean_zero_equalities();
   bool clean_trivial_constraints();
   void compute_inverse_translation();
-  bool necessarily_violated_constraint(int i) const;
+  bool necessarily_violated_constraint(const Constraint&) const;
   bool necessarily_invalid_recursive_state() const;
   void print_vertices_recursive(ostream&, unsigned int) const;
   mutable vector<int> recursive_state;
