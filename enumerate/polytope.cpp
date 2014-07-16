@@ -327,6 +327,7 @@ optional<Constraint> read_constraint(size_t dim, istream& i) {
 istream& operator>>(istream& i, Polytope& p) {
   i.ignore(6);
   i >> p.dimension;
+  p.original_dimension = p.dimension;
   i.ignore(sizeof("\nLOWER_BOUNDS\n") - 1
            + 2 * p.dimension
            + sizeof("\nUPPER_BOUNDS\n") - 1

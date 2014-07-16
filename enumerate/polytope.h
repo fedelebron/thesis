@@ -14,6 +14,7 @@ typedef vector<int> Coefficients;
 typedef tuple<Coefficients, ConstraintType, int> Constraint;
 
 struct Polytope {
+  size_t original_dimension;
   size_t dimension;
   unordered_map<unsigned int, int> determined;
   // translated[i] == j iff the current i is the original jth variable
@@ -41,7 +42,6 @@ struct Polytope {
   void print_vertices_recursive(ostream&, unsigned int) const;
   mutable vector<int> recursive_state;
   vector<int> inverse_translation;
-  int original_dimension;
 };
 
 istream& operator>>(istream& i, Polytope& p);
