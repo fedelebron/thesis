@@ -117,7 +117,7 @@ void Polytope::print_vertices_recursive(ostream& o, unsigned int k) const {
 }
 
 void Polytope::clean() {
-  original_dimension = nvars;
+  original_dimension = dimension;
   while(clean_trivial_constraints()
         || clean_zero_equalities());
   compute_inverse_translation();
@@ -128,7 +128,7 @@ int Polytope::translate(int idx) const {
 }
 
 void Polytope::fix_translation_table(int idx) {
-  for (size_t i = idx; i < nvars; ++i) {
+  for (size_t i = idx; i < dimension; ++i) {
     translated[i] = translated[i + 1];
   }
 }
@@ -174,7 +174,7 @@ void Polytope::remove_variable(int idx, int value) {
   }
   determined[translate(idx)] = value;
   fix_translation_table(idx);
-  --nvars;
+  --dimension;
   remove_empty_constraints();
 }
 
@@ -326,18 +326,18 @@ optional<Constraint> read_constraint(size_t dim, istream& i) {
 
 istream& operator>>(istream& i, Polytope& p) {
   i.ignore(6);
-  i >> p.nvars;
+  i >> p.dimension;
   i.ignore(sizeof("\nLOWER_BOUNDS\n") - 1
-           + 2 * p.nvars
+           + 2 * p.dimension
            + sizeof("\nUPPER_BOUNDS\n") - 1
-           + 2 * p.nvars
+           + 2 * p.dimension
            + sizeof("\nINEQUALITIES_SECTION\n") - 1);
   optional<Constraint> c;
-  while ((c = read_constraint(p.nvars, i))) {
+  while ((c = read_constraint(p.dimension, i))) {
     p.constraints.push_back(c.get());
   }
 
-  p.translated.resize(p.nvars + 1);
+  p.translated.resize(p.dimension + 1);
   std::iota(begin(p.translated), end(p.translated), 0);
 
   return i;
@@ -360,7 +360,7 @@ ostream& operator<<(ostream& o, const Polytope& p) {
 
 void Polytope::print_constraint(ostream& o, int j, bool human_readable) const {
   bool output = false;
-  for (size_t k = 1; k <= nvars; ++k) {
+  for (size_t k = 1; k <= dimension; ++k) {
     int val = std::get<0>(constraints[j])[k];
     if (!val) continue;
     if (val == -1) o << '-';
@@ -379,11 +379,11 @@ void Polytope::print_constraint(ostream& o, int j, bool human_readable) const {
 }
 
 void Polytope::print_ieq(ostream& o) const {
-  o << "DIM = " << nvars << std::endl;
+  o << "DIM = " << dimension << std::endl;
   o << "LOWER_BOUNDS" << std::endl;
-  for (size_t i = 0; i < nvars; ++i) o << "0 ";
+  for (size_t i = 0; i < dimension; ++i) o << "0 ";
   o << std::endl << "UPPER_BOUNDS" << std::endl;
-  for (size_t i = 0; i < nvars; ++i) o << "1 ";
+  for (size_t i = 0; i < dimension; ++i) o << "1 ";
   o << std::endl << "INEQUALITIES_SECTION" << std::endl;
   for (size_t i = 0; i < constraints.size(); ++i) {
     print_constraint(o, i, false);
@@ -407,7 +407,7 @@ void Polytope::print_ine(ostream& o) const {
     o << '\n';
   }
   o << "begin\n";
-  o << constraints.size() + 2 * nvars << ' ' << nvars + 1 << " integer\n";
+  o << constraints.size() + 2 * dimension << ' ' << dimension + 1 << " integer\n";
   for (size_t i = 0; i < constraints.size(); ++i) {
     //std::cout << "The " << i << "th constraint: ";
     //print_constraint(std::cout, i, false);
@@ -420,15 +420,15 @@ void Polytope::print_ine(ostream& o) const {
     o << '\n';
   }
   // add 0-1 constraints
-  for (size_t i = 1; i <= nvars; ++i) {
+  for (size_t i = 1; i <= dimension; ++i) {
     o << 0 << ' ';
     for (size_t j = 1; j < i; ++j) o << "0 ";
     o << "1 ";
-    for (size_t j = i + 1; j <= nvars; ++j) o << "0 ";
+    for (size_t j = i + 1; j <= dimension; ++j) o << "0 ";
     o << "\n1 ";
     for (size_t j = 1; j < i; ++j) o << "0 ";
     o << "-1 ";
-    for (size_t j = i + 1; j <= nvars; ++j) o << "0 ";
+    for (size_t j = i + 1; j <= dimension; ++j) o << "0 ";
     o << '\n';
   }
 

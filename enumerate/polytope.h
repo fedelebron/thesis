@@ -14,7 +14,7 @@ typedef vector<int> Coefficients;
 typedef tuple<Coefficients, ConstraintType, int> Constraint;
 
 struct Polytope {
-  size_t nvars;
+  size_t dimension;
   unordered_map<unsigned int, int> determined;
   // translated[i] == j iff the current i is the original jth variable
   vector<int> translated;
