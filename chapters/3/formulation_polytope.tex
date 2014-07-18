@@ -31,78 +31,78 @@ $$
 
 subject to some constraints. Namely, as per the problem definition, we require that each course chooses a valid starting week. Thus we obtain the following constraint:
 
-\begin{align*}
+\begin{align}
   &\forall c \in C,\\
   &\forall w \in W,\\
   &csd_{c, w} \le psd_{c, w}
-\end{align*}
+\end{align}
 
 and the following constraint, which means exactly one starting week is chosen for each course:
 
-\begin{align*}
+\begin{align} \label{eq:chosenstart}
   &\forall\ c \in C\\
   &\sum_{w \in W} csd_{c, w} = 1
-\end{align*}
+\end{align}
 
 We also require that each course chooses a valid weekly schedule. Thus we require:
 
-\begin{align*}
+\begin{align}
   &\forall c \in C,\\
   &\forall s \in M,\\
   &cp_{c, s} \le pp_{c, s}
-\end{align*}
+\end{align}
 
 and
 
-\begin{align*}
+\begin{align} \label{eq:chosenpattern}
   &\forall\ c \in C\\
   &\sum_{s \in M} cp_{c, s} = 1
-\end{align*}
+\end{align}
 
 Each professor must be available on the days he teaches. This implies that:
 
-\begin{align*}
+\begin{align}
   &\forall d \in D,\\
   &\forall p \in P,\\
   &\sum_{c \in C} busy_{p, c, d} \le a_{p, d}
-\end{align*}
+\end{align}
 
 Note this last constraint also requires that a professor teaches at most one course per day.
 
 We also require each professor be able to fulfill any role he is assigned to teach in:
 
-\begin{align*}
+\begin{align}
   &\forall c \in C,\\
   &\forall 1 \le l \le n(c),\\
   &\forall p \in P,\\
   &\forall k \in R,\\
   &x_{c, l, p, k} \le r_{p, k}
-\end{align*}
+\end{align}
 
 We require each professor $p$ to teach at most $\max_p$ classes. This means that
 
-\begin{align*}
+\begin{align}
   &\forall p \in P,\\
   &\sum_{\substack{c \in C\\d \in D}} busy_{p, c, d} \le \textstyle{\max_p}
-\end{align*}
+\end{align}
 
 We require that the number of professors for a given class and a given role must satisfy the requirement for that role and that class:
 
-\begin{align*}
+\begin{align}
   &\forall c \in C,\\
   &\forall 1 \le l \le n(c),\\
   &\forall k \in R,\\
   &\min(c, l, k) \le \sum_{p \in P} x_{c, l, p, k} \le \max(c, l, k)
-\end{align*}
+\end{align}
 
 Due to our formulation of $x$, we need to ensure that no ``duplicate'' professors exist - that is, that a single professor is not assigned to teach a given class in two different roles. Formally, we require:
 
-\begin{align*}
+\begin{align}
   &\forall c \in C,\\
   &\forall 1 \le l \le n(c),\\
   &\forall p \in P,\\
   &\sum_{k \in R} x_{c, l, p, k} \le 1
-\end{align*}
+\end{align}
 
 
 That's it for the problem's constraints, we now add consistency constraints that arise from our choice of variables for this formulation.
@@ -111,65 +111,65 @@ Firstly, we need to make sure that $class\_date$ makes sense. This means that $c
 
 We can write this constraint as:
 
-\begin{align*}
+\begin{align}
   &\forall\ c \in C\\
   &\forall w \in W\\
   &\forall m \in M\\
   &\forall 1 \le l \le n(c)\\
   &\forall 1 \le d \le D\\
   &ds_{m, w, l, d} \Rightarrow csd_{c, w} + cp_{c, m} - 1 \le class\_date_{c, l, d}
-\end{align*}
+\end{align}
 
 We also require that every class of every course is scheduled to exactly one day:
 
-\begin{align*}
+\begin{align} \label{eq:oneclassdate}
   &\forall c \in C,\\
   &\forall 1 \le l \le n(c),\\
   &\sum_{d \in D} class\_date_{c, l, d} = 1
-\end{align*}
+\end{align}
 
 and that if the course has $k$ classes, no more than $k$ class dates are assigned:
 
-\begin{align*}
+\begin{align} \label{eq:maxclassdates}
   &\forall c \in C,\\
   &\forall l > n(c),\\
   &\forall d \in D,\\
   &class\_date_{c, l, d} = 0
-\end{align*}
+\end{align}
 
 $busy\_l$ can be uniquely determined given the $x$ vector, and it is used solely for convenience:
 
-\begin{align*}
+\begin{align}
   &\forall p \in P,\\
   &\forall c \in C,\\
   &\forall 1\le l \le n(c),\\
   &busy\_l_{p, c, l} = \sum_{k \in R} x_{c, l, p, k}
-\end{align*}
+\end{align}
 
 We also want the rest of $busy\_l$ to be empty on class numbers higher than a given course's total number of classes:
 
-\begin{align*}
+\begin{align}
   &\forall p \in P,\\
   &\forall c \in C,\\
   &\forall l > n(c),\\
   &busy\_l_{p, c, l} = 0
-\end{align*}
+\end{align}
 
 Likewise, we have a convenience set of variables $busy$, which is simply the translation from class number to class date of $busy\_l$. Thus, if a course's $l$th class is on the $d$th date, and $busy\_l_{p, c, l}$, then we must have $busy_{p, c, d}$. Thus we have:
 
-\begin{align*}
+\begin{align}
   &\forall p \in P,\\
   &\forall c \in C,\\
   &\forall 1 \le l \le n(c),\\
   &busy_{p, c, d} \ge busy\_l_{p, c, l} + class\_date_{c, l, d} - 1
-\end{align*}
+\end{align}
 
 If we wanted not to allow $busy$ to have further nonzero entries, we could require that the sum of the busy days for professor $p$ and course $c$ is just the number of classes $p$ teaches in course $c$, since a professor is present at most once per every class:
 
-\begin{align*}
+\begin{align}
   &\forall p \in P,\\
   &\forall c \in C,\\
   &\sum_{d \in D} busy_{p, c, d} = \sum_{1 \le l \le n(c)} busy\_l_{p, c, l}
-\end{align*}
+\end{align}
 
 These two restrictions would tell us that, in a sense, $busy$ is a shifting of $busy\_l$, via $class\_date$. We choose not to add these restrictions, since they do not change the semantics of the found solutions - extra entries in $busy$ can simply be ignored, and we decrease the number of constraints for the solvers.

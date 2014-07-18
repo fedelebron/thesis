@@ -1,7 +1,8 @@
 \documentclass[a4paper,11pt]{amsbook}
 %\usepackage[utf8]{inputenc}
 
-
+\usepackage{etoolbox}
+\usepackage{chngcntr}
 \usepackage{amsmath, amscd, amssymb, amsthm, latexsym}
 \usepackage[usenames,dvipsnames,table]{xcolor}
 \usepackage{graphicx}
@@ -123,6 +124,11 @@ citecolor = magenta
 \DeclareRobustCommand{\gobblefive}[5]{}
 \newcommand*{\SkipTocEntry}{\addtocontents{toc}{\gobblefive}}
 
+\newcounter{aligncounter}
+\counterwithin*{aligncounter}{section}
+\counterwithin*{equation}{aligncounter}
+\AtBeginEnvironment{align}{\stepcounter{aligncounter}}
+\AtBeginEnvironment{alignat}{\stepcounter{aligncounter}}
 
 \begin{document}
 %\numberwithin{section}{chapter}
@@ -146,6 +152,9 @@ citecolor = magenta
 \numberwithin{figure}{section} %sets equation numbers <chapter>.<section>.<index>
 %\numberwithin{figure}{subsection} %sets equation numbers <chapter>.<section>.<subsection>.<index>
 %\maketitle
+
+\renewcommand\theequation{\thesection.\thealigncounter.\arabic{equation}}
+
 
 \input{title}
 \setcounter{tocdepth}{3} %temporal

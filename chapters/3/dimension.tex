@@ -1,0 +1,41 @@
+\section{Dimension}
+
+We begin by analyzing the dimension of the polytope, which we'll call $\dim$. We see that we have six types of variables:
+\begin{itemize}
+\item $cp_{c, s}$, of which there are $|C| \times |S|$.
+\item $csd_{c, w}$, of which there are $|C| \times |W|$.
+\item $x_{c, l, p, k}$, of which there are $|C| \times |N| \times |P| \times |R|$.
+\item $class\_date_{c, l, d}$, of which there are $|C| \times |N| \times |D|$.
+\item $busy_{p, c, d}$, of which there are $|P| \times |C| \times |D|$.
+\item $busy\_l_{p, c, l}$, of which there are $|P| \times |C| \times |L|$.
+\end{itemize}
+
+This means that the total number of variables is $|C| \times |S| + |C| \times |W| + |C| \times |N| \times |P| \times |R| + |C| \times |N| \times |D| + |P| \times |C| \times |D| + |P| \times |C| \times |L|$. After some simplification, this is $|C| * (|D| * (|N| + |P|) + |P| * (|L| + |N| * |R|) + |S| + |W|)$. We will call this number $U$, since it will be an upper bound on the dimension of the polytope.
+
+
+We find several linearly independent families of equalities which allow us to bound the dimension of the problem more tightly:
+\begin{itemize}
+\item We have $|C|$ equations from \ref{eq:chosenstart}, each of which refer to different variables, and so are linearly independent and decrease our dimension upper bound by $|C|$.
+\item From \ref{eq:chosenpattern} we obtain $|C|$ more linearly independent equations.
+\item From \ref{eq:oneclassdate} we get $|C| \times (\sum_{i = 1}^{|C|} n(i))$ equalities, which again are obviously linearly independent since they refer to distinct variables.
+\item From \ref{eq:maxclassdates} we find $|C| \times |D| \times |L| - |C| \times |D| \times (\sum_{i = 1}^{|C|} n(i))$ equalities.
+\item We have $|P| \times |C| \times |L|$ equalities stemming from the totally linear dependence of $busy\_l$ to the other variables. These are used simply for convenience, and so they add no dimensions to the polytope.
+\end{itemize}
+
+Considering these families of equalities, which are both linearly independent and linearly independent when combined, we can restrict $\dim$ by $U - 2|C| - |C| \times |D| \times |L| + |C| \times |D| \times \sum_{i=1}^{|C|} n(i) - |C| \times \sum_{i=1}^{|C|} n(i) - |P| \times |C| \times |L|$.
+
+By noting $K = \sum_{i=1}^{|C|} n(i)$, we obtain the following result:
+
+\begin{thm}
+\begin{align*}
+\dim \le |C| \times (&|D| \times |K|
+                     \\&- |D| \times |L|
+                     \\&+ |D| \times |N|
+                     \\&+ |D| \times |P|
+                     \\&- |K|
+                     \\&- |L| \times |P|
+                     \\&+ |N| \times |P| \times |R|
+                     \\&+ |S| + |W| - 2)
+\end{align*}
+\end{thm}
+
