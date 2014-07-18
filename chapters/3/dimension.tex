@@ -10,7 +10,7 @@ We begin by analyzing the dimension of the polytope, which we'll call $\dim$. We
 \item $busy\_l_{p, c, l}$, of which there are $|P| \times |C| \times |L|$.
 \end{itemize}
 
-This means that the total number of variables is $|C| \times |S| + |C| \times |W| + |C| \times |N| \times |P| \times |R| + |C| \times |N| \times |D| + |P| \times |C| \times |D| + |P| \times |C| \times |L|$. After some simplification, this is $|C| * (|D| * (|N| + |P|) + |P| * (|L| + |N| * |R|) + |S| + |W|)$. We will call this number $U$, since it will be an upper bound on the dimension of the polytope.
+This means that the total number of variables is $|C| \times |S| + |C| \times |W| + |C| \times |N| \times |P| \times |R| + |C| \times |N| \times |D| + |P| \times |C| \times |D| + |P| \times |C| \times |L|$. After some simplification, this is $|C| \times (|D| \times (|N| + |P|) + |P| \times (|L| + |N| \times |R|) + |S| + |W|)$. We will call this number $U$, since it will be an upper bound on the dimension of the polytope.
 
 
 We find several linearly independent families of equalities which allow us to bound the dimension of the problem more tightly:
