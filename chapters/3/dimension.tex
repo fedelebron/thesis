@@ -38,3 +38,33 @@ Let $\dim$ be the dimension of the polytope where there are $|C|$ courses, $|S|$
 \end{align*}
 \end{thm}
 
+\subsection{Chance hyperplanes}
+
+One might hope that the bound given in the previous section is tight. Indeed, in many cases we have seen it turns out this is actually the dimension of the polytope. However, in general, the bound is unfortunately \emph{not} tight, due to what we will call ``chance hyperplanes'', or ``chance equalities''.
+
+Take, for example, a course $c$ with a class $i$ such that $i$ requires at least 1 instance of a professor with role $j$. Furthermore, assume there is exactly one professor, the $k$th one, who can fulfill that role. Then we will have the following relevant constraints on the polytope:
+
+\begin{align*}
+\forall p \in P. x_{c, i, p, j} &\le r_{p, j}\\
+1 &\le \sum_{p \in P} x_{c, i, p, j}\\
+\forall p \in P. 0 &\le x_{c, i, p, j} \le 1
+\end{align*}
+
+Since only professor $k$ can fulfill role $j$, $r_{p, j} = 0 \forall p \ne k$. Thus we have
+
+\begin{align*}
+\forall p \in P \setminus \{k\} & x_{c, i, p, j} = 0
+\end{align*}
+
+Since these variables vanish, we conclude the following
+
+\begin{align*}
+1 &\le \sum_{p \in P \setminus \{k\}} x_{c, i, p, j} + x_{c, i, k, j}\\
+  &= 0 + x_{c, i, k, j}\\
+  &= x_{c, i, k, j} \le 1
+\end{align*}
+
+Thus we have a valid equality $x_{c, i, k, j} = 1$, which is not deduced solely from the problem's ILP, but depends on the actual data that each case has (in this case, on the fact that only professor $k$ can fulfill role $j$).
+
+It is for this reason that the dimension of the polytope will be, in general, lower than the above bound.
+
