@@ -91,7 +91,7 @@ void Polytope::print_vertices_recursive(ostream& o, unsigned int k) const {
     for (int i = 1; i <= original_dimension; ++i) {
       o << recursive_state[i] << ' ';
     }
-    o << '\n';
+    o << std::endl;
     std::cerr << '*';
     return;
   }
