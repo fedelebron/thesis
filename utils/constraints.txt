@@ -57,12 +57,13 @@ subto satisfied_roles_2:
 
 subto role_family_1:
   forall <c, l, k> in C * L_ * R with l < n[c] and 0 == M[c, l, k]:
-    forall <p> in P:
+    forall <p> in P with r[p, k] == 1:
       x[c, l, p, k] == 0;
 
 subto role_family_2:
-  forall <c, l, k> in C * L_ * R with l < n[c] and m[c, l, k] == M[c, l, k]:
-    sum <p> in P:
+  forall <c, l, k> in C * L_ * R with l < n[c] and m[c, l, k] == M[c, l, k]
+  and M[c, l, k] != 0:
+    sum <p> in P with r[p, k] == 1:
       x[c, l, p, k] == m[c, l, k];
 
 
