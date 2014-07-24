@@ -100,5 +100,16 @@ Since these variables vanish, we conclude the following
 
 Thus we have a valid equality $x_{c, i, k, j} = 1$, which is not deduced solely from the problem's ILP, but depends on the actual data that each case has (in this case, on the fact that only professor $k$ can fulfill role $j$).
 
-It is for this reason that the dimension of the polytope will be, in general, lower than the above bound.
+Another case arises when the upper ($\max(c, l, k)$) and lower ($\min(c, l, k)$) bounds for the number of professors $p$ of a given role $k$ in a given class $c$ coincide. These then give rise to an equality
 
+$$
+\sum_{p \in P} x_{c, l, p, k} = \min(c, l, k) = \max(c, l, k)
+$$
+
+A particular case of this is when $\max(c, l, k) = 0$, where we in fact get $|P|$ such equalities:
+
+$$
+\forall p \in P. x_{c, l, p, k} = 0
+$$
+
+It is for this reason that the dimension of the polytope will be, in general, lower than the above bound.
