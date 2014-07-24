@@ -61,7 +61,7 @@ and
 
 Each professor must be available on the days he teaches. This implies that:
 
-\begin{align}
+\begin{align} \label{eq:availability}
   &\forall d \in D,\\
   &\forall p \in P,\\
   &\sum_{c \in C} busy_{p, c, d} \le a_{p, d}
@@ -71,7 +71,7 @@ Note this last constraint also requires that a professor teaches at most one cou
 
 We also require each professor be able to fulfill any role he is assigned to teach in:
 
-\begin{align}
+\begin{align} \label{eq:rolevalidity}
   &\forall c \in C,\\
   &\forall 1 \le l \le n(c),\\
   &\forall p \in P,\\
@@ -104,6 +104,15 @@ Due to our formulation of $x$, we need to ensure that no ``duplicate'' professor
   &\sum_{k \in R} x_{c, l, p, k} \le 1
 \end{align}
 
+We also need to make sure that no invalid classes existe in $x$. That is, that the $l$ index is always at most $n(c)$ for a given index $c$. Formally:
+
+\begin{align} \label{eq:noinvalidclasses}
+ &\forall c\in C,\\
+ &\forall l > n(c),\\
+ &\forall p \in P,\\
+ &\forall k \in R,\\
+ &x_{c, l, p, k} = 0
+\end{align}
 
 That's it for the problem's constraints, we now add consistency constraints that arise from our choice of variables for this formulation.
 

@@ -14,29 +14,63 @@ This means that the total number of variables is $|C| \times |M| + |C| \times |W
 
 
 We find several linearly independent families of equalities which allow us to bound the dimension of the problem more tightly:
-\begin{itemize}
+
+\begin{enumerate}
 \item We have $|C|$ equations from \ref{eq:chosenstart}, each of which refer to different variables, and so are linearly independent and decrease our dimension upper bound by $|C|$.
 \item From \ref{eq:chosenpattern} we obtain $|C|$ more linearly independent equations.
-\item From \ref{eq:oneclassdate} we get $|C| \times (\sum_{i = 1}^{|C|} n(i))$ equalities, which again are obviously linearly independent since they refer to distinct variables.
-\item From \ref{eq:maxclassdates} we find $|C| \times |S| \times (\sum_{i=1}^{|C|} (N - n(i))) = (\sum_{i=1}^{|C|} |C| \times |S| \times N) - (\sum_{i=1}^{|C|} |C| \times |S| \times n(i)) = |C|^2 \times |S| \times N - |C| \times |S| \times (\sum_{i = 1}^{|C|} n(i))$ equalities.
+\item From \ref{eq:oneclassdate} we get $\sum_{i = 1}^{|C|} n(i)$ equalities, which again are linearly independent since they refer to distinct variables.
+\item From \ref{eq:maxclassdates} we find $|S| \times (\sum_{i=1}^{|C|} (N - n(i))) = (\sum_{i=1}^{|C|} |S| \times N) - (\sum_{i=1}^{|C|} |S| \times n(i)) = |C| \times |S| \times N - |S| \times (\sum_{i = 1}^{|C|} n(i))$ equalities.
+\item From \ref{eq:noinvalidclasses} we get an equality for every $(c, l, p, k)$ such that $l > n(c)$. There are $\sum_{i = 1}^{|C|} |P| \times |R| \times (N - n(i)) = |P| \times |R| \times |N| \times |C| - |P| \times |R| \times K$ of these.
+\item While this is not a set of equations but of inequalities, from \ref{eq:availability} we get equalities for every $(p, d)$ such that $d \not\in A_p$. This gives us $\sum_{i=1}^{|P|} |S - A_i| = \sum_{i=1}^{|P|} |S| - |A_i| = |S| \times |P| - \sum_{i=1}^{|P|} |A_i|$ equalities.
+\item In the same vein, from \ref{eq:rolevalidity} we get equalities for every $(c, l, p, k)$ such that $k \not\in R_p$. There are $\sum_{i = 1}^{|P|} |C| \times N \times (|R| - |R_i|) = |P| \times |C| \times N \times |R| - |C| \times N \times (\sum_{i=1}^{|P|} |R_i|)$ of these.
 \item We have $|P| \times |C| \times N$ equalities stemming from the totally linear dependence of $busy\_l$ to the other variables. These are used simply for convenience, and so they add no dimensions to the polytope.
-\end{itemize}
+\end{enumerate}
 
-Considering these families of equalities, which are both linearly independent and linearly independent when combined, we can restrict $\dim$ by $U - 2|C| - |C| \times (\sum_{i = 1}^{|C|} n(i)) - |C|^2 \times |S| \times N + |C| \times |S| \times (\sum_{i = 1}^{|C|} n(i)) - |P| \times |C| \times N$.
+For brevity's sake we'll denote $K = \sum_{i=1}^{|C|} n(i)$, $T = \sum_{i=1}^{|P|} |A_i|$, and $Q = \sum_{i=1}^{|P|} |R_i|$.
+
+Considering these families of equalities, which are both linearly independent and linearly independent when combined, we can restrict $\dim$ by $U - 2|C| - (\sum_{i = 1}^{|C|} n(i)) - |C| \times |S| \times N + |S| \times (\sum_{i = 1}^{|C|} n(i)) - |P| \times |C| \times N$.
 
 By noting $K = \sum_{i=1}^{|C|} n(i)$, we obtain the following result:
 
 \begin{thm}
 Let $\dim$ be the dimension of the polytope where there are $|C|$ courses, $|S|$ days in the semester, $|P|$ professors, $|R|$ roles, $|M|$ weekly schedules, $|W|$ starting weeks, $N$ is the maximum number of classes a course has, and $K$ is the sum of the number of classes of each course. Then
 \begin{align*}
-  \dim \le |C| \times (&N \times |P| \times |R|
-                       \\&+ |S| \times (|K| + N - |C| \times N + |P|)
-                       \\&- |K|
-                       \\&+ |M|
-                       \\&+ |W|
-                       \\&- 2) 
+  \dim \le &|C| \times (N \times Q\\
+                      &\hspace{1cm}+ P \times S\\
+                      &\hspace{1cm}- N \times P \times R\\
+                      &\hspace{1cm}+ W\\
+                      &\hspace{1cm}+ M\\
+                      &\hspace{1cm}- 2)\\
+           &+ K \times (|P| \times |R| + |S| - 1)\\
+           &- |P| \times |S|\\
+           &+ T
 \end{align*}
 \end{thm}
+\begin{proof}
+We will show that the set of hyperplanes defined by the equations above are linearly independent. If the number of variables in the ILP formulation is $U$, and the number of equations is $\Sigma$, this will put an upper bound of $U - \Sigma$ on the dimension of the polytope associated with the ILP.
+
+We will call the equations coming from the $i$th item, for $1 \le i \le 8$, $E_i$. First, let's show that each set $E_i$ is linearly independent. Since the $E_i$ do not share coefficients between different $i$, this will show that their union (of size $\Sigma$) is a linearly independent set.
+
+\begin{itemize}
+\item For $E_1$ we have $|C|$ equations. The $j$th equation here will be $\sum_{w \in W} csd_{j, w} = 1$. Then two equations $j$ and $j'$ in $E_1$ will not share any variables, since all of the first one's variables have first index $j$, and all of the second one's variables have first index $j'$.
+
+\item For $E_2$ we have $|C|$ equalities, which are linearly independent for essentally the same reason as $E_1$ are.
+
+\item For $E_3$ we have $K$ equations, but each one will have a unique pair of $(c, l)$ indices, so again there is no intersection among the variables used.
+
+\item For $E_4$ and $E_5$  we see that the indices are again distinct for every equation.
+
+\item For $E_6$ each equation has a unique pair of $(d, p)$ indices.
+
+\item For $E_7$ each equation will have a unique 4-tuple $(c, l, p, k)$ of indices.
+
+\item For $E_8$ clearly every $busy\_l$ variable has a unique index, and we have exactly one equation per variable.
+\end{itemize}
+
+Thus each set $E_1, \dots, E_8$ is linearly independent. There could only be a linear dependence between sets $E_3$ and $E_4$, and between $E_5$ and $E_7$, since they seem to refer to the same variables ($class\_date$ and $x$, respectively). However, in both cases the variables they work on are distinguished by having their $l$ coordinate be $\le n(c)$ or $> n(c)$, so the set of variables in these equations really is disjoint.
+
+Thus every equation here is linearly independent, and the bound is obtained.
+\end{proof}
 
 \subsection{Chance hyperplanes}
 
