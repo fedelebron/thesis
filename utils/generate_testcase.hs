@@ -271,6 +271,21 @@ createContext = Context {
   randomSeed = toSeed (V.singleton 0)
 }
 
+dimension_bound :: Problem -> Int
+dimension_bound problem = let ctx = context problem
+                              ns = map numberOfClasses $ courses problem
+                              k = sum ns
+                              t = sum (map (length . filter id . availability) (professors problem))
+                              q = sum (map (length . roles) (professors problem))
+                              s = numberOfDays ctx
+                              n = maximum ns
+                              p = numberOfProfessors ctx
+                              c = numberOfCourses ctx
+                              r = numberOfRoles ctx
+                              m = numberOfSchedules ctx
+                              w = numberOfWeeks ctx
+                    in k * (p * r + s - 1) - p * s + t + c * (m + w + n * q - n * p * r + p * s - 2)
+
 main :: IO ()
 main = do
   s <- $initHFlags "Test case generator"
@@ -282,3 +297,4 @@ main = do
   p :: Problem <- generate ctx x
   putStrLn (toZimpl p)
   readFile "constraints.txt" >>= putStrLn
+  putStrLn $ "# Dimension bound: " ++ (show $ dimension_bound p)
