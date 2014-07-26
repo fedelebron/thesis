@@ -10,7 +10,9 @@ maximize quality:
     x[c, l, p, k] * q[p, c];
 
 subto class_date_coherency:
-  forall<c, sd, p, l, d> in C * SD * S * L_ * D with ds[p, sd, l, d] == 1:
+  forall<c, sd, p, l, d> in C * SD * S * L_ * D
+    with ds[p, sd, l, d] == 1
+         and l < n[c]:
     csd[c, sd] + cp[c, p] - 1 <= class_date[c, l, d];
 
 subto class_date_coherency_2:
