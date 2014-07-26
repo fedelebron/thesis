@@ -20,6 +20,20 @@ bool is_trivial(const Coefficients& c) {
   return std::count(begin(c), end(c), 0) == c.size() - 1;
 }
 
+bool is_tautological(const Constraint& c) {
+  const Coefficients& coeffs = get<0>(c);
+  const ConstraintType& cmp = get<1>(c);
+  const int& value = get<2>(c);
+  if (cmp == ConstraintType::EQ) return false;
+  int pos = std::count(begin(coeffs), end(coeffs), 1);
+  int neg = std::count(begin(coeffs), end(coeffs), -1);
+  if (cmp == ConstraintType::LE
+      && pos <= value) return true;
+  if (cmp == ConstraintType::GE
+      && -neg >= value) return true;
+  return false;
+}
+
 bool is_nonnegative(const Coefficients& c) {
   return std::count_if(begin(c), end(c), [](int x) { return x >= 0; }) == c.size();
 }
@@ -119,7 +133,8 @@ void Polytope::print_vertices_recursive(ostream& o, unsigned int k) const {
 void Polytope::clean() {
   original_dimension = dimension;
   while(clean_trivial_constraints()
-        || clean_zero_equalities());
+        || clean_zero_equalities()
+        || clean_tautological_inequalities());
   compute_inverse_translation();
 }
 
@@ -292,6 +307,15 @@ bool Polytope::clean_zero_equalities() {
     }
   }
   return false;
+}
+
+bool Polytope::clean_tautological_inequalities() {
+  int length = constraints.size();
+  constraints.erase(std::remove_if(begin(constraints),
+                                   end(constraints),
+                                   is_tautological),
+                    end(constraints));
+  return constraints.size() != length;
 }
 
 optional<Constraint> read_constraint(size_t dim, istream& i) {

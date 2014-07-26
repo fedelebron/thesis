@@ -35,6 +35,7 @@ struct Polytope {
   void fix_translation_table(int idx);
   void remove_empty_constraints();
   bool clean_zero_equalities();
+  bool clean_tautological_inequalities();
   bool clean_trivial_constraints();
   void compute_inverse_translation();
   bool necessarily_violated_constraint(const Constraint&) const;
