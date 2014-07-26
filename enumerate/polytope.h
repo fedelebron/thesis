@@ -26,7 +26,7 @@ struct Polytope {
   int untranslate(int idx) const;
   // translate from new indices to original indices
   int translate(int idx) const;
-  void print_constraint(ostream&, int i, bool human_readable) const;
+  void print_constraint(ostream&, const Constraint& c, bool human_readable) const;
   void print_ieq(ostream&) const;
   void print_poi(ostream&) const;
   void print_ine(ostream&) const;

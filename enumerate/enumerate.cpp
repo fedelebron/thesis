@@ -22,8 +22,8 @@ int main(int argc, char** argv) {
   if (find(begin(args), end(args), "--clean") != end(args)) {
     poly.clean();
     std::cout << "Cleaned input down to " << poly.dimension << " variables, " << poly.constraints.size() << " inequalities." << std::endl;
-    for (size_t i = 0; i < poly.constraints.size(); ++i) {
-      poly.print_constraint(std::cout, i, true);
+    for (const auto& c : poly.constraints) {
+      poly.print_constraint(std::cout, c, true);
     }
   }
 

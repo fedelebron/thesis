@@ -346,8 +346,8 @@ istream& operator>>(istream& i, Polytope& p) {
 
 ostream& operator<<(ostream& o, const Polytope& p) {
   o << "Constraints: " << std::endl;
-  for (size_t j = 0; j < p.constraints.size(); ++j) {
-    p.print_constraint(o, j, true);
+  for (auto& constraint : p.constraints) {
+    p.print_constraint(o, constraint, true);
   }
 
   o << "Determined: " << std::endl;
@@ -359,10 +359,10 @@ ostream& operator<<(ostream& o, const Polytope& p) {
 }
 
 
-void Polytope::print_constraint(ostream& o, int j, bool human_readable) const {
+void Polytope::print_constraint(ostream& o, const Constraint& c, bool human_readable) const {
   bool output = false;
   for (size_t k = 1; k <= dimension; ++k) {
-    int val = std::get<0>(constraints[j])[k];
+    int val = std::get<0>(c)[k];
     if (!val) continue;
     if (val == -1) o << '-';
     else if (output || !human_readable) o << '+';
@@ -370,13 +370,13 @@ void Polytope::print_constraint(ostream& o, int j, bool human_readable) const {
     output = true;
   }
 
-  switch(get<1>(constraints[j])) {
+  switch(get<1>(c)) {
     case ConstraintType::LE: o << '<'; break;
     case ConstraintType::GE: o << '>'; break;
     case ConstraintType::EQ: o << '='; break;
   }
   o << '=';
-  o  << ' ' << get<2>(constraints[j]) << std::endl;
+  o  << ' ' << get<2>(c) << std::endl;
 }
 
 void Polytope::print_ieq(ostream& o) const {
@@ -386,8 +386,8 @@ void Polytope::print_ieq(ostream& o) const {
   o << std::endl << "UPPER_BOUNDS" << std::endl;
   for (size_t i = 0; i < dimension; ++i) o << "1 ";
   o << std::endl << "INEQUALITIES_SECTION" << std::endl;
-  for (size_t i = 0; i < constraints.size(); ++i) {
-    print_constraint(o, i, false);
+  for (auto& constraint : constraints) {
+    print_constraint(o, constraint, false);
   }
   o << std::endl << "END" << std::endl;
 }
