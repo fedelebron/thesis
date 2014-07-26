@@ -25,6 +25,9 @@ int main(int argc, char** argv) {
     for (const auto& c : poly.constraints) {
       poly.print_constraint(std::cout, c, true);
     }
+    for (const auto& kv : poly.determined) {
+      std::cout << "x" << + kv.first << " == " << kv.second << std::endl;
+    }
   }
 
   if (find(begin(args), end(args), "--human") != end(args)) {
