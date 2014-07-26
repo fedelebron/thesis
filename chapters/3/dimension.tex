@@ -72,6 +72,12 @@ Thus each set $E_1, \dots, E_8$ is linearly independent. There could only be a l
 Thus every equation here is linearly independent, and the bound is obtained.
 \end{proof}
 
+\begin{obs}
+We note that for the bound we obtain, the $|M|$ and $|W|$ variables are considered equally significant. This can be understood since in our ILP formulation they are treated essentially identically.
+
+More conceptually, we can consider that every starting date we add forms, together with every weekly schedule, a new ``semester schedule'', which determines class dates for an entire semester.
+\end{obs}
+
 \subsection{Chance hyperplanes}
 
 One might hope that the bound given in the previous section is tight. Indeed, in many cases we have seen it turns out this is actually the dimension of the polytope. However, in general, the bound is unfortunately \emph{not} tight, due to what we will call ``chance hyperplanes'', or ``chance equalities''.
