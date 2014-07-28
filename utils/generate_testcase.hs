@@ -1,4 +1,4 @@
-{-# LANGUAGE TypeSynonymInstances, FlexibleInstances, ScopedTypeVariables, TemplateHaskell #-}
+{-# LANGUAGE TypeSynonymInstances, FlexibleInstances, UndecidableInstances, ScopedTypeVariables, TemplateHaskell #-}
 
 import Data.List
 import System.Random.MWC
@@ -6,6 +6,8 @@ import HFlags
 import Control.Monad.Primitive (PrimMonad, PrimState)
 import Control.Monad (filterM, liftM, replicateM)
 import qualified Data.Vector as V
+import Debug.Trace
+import System.IO (hPutStrLn, stderr)
 
 defineFlag "professors" (1 :: Int) "How many professors to use"
 defineFlag "courses" (1 :: Int) "How many courses to use"
@@ -15,12 +17,12 @@ defineFlag "weeks" (2 :: Int) "How many weeks to consider"
 defineFlag "roles" (5 :: Int) "How many roles to use"
 defineFlag "classes" (20 :: Int) "Maximum number of classes per course"
 defineFlag "course_schedules" (2 :: Int) "How many schedules each course can use"
-defineFlag "start_dates" (5 :: Int) "How many starting dates to use"
-defineFlag "course_start_dates" (2 :: Int) "How many starting dates to use"
+defineFlag "start_weeks" (5 :: Int) "How many starting weeks to use"
+defineFlag "course_start_weeks" (2 :: Int) "How many starting weeks to use per course"
 defineFlag "max_roles" (2 :: Int) "How many instances of a given role may be required for a class as a maximum"
 defineFlag "min_roles" (0 :: Int) "How many instances of a given role may be required for a class as a minimum"
 defineFlag "max_p" (10 :: Int) "Maximum number of classes a professor can be allowed to give, at the most"
-defineFlag "max_start_date" (2 :: Int) "The latest week a course can start at"
+defineFlag "max_start_week" (2 :: Int) "The latest week a course can start at"
 defineFlag "random_seed" (0 :: Int) "A random seed for the testcase, if none is specified, a fresh one will be generated"
 defineFlag "availability_probability" (0.5 :: Double) "The probability a professor is available on a given day"
 
@@ -32,13 +34,13 @@ data Context = Context { numberOfProfessors :: Int,
                          numberOfWeeks :: Int,
                          numberOfWeekDays :: Int,
                          numberOfRoles :: Int,
-                         numberOfStartDates :: Int,
-                         numberOfCourseStartDates :: Int,
+                         numberOfStartWeeks :: Int,
+                         numberOfCourseStartWeeks :: Int,
                          maxNumberOfRoles :: Int,
                          minNumberOfRoles :: Int,
                          maxMaxP :: Int,
                          maxNumberOfClasses :: Int,
-                         maxStartDate :: Int,
+                         maxStartWeek :: Int,
                          availabilityProbability :: Double,
                          randomSeed :: Seed
 } deriving Show
@@ -94,26 +96,27 @@ instance Generatable ClassRequirement where
                                      -- no totally empty requirements
     return $ zip roles sorted'
 
+newtype StartingWeek = StartingWeek { getStartingWeek :: Int} deriving Show
+
+instance Generatable StartingWeek where
+  generate ctx gen = liftM StartingWeek $ uniformR (0, maxStartWeek ctx) gen
+
 data Course = Course { availableSchedules :: [Int],
-                       availableStartingWeeks :: [Int],
+                       availableStartingWeeks :: [Int], -- indices into a problem's starting weeks
                        perClassRequirements :: [ClassRequirement],
                        numberOfClasses :: Int
                      } deriving Show
 
 instance Generatable Course where
   generate ctx gen = do
-    schedules <- filterM (const $ uniform gen) [0.. numberOfCourseSchedules ctx - 1]
-    schedules' <- if null schedules -- at least one schedule per course
-                  then do
-                    x <- uniformR (0, numberOfCourseSchedules ctx - 1) gen
-                    return [x]
-                  else return schedules
-    startingWeeks <- filterM (const $ uniform gen) [0 .. maxStartDate ctx ]
-    let startingWeeks' = 0:startingWeeks -- arbitrarily add the first week as a possible starting week
-    numberOfClasses <-  uniformR (1, maxNumberOfClasses ctx) gen
+    let pickSchedule = uniformR (0, numberOfSchedules ctx - 1) gen
+    schedules <- liftM nub $ replicateM (numberOfCourseSchedules ctx) pickSchedule
+    let pickStartingWeek = uniformR (0, numberOfStartWeeks ctx - 1) gen
+    startingWeeks <- liftM nub $ replicateM (numberOfCourseStartWeeks ctx) pickStartingWeek
+    numberOfClasses <- uniformR (1, maxNumberOfClasses ctx) gen
     reqs <- replicateM numberOfClasses $ generate ctx gen
-    return $ Course { availableSchedules = schedules',
-                      availableStartingWeeks = startingWeeks',
+    return $ Course { availableSchedules = schedules,
+                      availableStartingWeeks = startingWeeks,
                       perClassRequirements = reqs,
                       numberOfClasses = numberOfClasses
                     }
@@ -123,23 +126,21 @@ data Problem = Problem {
                          courses :: [Course],
                          professors :: [Professor],
                          schedules :: [Schedule],
-                         startingWeeks :: [Int]
+                         startingWeeks :: [StartingWeek]
                        } deriving Show
 instance Generatable Problem where
   generate ctx gen = do
     courses <- replicateM (numberOfCourses ctx) $ generate ctx gen
     professors <- replicateM (numberOfProfessors ctx) $ generate ctx gen
     schedules <- replicateM (numberOfSchedules ctx) $ generate ctx gen
-    startingWeeks <- replicateM (numberOfStartDates ctx) $ generate ctx gen
-    let startingWeeks' = filter (<= maxStartDate ctx) startingWeeks
-    if (length startingWeeks' /= numberOfStartDates ctx)
-    then generate ctx gen
-    else return $ Problem { context = ctx,
-                            courses = courses,
-                            professors = professors,
-                            schedules = schedules,
-                            startingWeeks = startingWeeks'
-                          }
+    startingWeeks <- replicateM (numberOfStartWeeks ctx) $ generate ctx gen
+    (traceShow startingWeeks (return 123))
+    return $ Problem { context = ctx,
+                       courses = courses,
+                       professors = professors,
+                       schedules = schedules,
+                       startingWeeks = startingWeeks
+                     }
 
 showA :: Problem -> String
 showA p = "param a[P * D] :=    | " ++ intercalate ", " (map show [0 .. numberOfDays (context p) - 1]) ++ " |\n"
@@ -192,14 +193,15 @@ showm selector name p = "param " ++ name ++ "[C * L_ * R] :=       | " ++ interc
               in maybe "0" (show . selector) (lookup k reqs)
 
 showDS :: Problem -> String
-showDS p = "param ds[S * SD *  L_ * D] :=    | " ++ intercalate ", " (map show [0 .. d - 1]) ++ " |\n"
+showDS p = "param ds[S * SD *  L_ * D] :=    | " ++ intercalate ", " (map show days) ++ " |\n"
            ++ intercalate "\n" [g k | (i, s) <- zip [0..] (schedules p),
-                                      (j, sd) <- zip [0..] (startingWeeks p),
+                                      (j, sd) <- zip [0..] (map getStartingWeek $ startingWeeks p),
                                       let g = f (i, s) (j, sd),
                                       k <- [0 .. n - 1]]
            ++ ";"
   where
     d = numberOfDays (context p)
+    days = [0 .. d - 1]
     n = maxNumberOfClasses (context p)
     f (i, s) (j, sd) = g where
       classDays = toYearlyDates sd s
@@ -236,7 +238,7 @@ toZimpl p = unlines . map ($ p) $ [setShower "P" numberOfProfessors,
                                    setShower "D" numberOfDays,
                                    setShower "C" numberOfCourses,
                                    setShower "S" numberOfSchedules,
-                                   setShower "SD" numberOfStartDates,
+                                   setShower "SD" numberOfStartWeeks,
                                    showL,
                                    setShower "L_" maxNumberOfClasses,
                                    showA,
@@ -259,15 +261,15 @@ createContext = Context {
   numberOfCourseSchedules = min flags_course_schedules flags_schedules,
   numberOfRoles = flags_roles,
   numberOfWeekDays = flags_week_days,
-  numberOfStartDates = flags_start_dates,
+  numberOfStartWeeks = flags_start_weeks,
   numberOfDays = flags_week_days * flags_weeks,
-  numberOfCourseStartDates = min flags_course_start_dates flags_start_dates,
+  numberOfCourseStartWeeks = min flags_course_start_weeks flags_start_weeks,
   maxNumberOfRoles = flags_max_roles,
   minNumberOfRoles = flags_min_roles,
   maxMaxP = flags_max_p,
   maxNumberOfClasses = flags_classes,
   availabilityProbability = flags_availability_probability,
-  maxStartDate = min flags_max_start_date flags_weeks,
+  maxStartWeek = min flags_max_start_week (flags_weeks - 1),
   randomSeed = toSeed (V.singleton 0)
 }
 
