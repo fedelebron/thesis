@@ -20,7 +20,7 @@ subto class_date_coherency_2:
     sum<d> in D: class_date[c, l, d] == 1;
 
 subto class_date_coherency_3:
-  forall<c, l, d> in C * L_ * D with l >= n[c] and l <= L:
+  forall<c, l, d> in C * L_ * D with l >= n[c]:
     class_date[c, l, d] == 0;
 
 subto busy_l_coherency_2:
