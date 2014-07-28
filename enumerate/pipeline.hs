@@ -1,6 +1,12 @@
-import System.Process (waitForProcess,
+import System.Process (readProcess,
+                       waitForProcess,
                        runInteractiveProcess,
-                       readProcessWithExitCode)
+                       readProcessWithExitCode,
+                       proc,
+                       StdStream(UseHandle),
+                       createProcess,
+                       std_out,
+                       std_err)
 import System.Exit (exitFailure, exitSuccess)
 import System.IO (hPutStrLn,
                   stderr,
@@ -8,18 +14,23 @@ import System.IO (hPutStrLn,
                   BufferMode(NoBuffering, LineBuffering),
                   hSetBinaryMode,
                   hSetBuffering,
-                  hGetContents)
+                  hGetContents,
+                  openFile,
+                  hFlush,
+                  IOMode(WriteMode))
 import System.Environment (getArgs, getProgName)
 import System.FilePath.Posix (addExtension, replaceExtension)
 import System.Posix.Files (rename)
 import Data.Tuple (swap)
 import Data.Maybe (fromJust)
 import qualified Data.Map.Strict as M
-import Control.Monad (when)
+import Control.Monad (when, forever)
 import GHC.IO.Handle (Handle)
 import System.ProgressBar (progressBar, noLabel, percentage)
 import Data.List (isPrefixOf)
 import Data.Char (isSpace, isDigit)
+import Data.Time (UTCTime, diffUTCTime, getCurrentTime)
+import Control.Concurrent (forkIO, threadDelay, killThread)
 
 printHelp :: IO ()
 printHelp = do
@@ -39,9 +50,7 @@ createTranslationMap str = let equations = drop 9 (lines str)
     tuplify :: [a] -> (a, a)
     tuplify [x, y] = (x, y)
 
-type Sign = Char
-type Variable = String
-type Term = (Sign, Variable)
+type Term = String
 
 translateFacets :: TranslationMap -> String -> String
 translateFacets t = unlines . map translateLine . lines
@@ -54,16 +63,15 @@ translateFacets t = unlines . map translateLine . lines
     translateFacet :: String -> String
     translateFacet f = let f' = tail . dropWhile ((/=) ')') $ f
                            terms = toTerms f'
-                           strings = map (uncurry (:)) terms
-                        in unwords strings
+                        in unwords terms
       where
         toTerms :: String -> [Term]
         toTerms [] = []
         toTerms (' ':xs) = toTerms xs
         toTerms (x:xs) | x `elem` "+-" = let (var, rest) = break (`elem` " +-") xs
                                              Just v = M.lookup var t
-                                         in (x, v) : toTerms rest
-        toTerms (x:xs) | x `elem` "<>=" = [(x, xs)]
+                                         in (x:' ':v) : toTerms rest
+        toTerms (x:'=':xs) = [x:'=':' ':dropWhile isSpace xs]
 
 reportPORTAProgress :: Handle -> IO ()
 reportPORTAProgress handle = do
@@ -103,6 +111,22 @@ reportPORTAProgress handle = do
       countdown n (k - 1) xs
     countdown n k (x:xs) = countdown n k xs
 
+checkVertexFileStatus :: String -> UTCTime -> IO ()
+checkVertexFileStatus fileName startTime = do
+  stdout' <- readProcess "wc" ["-l", "-c", fileName] ""
+  let [lines, chars, _] = words stdout'
+  let nlines = read lines :: Int
+      nchars = read chars :: Int
+      mb = nchars `div` (1024^2)
+  currTime <- getCurrentTime
+  let diff = toInteger . round $ currTime `diffUTCTime` startTime
+  putStr "\r                                                                    \r"
+  putStr $ (show nlines) ++ "\t\t" ++ (show mb) ++ "MB\t\t+" ++ (show diff) ++ "s"
+  hFlush stdout
+
+periodically :: IO () -> IO ()
+periodically action = threadDelay 100000 >> action >> periodically action
+
 main :: IO ()
 main = do
   args <- getArgs
@@ -110,31 +134,36 @@ main = do
   let (lpFile:_) = args
   -- The file where the vertices will be written to
   let poiFile = replaceExtension lpFile "poi"
+  poiHandle <- openFile poiFile WriteMode
   -- The file where the translation table for the lp variables will be
   -- written to
   let tblFile = replaceExtension lpFile "tbl"
+  tblHandle <- openFile tblFile WriteMode
+
+  putStrLn "Vertices\tFile size\tTime"
+  currentTime <- getCurrentTime
+  checker <- forkIO (periodically (checkVertexFileStatus poiFile currentTime))
 
   -- -t to print the translation table to stderr
   -- -a because our variables are arbitrarily named, not x1, ..., xn
   let params = ["-t", "-a", lpFile]
-  (_, stdout, stderr) <- readProcessWithExitCode "zerOne" params ""
+  let process = (proc "zerOne" params) { std_out = UseHandle poiHandle,
+                                         std_err = UseHandle tblHandle }
+  (_, _, _, processHandle) <- createProcess process
+  waitForProcess processHandle
 
-  putStrLn $ "Writing " ++ (show $ length (lines stdout) - 5) ++ " vertices..."
-  writeFile poiFile stdout
-  putStrLn "Writing translation table..."
-  writeFile tblFile stderr
+  killThread checker
 
-  let translationMap = createTranslationMap stderr
-
+  translationTable <- readFile tblFile
+  let translationMap = createTranslationMap translationTable
   let params = ["-T", "-l", poiFile]
   let cmd = "./xporta"
-  --  (status, stdout, stderr) <- readProcessWithExitCode "./xporta" params ""
   (_, stdout, _, proc) <- runInteractiveProcess cmd params Nothing Nothing
-  -- Set to text mode
 
+  putStrLn ""
   reportPORTAProgress stdout
-
   waitForProcess proc
+
   -- Where PORTA writes the facets to
   let ieqFile' = addExtension poiFile "ieq"
       ieqFile = replaceExtension poiFile "ieq"
