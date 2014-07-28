@@ -24,8 +24,8 @@ subto class_date_coherency_3:
     class_date[c, l, d] == 0;
 
 subto busy_l_coherency_2:
-  forall <c, l, p> in C * L_ * P with l >= n[c]:
-    sum<k> in R: x[c, l, p, k] == 0;
+  forall <c, l, p, k> in C * L_ * P * R with l >= n[c]:
+    x[c, l, p, k] == 0;
 
 subto busy_coherency:
   forall <p, c, l, d> in P * C * L_ * D:
@@ -67,7 +67,6 @@ subto role_family_2:
   and M[c, l, k] != 0:
     sum <p> in P with r[p, k] == 1:
       x[c, l, p, k] == m[c, l, k];
-
 
 subto no_duplicate_profs:
     forall <c, l, p> in C * L_ * P with l < n[c]:
