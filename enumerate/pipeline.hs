@@ -21,8 +21,6 @@ import System.ProgressBar (progressBar, noLabel, percentage)
 import Data.List (isPrefixOf)
 import Data.Char (isSpace, isDigit)
 
-import Debug.Trace
-
 printHelp :: IO ()
 printHelp = do
   progName <- getProgName
@@ -71,10 +69,9 @@ reportPORTAProgress :: Handle -> IO ()
 reportPORTAProgress handle = do
   hSetBinaryMode handle False
   hSetBuffering handle LineBuffering
-  contents <- hGetContents handle
-
   hSetBuffering stdout NoBuffering
 
+  contents <- hGetContents handle
   let li = lines contents
 
   putStrLn "Gaussian elimination..."
@@ -86,19 +83,21 @@ reportPORTAProgress handle = do
   putStrLn "\nFourier-Motzkin done."
 
   where
+    bar :: Integer -> Integer -> IO ()
     bar = progressBar percentage percentage 100
+    track :: String -> [String] -> IO [String]
     track str = countdownStart
                 . drop 5
                 . dropWhile (not . isPrefixOf str)
+    countdownStart :: [String] -> IO [String]
     countdownStart (x:xs) = let n = read
                                     . takeWhile isDigit
                                     . dropWhile isSpace
                                     . tail
                                     $ x
                             in countdown n n xs
-    countdown _ 1 xs = do
-      bar 1 1
-      return xs
+    countdown :: Integer -> Integer -> [String] -> IO [String]
+    countdown _ 1 xs = bar 1 1 >> return xs
     countdown n k (('|':_):xs) = do
       bar (n - k) n
       countdown n (k - 1) xs
@@ -118,7 +117,7 @@ main = do
   -- -t to print the translation table to stderr
   -- -a because our variables are arbitrarily named, not x1, ..., xn
   let params = ["-t", "-a", lpFile]
-  (status, stdout, stderr) <- readProcessWithExitCode "zerOne" params ""
+  (_, stdout, stderr) <- readProcessWithExitCode "zerOne" params ""
 
   putStrLn $ "Writing " ++ (show $ length (lines stdout) - 5) ++ " vertices..."
   writeFile poiFile stdout
@@ -128,8 +127,9 @@ main = do
   let translationMap = createTranslationMap stderr
 
   let params = ["-T", "-l", poiFile]
+  let cmd = "./xporta"
   --  (status, stdout, stderr) <- readProcessWithExitCode "./xporta" params ""
-  (stdin, stdout, stderr, proc) <- runInteractiveProcess "./xporta" params Nothing Nothing
+  (_, stdout, _, proc) <- runInteractiveProcess cmd params Nothing Nothing
   -- Set to text mode
 
   reportPORTAProgress stdout
