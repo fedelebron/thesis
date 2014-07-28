@@ -6,7 +6,6 @@ import HFlags
 import Control.Monad.Primitive (PrimMonad, PrimState)
 import Control.Monad (filterM, liftM, replicateM)
 import qualified Data.Vector as V
-import Debug.Trace
 import System.IO (hPutStrLn, stderr)
 
 defineFlag "professors" (1 :: Int) "How many professors to use"
@@ -134,7 +133,6 @@ instance Generatable Problem where
     professors <- replicateM (numberOfProfessors ctx) $ generate ctx gen
     schedules <- replicateM (numberOfSchedules ctx) $ generate ctx gen
     startingWeeks <- replicateM (numberOfStartWeeks ctx) $ generate ctx gen
-    (traceShow startingWeeks (return 123))
     return $ Problem { context = ctx,
                        courses = courses,
                        professors = professors,
