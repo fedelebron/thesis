@@ -15,6 +15,9 @@ using std::string;
 using boost::optional;
 using std::isspace;
 using std::get;
+using std::to_string;
+
+Polytope::Polytope() : original_dimension(0), dimension(0) {}
 
 bool is_trivial(const Coefficients& c) {
   return std::count(begin(c), end(c), 0) == c.size() - 1;
@@ -51,7 +54,6 @@ int get_trivial_variable(const Coefficients& c) {
   auto it = std::find_if(begin(c), end(c), [](int x) { return x != 0; });
   return std::distance(begin(c), it);
 }
-
 
 void Polytope::compute_inverse_translation() {
   inverse_translation.resize(original_dimension + 1);
@@ -324,13 +326,14 @@ optional<Constraint> read_constraint(size_t dim, istream& i) {
 
   Coefficients coeffs(dim + 1);
   char c;
-  while ((c = i.peek()) && (c == '+' || c == '-')) {
+  while ((c = i.peek()) && c != '+' && c != '-') i.get();
+  while ((c = i.peek()) && c != '=' && c != '<' && c != '>') {
     bool sign = c == '+';
-    i.ignore(3);
+    while (!isdigit(i.peek())) i.get();
     int coeff;
     i >> coeff;
     coeffs[coeff] = sign ? 1 : -1;
-    i.ignore(1);
+    while (isspace(i.peek())) i.get();
   }
 
   ConstraintType type;
@@ -340,7 +343,7 @@ optional<Constraint> read_constraint(size_t dim, istream& i) {
     default: type = ConstraintType::EQ;
   }
 
-  i.ignore(3);
+  i.ignore(2);
 
   int bound;
   i >> bound;
@@ -352,26 +355,94 @@ istream& operator>>(istream& i, Polytope& p) {
   i.ignore(6);
   i >> p.dimension;
   p.original_dimension = p.dimension;
-  i.ignore(sizeof("\nLOWER_BOUNDS\n") - 1
+  string s;
+  while (i >> s && s != "INEQUALITIES_SECTION");
+  i.ignore(1);
+  /*i.ignore(sizeof("\nLOWER_BOUNDS\n") - 1
            + 2 * p.dimension
            + sizeof("\nUPPER_BOUNDS\n") - 1
            + 2 * p.dimension
-           + sizeof("\nINEQUALITIES_SECTION\n") - 1);
+           + sizeof("\nINEQUALITIES_SECTION\n") - 1);*/
   optional<Constraint> c;
   while ((c = read_constraint(p.dimension, i))) {
     p.constraints.push_back(c.get());
   }
 
   p.translated.resize(p.dimension + 1);
+  for (int i = 1; i <= p.dimension; ++i) {
+    p.inverse_sequential_translation[i] = 'x' + to_string(i);
+    p.sequential_translation['x' + to_string(i)] = i;
+  }
+
   std::iota(begin(p.translated), end(p.translated), 0);
 
   return i;
 }
 
+void Polytope::read_lp(istream& i) {
+  char c;
+  string s;
+  vector<vector<int>> constraint_indices;
+  auto& h = sequential_translation;
+  auto& ih = inverse_sequential_translation;
+  h.clear();
+  while(getline(i, s) && s != "Subject to");
+  while(getline(i, s) && s != "Bounds") {
+    vector<int> current_constraint_indices;
+    while (isspace(i.peek())) i.get();
+    while (i.peek() == '+' || i.peek() == '-') {
+      i >> c;
+      i.ignore(1); // ' '
+      i >> s;
+      if (h.find(s) == end(h)) {
+        h[s] = h.size() + 1;
+        ih[h.size()] = s;
+      }
+      current_constraint_indices.push_back((c == '+' ? 1 : -1) * h[s]);
+      while (isspace(i.peek())) i.get();
+    }
+
+    constraint_indices.push_back(current_constraint_indices);
+
+    ConstraintType c;
+    switch (i.peek()) {
+      case '<':
+        c = ConstraintType::LE;
+        break;
+      case '=':
+        c = ConstraintType::EQ;
+        break;
+      case '>':
+        c = ConstraintType::GE;
+        break;
+    }
+
+    i.ignore(2); // '==', '<=', or '>='
+    int v;
+    i >> v;
+    while (isspace(i.peek())) i.get();
+    constraints.push_back(Constraint{{}, c, v});
+  }
+
+  dimension = h.size();
+  original_dimension = h.size();
+
+  for (int i = 0; i < constraints.size(); ++i) {
+    auto& v = get<0>(constraints[i]);
+    v.resize(dimension + 1);
+    for (const auto& idx : constraint_indices[i]) {
+      v[abs(idx)] = idx > 0 ? 1 : -1;
+    }
+  }
+  translated.resize(dimension + 1);
+  std::iota(begin(translated), end(translated), 0);
+}
+
+
 ostream& operator<<(ostream& o, const Polytope& p) {
   o << "Constraints: " << std::endl;
   for (auto& constraint : p.constraints) {
-    p.print_constraint(o, constraint, true);
+    p.print_constraint(o, constraint, true, true);
   }
 
   o << "Determined: " << std::endl;
@@ -379,27 +450,42 @@ ostream& operator<<(ostream& o, const Polytope& p) {
     o << 'x' << kv.first << " = " << kv.second << std::endl;
   }
 
+  o << "Names: " << std::endl;
+  for (const auto& kv : p.sequential_translation) {
+    o << kv.first << " -> " << kv.second << std::endl;
+  }
+
   return o;
 }
 
 
-void Polytope::print_constraint(ostream& o, const Constraint& c, bool human_readable) const {
+void Polytope::print_constraint(ostream& o,
+                                const Constraint& c,
+                                bool human_readable,
+                                bool numbered) const {
   bool output = false;
   for (size_t k = 1; k <= dimension; ++k) {
     int val = std::get<0>(c)[k];
     if (!val) continue;
     if (val == -1) o << '-';
     else if (output || !human_readable) o << '+';
-    o << " x" << (human_readable ? translate(k) : k) << ' ';
+    if (!numbered) {
+      o << ' ' << inverse_sequential_translation.at(translate(k)) << ' ';
+    } else {
+      o << " x" << (human_readable ? translate(k) : k) << ' ';
+    }
     output = true;
   }
 
   switch(get<1>(c)) {
-    case ConstraintType::LE: o << '<'; break;
-    case ConstraintType::GE: o << '>'; break;
-    case ConstraintType::EQ: o << '='; break;
+    case ConstraintType::LE: o << "<="; break;
+    case ConstraintType::GE: o << ">="; break;
+    case ConstraintType::EQ:
+      o << '=';
+      if (human_readable) o << '=';
+      break;
   }
-  o << '=';
+
   o  << ' ' << get<2>(c) << std::endl;
 }
 
@@ -411,7 +497,7 @@ void Polytope::print_ieq(ostream& o) const {
   for (size_t i = 0; i < dimension; ++i) o << "1 ";
   o << std::endl << "INEQUALITIES_SECTION" << std::endl;
   for (auto& constraint : constraints) {
-    print_constraint(o, constraint, false);
+    print_constraint(o, constraint, false, true);
   }
   o << std::endl << "END" << std::endl;
 }
@@ -460,3 +546,64 @@ void Polytope::print_ine(ostream& o) const {
   o << "end\nmaxcutoff";
 }
 
+void Polytope::print_lp(ostream& o, bool numbered) const {
+  o << "Maximize potato: 1\n";
+  o << "Subject to\n";
+
+  for (const auto& c : constraints) {
+    print_constraint(o, c, false, numbered);
+  }
+
+  o << "Bounds\n";
+  for (unsigned int i = 1; i <= original_dimension; ++i) {
+    if (determined.count(i)) continue;
+    if (numbered) o << "0 <= x" << i << " <= 1\n";
+    else o << "0 <= " << inverse_sequential_translation.at(i)
+                      << " <= 1\n";
+  }
+
+  o << "General\n";
+
+  for (unsigned int i = 1; i <= original_dimension; ++i) {
+    if (determined.count(i)) continue;
+    if (numbered) o << " x" << i << '\n';
+    else o << inverse_sequential_translation.at(i)
+           << '\n';
+  }
+
+  o << "End\n";
+}
+
+void Polytope::print_tbl(ostream& o) const {
+  o << sequential_translation.size() << ' '
+    << determined.size() << '\n';
+  for (const auto& kv : sequential_translation) {
+    o << kv.first << " x" << kv.second << '\n';
+  }
+  for (const auto& kv : determined) {
+    o << 'x' << kv.first << " = " << kv.second << '\n';
+  }
+}
+
+void Polytope::read_tbl(istream& i) {
+  int nvars, ndetermined;
+  i >> nvars >> ndetermined;
+  int k, v;
+  string s;
+  for (int j = 0; j < nvars; ++j) {
+    i >> s;
+    i.ignore(2); // " x"
+    i >> k;
+    sequential_translation[s] = k;
+    inverse_sequential_translation[k] = s;
+  }
+
+  for (int j = 0; j < ndetermined; ++j) {
+    while (isspace(i.peek())) i.get();
+    i.ignore(1); // 'x'
+    i >> k;
+    i.ignore(3); // " = "
+    i >> v;
+    determined[k] = v;
+  }
+}

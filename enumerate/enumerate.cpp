@@ -2,9 +2,65 @@
 #include <string>
 #include <fstream>
 #include <vector>
-
+#include <tuple>
 #include "polytope.h"
 using namespace std;
+
+enum class Format {NUMBERED_LP, LP, IEQ, INE, POI, Human};
+struct Config {
+  string input_file;
+  string tbl_file;
+  Format input_format;
+  Format output_format;
+  bool clean;
+};
+
+string in_fmt_error = "Expected one of [\"ieq\", \"lp\"] after --in.";
+string out_fmt_error = "Expected one of [\"ieq\", \"lp\", \"numbered_lp\", \"ine\", \"poi\", \"human\"] after --out.";
+
+Config parse_command_line(vector<string> args) {
+  Config c{"default", "", Format::IEQ, Format::IEQ, false};
+  auto it = args.begin();
+  while (++it != args.end()) {
+    if (*it == "--in") {
+      ++it;
+      if (it == end(args)) {
+        cerr << in_fmt_error << endl;
+        exit(-1);
+      }
+      if (*it == "ieq") c.input_format = Format::IEQ;
+      else if (*it == "lp") c.input_format = Format::LP;
+      else {
+        cerr << in_fmt_error << endl;
+        exit(-1);
+      }
+    }
+    else if (*it == "--out") {
+      ++it;
+      if (it == end(args)) {
+        cerr << out_fmt_error << endl;
+        exit(-1);
+      }
+      if (*it == "ieq") c.output_format = Format::IEQ;
+      else if (*it == "lp") c.output_format = Format::LP;
+      else if (*it == "numbered_lp") c.output_format = Format::NUMBERED_LP;
+      else if (*it == "ine") c.output_format = Format::INE;
+      else if (*it == "poi") c.output_format = Format::POI;
+      else if (*it == "human") c.output_format = Format::Human;
+      else {
+        cerr << out_fmt_error << endl;
+        exit(-1);
+      }
+    } else if (*it == "--clean") {
+      c.clean = true;
+    } else if (*it == "--tbl-file") {
+      ++it;
+      c.tbl_file = *it;
+    } else c.input_file = *it;
+  }
+
+  return c;
+}
 
 int main(int argc, char** argv) {
   if (argc <= 1) {
@@ -12,32 +68,59 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  vector<string> args(argv, argv+argc);
-  string input_file = args[1];
+  Config c = parse_command_line(vector<string>(argv, argv+argc));
 
-  ifstream f(input_file);
+  ifstream f(c.input_file);
   Polytope poly;
-  f >> poly;
 
-  if (find(begin(args), end(args), "--clean") != end(args)) {
+  switch (c.input_format) {
+    case Format::LP:
+      poly.read_lp(f);
+      break;
+    case Format::IEQ:
+      f >> poly;
+      break;
+    default:
+      cerr << in_fmt_error << endl;
+      exit(-1);
+  }
+
+  if (c.clean) {
     poly.clean();
-    std::cout << "Cleaned input down to " << poly.dimension << " variables, " << poly.constraints.size() << " inequalities." << std::endl;
-    for (const auto& c : poly.constraints) {
-      poly.print_constraint(std::cout, c, true);
-    }
-    for (const auto& kv : poly.determined) {
-      std::cout << "x" << + kv.first << " == " << kv.second << std::endl;
+    if (!c.tbl_file.empty()
+        && c.output_format == Format::NUMBERED_LP) {
+      ofstream o(c.tbl_file);
+      poly.print_tbl(o);
     }
   }
 
-  if (find(begin(args), end(args), "--human") != end(args)) {
-    cout << poly << endl;
-    poly.print_ieq(cout);
-  } else if (find(begin(args), end(args), "--poi") != end(args)) {
-    ofstream o(input_file + ".poi");
-    poly.print_poi(o);
-  } else if (find(begin(args), end(args), "--ine") != end(args)) {
-    ofstream of(input_file + ".ine");
-    poly.print_ine(of);
+  if (!c.tbl_file.empty() && c.input_format == Format::IEQ) {
+    ifstream i(c.tbl_file);
+    poly.read_tbl(i);
+  }
+
+  switch (c.output_format) {
+    case Format::Human:
+      cout << poly << endl;
+      break;
+    case Format::IEQ:
+      poly.print_ieq(cout);
+      break;
+    case Format::LP:
+      poly.print_lp(cout, false);
+      break;
+    case Format::NUMBERED_LP:
+      poly.print_lp(cout, true);
+      break;
+    case Format::INE:
+      poly.print_ine(cout);
+      break;
+    case Format::POI:
+      poly.print_poi(cout);
+      break;
+    default:
+      cerr << out_fmt_error << endl;
+      exit(-1);
   }
 }
+

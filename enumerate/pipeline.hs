@@ -1,4 +1,5 @@
-import System.Process (readProcess,
+import System.Process (spawnProcess,
+                       readProcess,
                        waitForProcess,
                        runInteractiveProcess,
                        readProcessWithExitCode,
@@ -132,6 +133,16 @@ main = do
   args <- getArgs
   when (null args) $ printHelp >> exitFailure
   let (lpFile:_) = args
+
+  -- Clean .lp by removing useless variables
+  let cleanedLpFile = replaceExtension lpFile "cleaned.lp"
+  cleanedHandle <- openFile cleanedLpFile WriteMode
+  let params = ["--in", "lp", "--out", "lp", "--clean", lpFile]
+  let cmd = "./enumerate"
+  let process = (proc cmd params) { std_out = UseHandle cleanedHandle }
+  (_, _, _, processHandle) <- createProcess process
+  waitForProcess processHandle
+
   -- The file where the vertices will be written to
   let poiFile = replaceExtension lpFile "poi"
   poiHandle <- openFile poiFile WriteMode
@@ -146,7 +157,7 @@ main = do
 
   -- -t to print the translation table to stderr
   -- -a because our variables are arbitrarily named, not x1, ..., xn
-  let params = ["-t", "-a", lpFile]
+  let params = ["-t", "-a", cleanedLpFile]
   let process = (proc "zerOne" params) { std_out = UseHandle poiHandle,
                                          std_err = UseHandle tblHandle }
   (_, _, _, processHandle) <- createProcess process
