@@ -93,6 +93,16 @@ reportPORTAProgress handle = do
   li'' <- track "FOURIER - MOTZKIN" li'
   putStrLn "\nFourier-Motzkin done."
 
+  let written = "output written" `isPrefixOf` last (init li'')
+  let str = if written
+            then "Facets written to disk."
+            else "Facets not written to disk."
+  when (not written) $ do
+    putStrLn "Last 10 lines of output:"
+    let r = reverse . take 10 $ reverse li''
+    print r
+  putStrLn str
+
   where
     bar :: Integer -> Integer -> IO ()
     bar = progressBar percentage percentage 100
