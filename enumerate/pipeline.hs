@@ -179,7 +179,7 @@ main = do
 
   translationTable <- readFile tblFile
   let translationMap = createTranslationMap translationTable
-  let params = ["-T", "-l", poiFile]
+  let params = ["-T", "-l", "-o", poiFile]
   let cmd = "./xporta"
   (_, stdout, _, proc) <- runInteractiveProcess cmd params Nothing Nothing
 
