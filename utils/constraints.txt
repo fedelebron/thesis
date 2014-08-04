@@ -31,6 +31,12 @@ subto busy_coherency:
   forall <p, c, l, d> in P * C * L_ * D:
     busy[p, c, d] >= (sum<k> in R: x[c, l, p, k]) + class_date[c, l, d] - 1;
 
+subto busy_coherency_2:
+  forall <p, c> in P * C:
+    (sum<d> in D: busy[p, c, d])
+    ==
+    (sum<l, k> in L_ * R with l < n[c]: x[c, l, p, k]);
+
 subto professor_availability_1:
   forall <p, d> in P*D with a[p, d] == 0:
     forall<c> in C: busy[p, c, d] == 0;
