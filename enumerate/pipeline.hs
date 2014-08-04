@@ -69,9 +69,11 @@ translateFacets t = unlines . map translateLine . lines
         toTerms :: String -> [Term]
         toTerms [] = []
         toTerms (' ':xs) = toTerms xs
-        toTerms (x:xs) | x `elem` "+-" = let (var, rest) = break (`elem` " +-") xs
-                                             Just v = M.lookup var t
-                                         in (x:' ':v) : toTerms rest
+        toTerms (x:xs) | x `elem` "+-" = let trimmed = dropWhile isSpace xs
+                                             (nvar, rest) = break (`elem` " +-") trimmed
+                                             (coeff, var) = span isDigit nvar
+                                             v = maybe (error $ "Variable not found: " ++ var) id $ M.lookup var t
+                                         in (x:' ':(coeff ++ v)) : toTerms rest
         toTerms (x:'=':xs) = [x:'=':' ':dropWhile isSpace xs]
 
 reportPORTAProgress :: Handle -> IO ()
