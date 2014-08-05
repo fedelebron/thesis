@@ -108,7 +108,8 @@ reportPORTAProgress handle = do
     bar = progressBar percentage percentage 100
     track :: String -> [String] -> IO [String]
     track str = countdownStart
-                . drop 5
+                . tail
+                . dropWhile (not . isPrefixOf "|-----")
                 . dropWhile (not . isPrefixOf str)
     countdownStart :: [String] -> IO [String]
     countdownStart (x:xs) = let n = read
