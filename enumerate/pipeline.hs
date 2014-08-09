@@ -28,7 +28,7 @@ import qualified Data.Map.Strict as M
 import Control.Monad (when, forever)
 import GHC.IO.Handle (Handle)
 import System.ProgressBar (progressBar, noLabel, percentage)
-import Data.List (isPrefixOf)
+import Data.List (isPrefixOf, isInfixOf)
 import Data.Char (isSpace, isDigit)
 import Data.Time (UTCTime, diffUTCTime, getCurrentTime)
 import Control.Concurrent (forkIO, threadDelay, killThread)
@@ -42,7 +42,8 @@ printHelp = do
 type TranslationMap = M.Map String String
 
 createTranslationMap :: String -> TranslationMap
-createTranslationMap str = let equations = drop 9 (lines str)
+createTranslationMap str = let li = lines str
+                               equations = tail . dropWhile (not . isInfixOf "POLYMAKE") $ li
                                splitLines = map words equations
                                pairs = filter ((== 2) . length) splitLines
                                tuples = map (swap . tuplify) pairs
