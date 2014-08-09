@@ -179,6 +179,12 @@ main = do
 
   killThread checker
 
+  lineCountText <- readProcess "wc" ["-l", poiFile] ""
+  let lineCount = read . head $ words lineCountText
+  when (lineCount == 5) (do
+    putStrLn "Instance was infeasible. Stopping."
+    exitFailure)
+
   translationTable <- readFile tblFile
   let translationMap = createTranslationMap translationTable
   let params = ["-T", "-l", "-o", poiFile]
