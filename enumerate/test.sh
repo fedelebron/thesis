@@ -23,7 +23,7 @@ PIPELINE_CMD="./pipeline $MODEL_ID.lp"
 MODEL_DIR="$FPORTA_DIR/$MODEL_ID"
 
 print "Creating $MODEL_NAME..."
-mkdir $MODEL_ID
+mkdir -p $MODEL_ID
 pushd $GENERATE_DIR
 eval $GENERATE_CMD
 print "Converting to LP format..."
