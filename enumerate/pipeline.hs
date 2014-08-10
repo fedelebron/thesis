@@ -142,6 +142,17 @@ checkVertexFileStatus fileName startTime = do
 periodically :: IO () -> IO ()
 periodically action = threadDelay 100000 >> action >> periodically action
 
+relax :: String -> String
+relax = unlines . (++ ["End"]) . takeWhile (/= "General") . lines
+
+parseScipOutput :: String -> String
+parseScipOutput = unlines
+                  . map (unwords . init . words)
+                  . filter ((>= 1) . length)
+                  . tail
+                  . dropWhile (not . (isPrefixOf "objective value:"))
+                  . lines
+
 main :: IO ()
 main = do
   args <- getArgs
@@ -150,8 +161,13 @@ main = do
 
   -- Clean .lp by removing useless variables
   let cleanedLpFile = replaceExtension lpFile "cleaned.lp"
+      cleanedTblFile = replaceExtension cleanedLpFile "tbl"
   cleanedHandle <- openFile cleanedLpFile WriteMode
-  let params = ["--in", "lp", "--out", "lp", "--clean", lpFile]
+  let params = ["--in", "lp",
+                "--out", "lp",
+                "--tbl-file", cleanedTblFile,
+                "--clean",
+                lpFile]
   let cmd = "./enumerate"
   let process = (proc cmd params) { std_out = UseHandle cleanedHandle }
   (_, _, _, processHandle) <- createProcess process
@@ -189,11 +205,11 @@ main = do
   let translationMap = createTranslationMap translationTable
   let params = ["-T", "-l", "-o", poiFile]
   let cmd = "./xporta"
-  (_, stdout, _, proc) <- runInteractiveProcess cmd params Nothing Nothing
+  (_, stdout, _, procHandle) <- runInteractiveProcess cmd params Nothing Nothing
 
   putStrLn ""
   reportPORTAProgress stdout
-  waitForProcess proc
+  waitForProcess procHandle
 
   -- Where PORTA writes the facets to
   let ieqFile' = addExtension poiFile "ieq"
@@ -205,5 +221,35 @@ main = do
   let translated = translateFacets translationMap inequalities
   let txtFile = replaceExtension lpFile "txt"
   writeFile txtFile translated
+
+  -- Write both translation tables (presolving and zerOne) to tblFile
+  cleanedTbl <- readFile cleanedTblFile
+  writeFile tblFile (unlines [cleanedTbl, translationTable])
+
+  -- Write the relaxed LP
+  let relaxedFile = "relaxed.lp"
+  lp <- readFile lpFile
+  writeFile relaxedFile (relax lp)
+
+
+  -- Run SCIP and parse its output, saving the fractional vertex to a file
+  let vertexFile = "vertex.v"
+  let params = ["-c", "read " ++ relaxedFile ++"",
+                "-c", "optimize",
+                "-c", "display solution",
+                "-c", "quit"]
+      cmd = "scip"
+  scipOutput <- readProcess cmd params ""
+  writeFile vertexFile (parseScipOutput scipOutput)
+
+
+  -- Run valid_facets and write its output to a file
+  let validFacetsFile = "valid_facets.txt"
+      validFacetsCmd = "/home/flebron/tesis/utils/valid_facets"
+      params = ["--facets", txtFile]
+  validFacetsHandle <- openFile validFacetsFile WriteMode
+  let process = (proc validFacetsCmd params) { std_out = UseHandle validFacetsHandle }
+  (_, _, _, processHandle) <- createProcess process
+  waitForProcess processHandle
 
   exitSuccess
