@@ -1,0 +1,69 @@
+\subsection{Busy cuts}
+
+Consider the following scenario:
+\begin{itemize}
+\item A single course, 1.
+\item A single class, 1.
+\item Two days, 1 and 2.
+\item Two professors, available both days.
+\item A single role, 1, which both professors can take.
+\item A single starting week, 1.
+\item Two weekly patterns, $p1$ and $p2$. $p1$ schedules class $1$ on day $1$, $p2$ schedules class $1$ on day $2$.
+\end{itemize}
+
+Then we could have the following fractional vertex:
+
+\begin{itemize}
+\item $csd_{1, 1} = 1$, remembering $csd_{c, sd}$ means course $c$ chooses starting week $sd$
+\item $cp_{1, 1} = 0.5$, remembering $cp_{c, p}$ means course $c$ chooses schedule $p$
+\item $cp_{1, 2} = 0.5$
+\item $class\_date_{1, 1, 1} = 0.5$, remembering $class\_date_{c, l, d}$ means the $l$th class of course $c$ is scheduled on day $d$
+\item $class\_date_{1, 1, 2} = 0.5$
+\item $busy_{1, 1, 1} = 0$, remembering $busy_{p, c, d}$ means professor $p$ teaches a class for course $c$ on day $d$
+\item $busy_{1, 1, 2} = 0$
+\item $busy_{2, 1, 1} = 0$
+\item $busy_{2, 1, 2} = 0$
+\item $x_{1, 1, 1, 1} = 0.5$, remembering $x_{c, l, p, k}$ means professor $p$ teaches the $l$th class of course $c$ with role $k$
+\item $x_{1, 1, 2, 1} = 0.5$
+\end{itemize}
+
+It may seem odd that we have class $1$ falling on days $1$ or $2$ (as per $class\_date$), and we've assigned professors $1$ and $2$ to teach the $1$st class, and yet \emph{neither} of them are busy on days $1$ or $2$!
+
+But this makes sense given the constraints. Remember the way we lower bound $busy$:
+
+$$
+busy_{p, c, d} \ge busy\_l_{p, c, l} + class\_date_{c, l, d} - 1
+$$
+
+where $busy\_l_{p, c, l} = \sum_{k \in R} x_{c, l, p, k}$. In our case, with $d = 1$ or $d = 2$, we get $busy\_l_{1, 1, 1} = 0.5$, and $class\_date_{1, 1, d} = 0.5$. Thus the constraint is the same as
+
+$$
+busy_{1, 1, d} \ge 0
+$$
+
+which is trivial.
+
+The problen here is that since each professor only works "half" the class, the class requirements are satisfied, but not the $busy$ requirements for each of the professors (at least conceptually - clearly the linear constraints themselves are satisfied!). 
+
+We eliminate these vertices by noting that if a professor $p$ teaches the $l$th class of course $c$ with some role, and class $l$ can only fall on a subset $X$ of days, then it must hold that
+
+$$
+busy\_l_{p, c, l} \le \sum_{d \in D} busy_{p, c, d}
+$$
+
+Furthermore, we can always compute at least one such subset $X$: The set $d$ such that there's at least one valid weekly schedule and one valid starting week, such that the $l$th class falls on the $d$th day. This results in the following valid cutting plane:
+
+\begin{align*}
+&\forall c \in C\\
+&\forall p \in P\\
+&\forall 1 \le l \le n(c)\\
+&busy\_l_{p, c, l} \ge \sum_{\substack{d \in D \\ s \in M\ \mid\ pp_{c, s} = 1\\ w \in W\ \mid\ psd_{c, w} = 1 \\ ds_{s, w, l, d} = 1}} busy_{p, c, d}
+\end{align*}
+
+The above fractional solution is cut, since this inequality says, for $c = 1, p = 1, l = 1$:
+
+$$
+busy\_l_{1, 1, 1} = \sum_{k \in R} x_{1, 1, 1, k} = x_{1, 1, 1, 1} \le busy_{1, 1, 1} + busy_{1, 1, 2}
+$$
+
+Where the right hand side is $0$, and the left hand side is $0.5$, rendering this solution invalid.

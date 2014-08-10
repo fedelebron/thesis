@@ -1,0 +1,54 @@
+\subsection{Class date cuts}
+
+It is often the case that one does not want two classes of the same course to be scheduled at the same time. In this case, we have another family of cuts. Consider the following situation:
+
+\begin{itemize}
+  \item Schedule 1: One class per week, on mondays.
+  \item Schedule 2: Three classes per week, on mondays, wednesdays, and fridays.
+\end{itemize}
+
+Course $c$ has 3 classes, and the semester lasts one week (to simplify the scenario). It also has a single possible starting week, the first one. Assume there are enough professors available to fill all role requirements of course $c$. In this case, the only possible schedule $c$ can pick is schedule 2, since picking schedule $1$ would result in not scheduling two of $c$'s classes.
+
+Now consider the linear relaxation of this scenario. It is perfectly possible for one to have $cp_{c, 1} = 0.5$, and $cp_{c, 2} = 0.5$. Considering the start week as $1$ (thus $csd_{c, 1} = 1$), the first monday as $1$, the problem constraints mean that
+
+$$
+(cp_{c, 1} - 1) + (csd_{c, 1} - 1) \le class\_date_{c, 1, 1}
+$$
+
+Since we said there was only one starting week, so $csd_{c, 1} = 1$. We also said $cp_{c, 1} = 0.5$. Thus our constraint becomes
+
+$$
+0.5 \le class\_date_{c, 1, 1}
+$$
+
+And we also said schedule $2$, with starting week $1$,  placed the $1$st class on day $1$
+
+$$
+0.5 \le class\_date_{_c, 1, 1}
+$$
+
+Now since every class must be allocated to some day, we have a constraint $\sum_{d \in D} class\_date_{c, 1, d} = 1$. So let's say our solution vector places $class\_date_{c, 1, 1} = 1$.
+
+Since schedule $2$ has no day allocated for class $3$, thus we have a constraint
+
+$$
+(1 - cp_{c, 1}) + (1 - csd_{c, 1}) \ge class\_date_{c, 2, 1}
+$$
+
+Since $ds_{1, 1, 3, 1} = 0$. That is, picking the schedule $1$ and starting week $1$, the $3$rd class of a course does \emph{not} fall on the $1$st day. However, since we have a fractional $cp_{c, 1} = 0.5$, this becomes
+
+$$
+0.5 \ge class\_date_{c, 2, 1}
+$$
+
+So we can end up with a solution vector where $class\_date_{c, 2, 1} = 0.5$, and $class\_date_{c, 1, 1} = 1$. But then, if we sum for all $l$ the value of $class\_date_{c, l, 1}$ we get a value exceeding $1$, which is impossible since we must at most have one class per day for this course.
+
+Thus we derive the following cut:
+
+\begin{align}
+&\forall c \in C,\\
+&\forall d \in D,\\
+&\sum_{l = 1}^{n(c)} class\_date_{c, l, d} \le 1
+\end{align}
+
+Thus rendering this fractional solution invalid, but still being a valid inequality for all integral solutions.
