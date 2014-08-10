@@ -575,13 +575,8 @@ void Polytope::print_lp(ostream& o, bool numbered) const {
 }
 
 void Polytope::print_tbl(ostream& o) const {
-  o << sequential_translation.size() << ' '
-    << determined.size() << '\n';
-  for (const auto& kv : sequential_translation) {
-    o << kv.first << " x" << kv.second << '\n';
-  }
   for (const auto& kv : determined) {
-    o << 'x' << kv.first << " = " << kv.second << '\n';
+    o << inverse_sequential_translation.at(kv.first) << " " << kv.second << '\n';
   }
 }
 

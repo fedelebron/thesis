@@ -88,7 +88,7 @@ int main(int argc, char** argv) {
   if (c.clean) {
     poly.clean();
     if (!c.tbl_file.empty()
-        && c.output_format == Format::NUMBERED_LP) {
+        && c.output_format == Format::LP) {
       ofstream o(c.tbl_file);
       poly.print_tbl(o);
     }
