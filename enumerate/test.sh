@@ -36,7 +36,11 @@ pushd $MODEL_ID
 print $GENERATE_CMD >> config
 print "Running pipeline..."
 eval $PIPELINE_CMD
-print "Inequalities written to $MODEL_ID.txt"
+if [ $? -eq 0 ]; then;
+   print "Inequalities written to $MODEL_ID.txt";
+else;
+   print "Inequalities not computed."
+ fi
 rm xporta pipeline enumerate
 popd $MODEL_ID
 
