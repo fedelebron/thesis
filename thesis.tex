@@ -58,6 +58,9 @@
   }
 }
 
+\def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;}
+\def\scalecheck{\resizebox{\widthof{\checkmark}*\ratio{\widthof{x}}{\widthof{\normalsize x}}}{!}{\checkmark}}
+\def\greencheck{{\color{green}\checkmark}}
 \newlength{\problemoffset}
 \setlength{\problemoffset}{0.5in}
 \newcommand{\decision}[3]{%     \decision{NAME}{INSTANCE}{QUESTION}
