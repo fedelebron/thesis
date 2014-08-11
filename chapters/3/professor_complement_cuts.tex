@@ -1,0 +1,73 @@
+\subsection{Professor complement cuts}
+
+Suppose a course $c$ schedules a class $l$ on day $d$, and another course $c'$ schedules a clas $l'$ on day $d$. Then it better be the case that for any professor $p$, $p$ does \emph{not} teach both of these classes. In other words, that \emph{someone else} teaches those classes.
+
+And yet, consider the following scenario:
+
+\begin{itemize}
+\item Two courses, $1$ and $2$.
+\item A single role, $1$.
+\item A single starting date, $1$.
+\item Two classes for each, $1$ and $2$. Each class requires 1 professor with role $1$.
+\item Two weekly schedules, $1$ and $2$. Schedule $1$ says class $1$ is on day $1$, class $2$ is on day $3$. Schedule $2$ says class $1$ is on day $2$, class $2$ is on day $3$.
+\item A single professor, $1$, available all $3$ days and able to fill role $1$.
+\end{itemize}
+
+The schedule structure tells us that $ds_{1, 1, 1, 1} = 1$, $ds_{1, 1, 2, 3} = 1$, $ds_{2, 1, 1, 2} = 1$, and $ds_{2, 1, 2, 3} = 1$. Note that \emph{both} weekly schedules place the $2$nd class on day $3$.
+
+Now consider the following vertex:
+
+\begin{itemize}
+\item $cp_{1, 1} = 0.5$
+\item $cp_{1, 2} = 0.5$
+\item $cp_{2, 1} = 0.5$
+\item $cp_{2, 2} = 0.5$
+\item $class\_date_{1, 2, 4} = 0.5$
+\item $class\_date_{2, 2, 4} = 0.5$
+\item $class\_date_{1, 2, 3} = 0.5$
+\item $class\_date_{2, 2, 3} = 0.5$
+\item $busy_{1, 1, 3} = 0.5$
+\item $busy_{1, 1, 4} = 0.5$
+\item $busy_{1, 2, 3} = 0.5$
+\item $busy_{1, 2, 4} = 0.5$
+\item $x_{1, 2, 1, 1} = 1$
+\item $x_{2, 2, 1, 1} = 1$
+\end{itemize}
+
+So here we have a situation where classes $2$ of both courses are \emph{both} scheduled (in all integral vertices) on the same day ($3$), and yet the same professor ($1$) teaches both of them!
+
+We can fix this by requiring that, since \emph{all} valid choices of a schedule and start date for courses $c = 1$ and $c' = 2$ result in classes $l = 2$ and $l' = 2$ being scheduled on the same day $d = 3$, then for every professor $p$, the following must hold:
+
+$$
+busy\_l_{p, c, l} + busy\_l_{p, c', l'} \le 1
+$$
+
+In this case, remembering that since we only have one role $busy\_l_{p, c, l} = x_{c, l, p, 1}$, instantiating the variables $c = 1$, $c' = 2$, $l = 2$, $l' = 2$, we obtain the constraints
+
+\begin{align*}
+&busy\_l_{1, 1, 2}& &+& &busy\_l_{1, 2, 2}& &\le& &1&\\
+&x_{1, 2, 1, 1}& &+& &x_{2, 2, 1, 1}& &\le& &1&\\
+&1& &+& &1& &\le& &1&
+\end{align*}
+
+Which means this vertex violates the cut.
+
+Formally, the "professor complement" family is defined as:
+
+Let
+\begin{alignat*}{4}
+Match(l, l', c, c') = &l \le n(c)\\
+                      \land &l' \le n(c') \\
+                      \land &\exists d \in D \mid &&\forall (p, p') \in M_c \times M_{c'},\\
+                      &                           &&(w, w') \in W_c \times W_{c'},\\
+                      &                           &&ds_{p, w, l, d} = 1 \land ds_{p', w', l', d} = 1)
+\end{alignat*}
+
+Then
+
+\begin{align*}
+&\forall (l, l') \in N^2\\
+&\forall (c, c') \in C^2 \mid Match(l, l', c, c')\\
+&\forall p \in P,\\
+&busy\_l_{p, c, l} + busy\_l_{p, c', l'} \le 1
+\end{align*}
