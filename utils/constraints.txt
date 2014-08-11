@@ -43,6 +43,15 @@ subto busy_coherency_2:
     ==
     (sum<l, k> in L_ * R with l < n[c]: x[c, l, p, k]);
 
+subto busy_cuts:
+  forall <c, l, p> in C * L_ * P with l < n[c]:
+  (sum<k> in R: x[c, l, p, k])
+  <=
+  (sum<s, sd, d> in S * SD * D
+    with ds[s, sd, l, d] == 1
+    and pp[c, s] == 1
+    and psd[c, sd] == 1: busy[p, c, d]);
+
 subto professor_availability_1:
   forall <p, d> in P*D with a[p, d] == 0:
     forall<c> in C: busy[p, c, d] == 0;
