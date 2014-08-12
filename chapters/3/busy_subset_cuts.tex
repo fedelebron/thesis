@@ -82,4 +82,4 @@ So this fractional solution violates this cut. We call this family of cuts the "
 
 In practice, we observe that for small and medium sized instances, adding this family of cuts yields integral solutions for the polyhedral relaxation. For large instances, the exponential size of this family actually ends up hurting the solving time, by approximately 1\%.
 
-In the same vein, one could improve this strategy as part of a branch \& cut algorithm by only considering, when building $Y$, the schedules and starting dates which are nonzero in the node under consideration. This yields another local cut, valid only for the subtree rooted at that node, but with a tighter upper bound on the right hand side.
+In the same vein, one could improve this strategy as part of a branch \& cut algorithm by only considering, when building $Y$, the schedules and starting dates which have not been explicitly zeroed out by the branching so far. This yields another local cut, valid only for the subtree rooted at that node, but with a tighter upper bound on the right hand side.
