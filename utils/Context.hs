@@ -3,7 +3,6 @@ module Context where
 import System.Random.MWC (Gen)
 import Control.Monad.Primitive (PrimMonad, PrimState)
 data Context = Context { numberOfProfessors :: Int,
-                         numberOfDays :: Int,
                          numberOfCourses :: Int,
                          numberOfSchedules :: Int,
                          numberOfCourseSchedules :: Int,
@@ -19,6 +18,9 @@ data Context = Context { numberOfProfessors :: Int,
                          maxStartWeek :: Int,
                          availabilityProbability :: Double
 } deriving Show
+
+numberOfDays :: Context -> Int
+numberOfDays c = numberOfWeeks c * numberOfWeekDays c
 
 class Generatable t where
   generate :: PrimMonad m => Context -> Gen (PrimState m) -> m t

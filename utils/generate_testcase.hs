@@ -35,7 +35,6 @@ createContext = Context {
   numberOfRoles = flags_roles,
   numberOfWeekDays = flags_week_days,
   numberOfStartWeeks = flags_start_weeks,
-  numberOfDays = flags_week_days * flags_weeks,
   numberOfCourseStartWeeks = min flags_course_start_weeks flags_start_weeks,
   maxNumberOfRoles = flags_max_roles,
   minNumberOfRoles = flags_min_roles,
