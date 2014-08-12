@@ -1,6 +1,6 @@
 {-# LANGUAGE ScopedTypeVariables, TemplateHaskell #-}
 
-import System.Random.MWC
+import System.Random.MWC (Seed, asGenIO, restore, save, toSeed, withSystemRandom)
 import HFlags
 import qualified Data.Vector as V
 import System.IO (hPutStrLn, stderr)
