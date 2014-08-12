@@ -1,6 +1,6 @@
 module Context where
 
-import System.Random.MWC (Gen, Seed)
+import System.Random.MWC (Gen)
 import Control.Monad.Primitive (PrimMonad, PrimState)
 data Context = Context { numberOfProfessors :: Int,
                          numberOfDays :: Int,
