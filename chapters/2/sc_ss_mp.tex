@@ -14,35 +14,26 @@ This is, however, not particularly satisfying, since it does not immediately yie
 Consider the integer linear programming formulation of the single-pattern case, with the pattern fixed to $p_i$:
 
 \begin{alignat*}{2}
-  \text{maximize } & q_i^t x \\
+  \text{maximize } & \langle q_i, x \rangle \\
   \text{subject to } & B_i x \le \mathbf{1}\\
                      & x \ge \mathbf{0}\\
                      & x \in \Z^M
 \end{alignat*}
 
-where $q_i \in \Z^M$, and $B_i \in \Z^{N \times M}$. We can consider the following equivalent integer linear program $Q_i$:
-
-\begin{alignat}{2}
-  \text{minimize } & {q'}_i^t x \\
-  \text{subject to } & B_i x \le \mathbf{1}\\
-                     & x \ge \mathbf{0}\\
-                     & x \in \Z^M
-\end{alignat}
-
-where $q'_i = -q_i$, and the optimal solution is unchanged. Thus we can express the single-pattern case as a linear minimization; this shall be important in what follows.
+Call this problem $Q_i$.
 
 We can construct the following integer linear program:
 \begin{alignat*}{2}
-  \text{minimize } & y\\
+  \text{maximize } & H \times \left(\sum_i \langle q_i, x \rangle\right) - y\\
   \text{subject to } & B_i x_i \le \mathbf{1}\ \forall\ i\\
-                     & y \ge {q'}_i^t x_i\\
+                     & y \ge \langle q_i, x_i \rangle\\
                      & x_i \ge 0\\
                      & y \ge 0\\
                      & y \in \Z\\
                      & x_i \in \Z^M
 \end{alignat*}
 
-If we were to express this as a single matrix, we would obtain something like this:
+Where $H$ is some large constant. If we were to express this as a single matrix, we would obtain something like this:
 
 \begin{align*}
 A &= \begin{pmatrix}
@@ -63,7 +54,7 @@ c &= (0, 0, 0, \dots, 0, 1)
 
 And the integer linear program $Q$ could be expressed as
 \begin{alignat}{2}
-  \text{minimize } & c^t x\\
+  \text{maximize } & H \times \langle c, x \rangle - y\\
   \text{subject to } & Ax \le b\\
                      & x \ge 0\\
                      & x \in \Z^N
@@ -76,13 +67,15 @@ $Q$ can be solved in polynomial time.
 \begin{proof}
 Recall that by unimodularity the $Q_i$ had integral linear relaxations. We will not be able to show that $Q$ is totally unimodular, since this is not true in general, but what we will show is that the integral relaxation achieves the same value of the objective function.
 
-Let $Q_\R$ be the linear relaxation of $Q$, and let $x$ be a solution of $Q_\R$. We want to show there exists a $z \in \Z^{NM+1}$ such that $\langle c, x \rangle = \langle c, z \rangle$, and $Az \le b$, with $z \ge \mathbb{0}$.
+Let $Q_\R$ be the linear relaxation of $Q$, and let $(x, y)$ be a solution of $Q_\R$. We want to show there exists a $z \in \Z^{NM+1}$ such that $\langle c, x \rangle = \langle c, z \rangle$, and $Az \le b$, with $z \ge \mathbb{0}$.
 
-If $x$ is in $\Z^{NM+1}$, we are done. Suppose, then, that $x$ has at least one nonintegral coefficient. It cannot be the case that only $x$'s last coefficient ($y$) is nonintegral, since if the other $x_i$ subvectors were all integral, and since the $q'_i$ are all integral, we can minimize $y$ by setting it to be equal to $\min_i \langle q'_i, x_i \rangle$. Thus, there exists at least one coefficient of $x$ which is not integral, and it belongs to some $x_i$ subvector.
+If $x$ is in $\Z^{NM+1}$, we are done. Suppose, then, that $x$ has at least one nonintegral coefficient. It cannot be the case that only $x$'s last coefficient ($y$) is nonintegral, since if the other $x_i$ subvectors were all integral, and since the $q_i$ are all integral, we can minimize $y$ by setting it to be equal to $\min_i \langle q_i, x_i \rangle$. Thus, there exists at least one coefficient of $x$ which is not integral, and it belongs to some $x_i$ subvector.
 
-Consider now that the $Q_i$, since their matrix is totally unimodular, have integral linear relaxations. So there exists an optimal solution $z_i$, such that $z_i \in \Z^M$. Now take $x'$ to be $x$, but with its $i$th subvector replaced by $z_i$. Clearly such a solution still is feasible for $B$, since the other subvectors make it valid for the other $B_j$, and $z_i$ makes it valid for $B_i$. Since $z_i$ is an optimal solution to $B_i$, it must be the case that $\langle q'_i, x_i \rangle \ge \langle q'_i, z_i \rangle$, since $Q_i$ was a minimization problem. This means that the $y$ component of $x$, meaning its last coordinate, is \emph{still} valid, since its only restriction was that $\forall j. y \ge \langle q'_j, x_j \rangle$, and this is still true if we use the same $y$ but replace the $i$th subvector of $x$ by $z_i$. So $x'$ is indeed a valid solution, and it has no nonintegral component in its $i$th subvector.
+Consider now that the $Q_i$, since their matrix is totally unimodular, have integral linear relaxations. So there exists an optimal solution $z_i$, such that $z_i \in \Z^M$. Now take $x'$ to be $x$, but with its $i$th subvector replaced by $z_i$. Clearly such a solution still is feasible for $B$, since the other subvectors make it valid for the other $B_j$, and $z_i$ makes it valid for $B_i$. Since $z_i$ is an optimal solution to $B_i$, it must be the case that $\langle q_i, x_i \rangle \le \langle q_i, z_i \rangle$, since $Q_i$ was a maximization problem. If this inequality were strict, we could replace $x$ by $x'$ as an optimal solution of the relaxation and obtain a higher objective function (since $y$ might decrease, but $H$ would be multiplied by something larger, and since $H$ is large this would increase the objective function), which is impossible since $x$ was an optimal solution to the relaxation $Q_\R$. Thus the inequality is actually an equality.
 
-It is clear that we can do this for every single subvector in $x$, the optimal solution. Thus we can get a solution $z$, which has all its subvectors be integral, by replacing the nonintegral subvectors of $x$ by the integral solution vectors $z_i$. Clearly, then, the last coordinate of $z$ must be integral (since otherwise we could improve $y$, as before, by setting it to be the minimum over the $\langle q'_i, z_i \rangle$), and thus $z$ is integral.
+This means that the $y$ component of $x$, meaning its last coordinate, is \emph{still} valid, since its only restriction was that $\forall j. y \ge \langle q_j, x_j \rangle$, and this is still true if we use the same $y$ but replace the $i$th subvector of $x$ by $z_i$. So $(x', y)$ is indeed a valid solution, and it has no nonintegral component in its $i$th subvector.
+
+It is clear that we can do this for every single subvector in $x$, the optimal solution. Thus we can get a solution $z$, which has all its subvectors be integral, by replacing the nonintegral subvectors of $x$ by the integral solution vectors $z_i$. Clearly, then, the last coordinate of $z$ must be integral (since otherwise we could improve $y$, as before, by setting it to be the minimum over the $\langle q_i, z_i \rangle$), and thus $z$ is integral.
 
 In all these transformations, we kept the value of $y$ for $z$ as it was in $x$. Thus $y = \langle c, x \rangle = \langle c, z \rangle$, and $z \in \Z^{NM+1}$.
 
