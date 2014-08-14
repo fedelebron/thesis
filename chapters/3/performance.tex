@@ -1,0 +1,14 @@
+\newpage
+\section{Performance}
+
+We can analyze the model in terms of its performance when fed to CPLEX, an ILP solver. We analyse the runtime in terms of the different variables of the problem.
+
+In figure~\ref{bench:courses} we see its behavior when we vary the number of courses, leaving all else constant. We see a linear growth when the number of courses is small, below 50.
+
+\begin{figure}
+\begin{center}
+\subimport{../../benchmarks/}{courses.tex}
+\caption{Performance as course number varies}
+\label{bench:courses}
+\end{center}
+\end{figure}
