@@ -13,3 +13,20 @@ A timetabling problem involves assigning start dates and weekly schedules to cou
 The value in such an assignment is the sum, for each professor $p$ that is assigned to teach a class $c$ of a course $C$, the quality $p$ has teaching $C$.
 
 The goal in such a timetabling problem is to determine when each course must start, what weekly schedule it must have, and which professor(s) will teach each class, such that the value of the assignment is maximized.
+
+As an example, consider the following scenario, where we denote weekly schedules between braces:
+\begin{itemize}
+\item John is a TA, and can also work as a lab assistant. He likes the class "Algorithms and Data Structures", and his quality for it is $8$. His quality for "Algebra I" is $6$. He is available for teaching Mondays through Thursdays.
+\item Mary is a full professor. Her quality for "Algebra I" is $10$, and her quality for "Algorithms and Data Structures" is $9$. She is available for teaching on Mondays, Wednesdays, Thursdays, and Fridays.
+\item Alice is a lab assistant, and her quality for Algorithms and Data Structures is $9$. Her quality for Algebra I is $7$. She is available for teaching on Thursdays.
+\item Algebra I can either have the weekly schedule $\{$Monday, Tuesday, Friday$\}$, or $\{$Monday, Thursday$\}$. For its first class it requires $1$ professor, for its second class it requires $1$ TA, and for its third class it requires $1$ full professor and $1$ TA. Due to interactions with other majors, Algebra I \emph{must} start at the beginning of the semester.
+\item Algorithms and Data Structures can only be taught on $\{$Thursday, Friday$\}$. Its start can be delayed by one or two weeks. It has only two classes, the first of which requires $1$ TA, and the second of which requires $1$ full professor and $1$ lab assistant.
+\end{itemize}
+
+We need to determine when each of the courses starts, which weekly schedule it will follow, and who will teach each class. We see that if we scheduled Algorithms and Data Structures on the first week of the semester, then since its first class requires a TA, and John is the only TA, he could not teach Algebra I on that thursday, so Algebra I could not use the $\{$Monday, Thursday$\}$ schedule, since its $2$nd class would require a TA on the first thursday. Similarly, we cannot schedule Algebra I on $\{$Monday, Tuesday, Friday$\}$, since its third class requires a TA, and would fall on the first Friday, but John is not available on Fridays.
+
+For conveniency, let's assume the first day in the semester is Monday the 1st.
+
+A satisfying assignment would be for Algebra I to be scheduled on $\{$Monday, Thursday$\}$, and for Algorithms and Data Structures to be delayed until the $2$rd week. In this scheduling, Mary would teach Algebra I's $1$st class, on Monday the $1$st, John would teach its $2$nd class on Thursday the $4$th, and they would both teach the $3$rd class on Monday the $8$th. The next class John teaches is on Thursday the $10$th, when Algorithms and Data Structures starts. Then Alice and Mary teach its second class, on Friday the $11$th.
+
+The quality for this assignment will be $10 + 6 + 10 + 6 + 8 + 9 + 9 = 58$.
