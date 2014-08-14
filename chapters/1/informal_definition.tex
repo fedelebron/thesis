@@ -4,9 +4,9 @@ A timetabling problem involves assigning start dates and weekly schedules to cou
 
 \begin{itemize}
 \item Each professor can only teach on certain days, and at most once per day.
-\item Each professor can give classes only as certain ``types'' of professor (TA, lecturer, etc.).
-\item Each class of each course has a certain minimum and maximum number of professors of each type that are required to teach it.
-\item Each course has a set of weekly schedules it can be given, and a set of possible starting weeks.
+\item Each professor can give classes only as certain "roles" (TA, lecturer, etc.).
+\item Each class of each course has a certain minimum and maximum number of professors of each role that are required to teach it.
+\item Each course has a set of weekly schedules it can be given, and a set of possible starting weeks. A weekly schedule is a set of days of the week in which classes happen. For example, $\{$Monday, Friday$\}$ is a weekly schedule, and a course having it means its first class will be a Monday, then a Friday, then a Monday, and so on. $\{$Tuesday, Wednesday$\}$ and $\{$Monday, Wednesday, Friday$\}$ are also weekly schedules. A starting week is a week in the semester in which the course starts.
 \item Each professor has a certain ``quality'' teaching each course.
 \end{itemize}
 
@@ -14,7 +14,7 @@ The value in such an assignment is the sum, for each professor $p$ that is assig
 
 The goal in such a timetabling problem is to determine when each course must start, what weekly schedule it must have, and which professor(s) will teach each class, such that the value of the assignment is maximized.
 
-As an example, consider the following scenario, where we denote weekly schedules between braces:
+As an example, consider the following scenario:
 \begin{itemize}
 \item John is a TA, and can also work as a lab assistant. He likes the class "Algorithms and Data Structures", and his quality for it is $8$. His quality for "Algebra I" is $6$. He is available for teaching Mondays through Thursdays.
 \item Mary is a full professor. Her quality for "Algebra I" is $10$, and her quality for "Algorithms and Data Structures" is $9$. She is available for teaching on Mondays, Wednesdays, Thursdays, and Fridays.
