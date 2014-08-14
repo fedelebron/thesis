@@ -27,5 +27,5 @@ set ylabel 'Seconds'
 set xrange [20:45]
 set yrange [0:50]
 
-plot 'courses.dat' u 1:2 t 'Without busy cuts' w lp ls 1, \
-     ''            u 1:3 t 'With busy cuts' w lp ls 2
+plot 'courses.dat' u 1:2 t 'With busy cuts' w lp ls 1, \
+     ''            u 1:3 t 'Without busy cuts' w lp ls 2
