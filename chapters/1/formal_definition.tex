@@ -61,8 +61,9 @@ q_{p, c} & \text{ if } x = (c, n, r)\\
 \end{cases}
 \end{align*}
 
+That is, the value of a solution is the sum of the qualities of each assignment of a professor to each class of a course. This is intuitively a good objective to maximize, since we know some professors are better at teaching some courses than others, and we would like to exploit this and assign each professor to the courses he or she is best suited for. Thus if we attempt to maximize the sum of the qualities of these assignments, we will attempt to assign each professor to courses to which he or she contributes a higher quality to.
 
-Here's a full example:
+Here's a full example, along with its optimal solution:
 
 Let $C = \{\text{Biology}, \text{Computer Science}, \text{Mathematics}\}$, $P = \{\text{Mary}, \text{Bob}, \text{Jane}\}$, $n(\text{Biology}) = 2$, $n(\text{Computer Science}) = 3$, $n(\text{Mathematics}) = 3$. $q$ is defined as
 \begin{align*}
