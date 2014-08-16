@@ -1,32 +1,43 @@
 \section{Formal definition}
-An instance $\mathcal{T}$ of the timetabling problem consists of the following data:
+An instance $\mathcal{T}$ of the timetabling problem consists of several pieces of data:
 
 \begin{itemize}
 \item $C$ a set of courses,
 \item $P$ a set of professors,
+\item $n: C \to \Z_+$ a function which assigns each course the number of classes it has
+\item For every $p \in P$, $c \in C$, we have a number $q_{p, c} \in [0 \dots 7]$, indicating the quality of professor $p$ when teaching course $c$, and finally,
+\end{itemize}
+
+These will be the core pieces of information. Our goal will be to satisfy the requirements of each class in each course, and in doing so, attempt to maximize the overall quality of these assignments. To define the requirements, we need the following:
+\begin{itemize}
 \item $R$ a set of professor roles,
-\item $D$ a set of days of the week,
-\item $M \subset 2^D$ a set of weekly schedules,
+\item For every $c \in C$, $n \in \{1 \dots n(c)\}$, and $r \in R$ we have $\max(c, n, r)$ and $\min(c, n, r): \Z+$, specifying the minimum and maximum number of professors of role $r$ required to teach the $n$th class of course $c$,
+\item For every $p \in P$, we have $R_p \subset R$, the set of allowed professor roles for professor $p$
+\end{itemize}
+
+Thus we need to assign professors to roles in classes, but only roles they are allowed. We must assign a minimum number of each one for every class, but since we'd want to maximize the sum of the qualities, we'd be tempted to assign all the professors we can. That's where the upper limit comes in, and restricts us.
+
+Classes will be scheduled on certain days. When a class will be scheduled depends on its course's weekly pattern and starting week. Thus we need some more pieces of data:
+\begin{itemize}
+\item $WD$ a set of days of the week,
+\item $M \subset 2^{WD}$ a set of weekly patterns,
 \item $W$ a set of weeks in the semester,
 \item For every $c \in C$, a set $W_c \subset 2^W$, the set of available starting weeks for $c$,
-\item $n: C \to \Z_+$ a function which assigns each course the number of classes it has,
-\item For every $c \in C$, $n \in \{1 \dots n(c)\}$, and $r \in R$ we have $\max(c, n, r)$ and $\min(c, n, r): \Z+$, specifying the minimum and maximum number of professors of role $r$ required to teach the $n$th class of course $c$,
 \item For every $c \in C$, we have $M_c \subset M$, a set of allowed schedules for course $c$,
-\item For every $p \in P$, we have $R_p \subset R$, the set of allowed professor roles for professor $p$,
+\end{itemize}
+
+We also have to take into account professor availability, given by the following pieces of data:
+\begin{itemize}
 \item For every $p \in P$, we have a set $A_p \subset W \times D$, the set days when professor $p$ is available,
-\item For every $p \in P$, $c \in C$, we have a number $q_{p, c} \in [0 \dots 7]$, indicating the quality of professor $p$ when teaching course $c$, and finally,
 \item For every $p \in P$, we have a number $\max_p \in \Z+$, indicating the maximum number of classes professor $p$ is willing to teach
 \end{itemize}
 
+Given an instance of the timetabling problem, we define $N \subset \mathbb{Z}$ as $N = \{1 \dots \max_{c \in C} n(c)\}$. We will also define $D = W \times WD$, the set of days in the semester.
 
-Given an instance of the timetabling problem, we define $N \subset \mathbb{Z}$ as $N = \{1 \dots \max_{c \in C} n(c)\}$. We will also define $S = W \times D$, the set of days in the semester.
-
-
-
-Formally, a solution to a timetabling problem is a triple $\mathcal{S} = (w, m, a)$, where $w: C \to W$ gives the starting week for each course, $m: C \to M$ gives the weekly schedule for each course, and $a: P \times D \times W \to C \times N \times R \cup \{\bot\}$ says, for each $(p, d, w)$, what professor $p$ does on day $d$ of week $w$:
+Formally, a solution to a timetabling problem is a triple $\mathcal{S} = (w, m, a)$, where $w: C \to W$ gives the starting week for each course, $m: C \to M$ gives the weekly schedule for each course, and $a: P \times D \to C \times N \times R \cup \{\bot\}$ says, for each $(p, d)$, what professor $p$ does on day $d$:
 \begin{itemize}
-\item If $a(p, d, w) = (c, n, r)$, then professor $p$ on day $d$ of week $w$ teaches the $n$th class of course $c$, as the $r$th role
-\item If $a(p, d, w) = \bot$, then professor $p$ on day $d$ of week $w$ does not teach any courses
+\item If $a(p, d) = (c, n, r)$, then professor $p$ on day $d$ teaches the $n$th class of course $c$, as the $r$th role
+\item If $a(p, d) = \bot$, then professor $p$ on day $d$ does not teach any courses
 \end{itemize}
 
 A solution must also meet the requirements specified in the instance. Formally, these are
@@ -34,16 +45,16 @@ A solution must also meet the requirements specified in the instance. Formally, 
 \begin{itemize}
 \item Every starting week is valid: $\forall\ c\ \in C. w(c) \in W(c)$.
 \item Every weekly schedule is valid: $\forall\ c\ \in C. m(c) \in M_c$.
-\item Every professor is available on days where he works: $a(p, d, w) \ne \bot \Rightarrow (d, w) \in A_p$.
-\item Every professor can fulfil roles to which he is assigned: $a(p, d, w) = (c, n, r) \Rightarrow r \in R_p$.
-\item No professor works more days than allowed: $\forall\ p\ \in P. \sum_{\substack{d \in D\\w \in W}} \delta_{a(p, d, s) \ne \bot} \le \max_p$.
-\item The number of professors working on a given role on a given class are within the $\min$ and $\max$ parameters for that class: $\forall c \forall n \forall r. \min(c, n, r) \le \sum_{p \in P} \delta_{\exists p, w. a(p, d, w) = (c, n, r)} \le \max(c, n, r)$.
+\item Every professor is available on days where he works: $a(p, d) \ne \bot \Rightarrow d \in A_p$.
+\item Every professor can fulfil roles to which he is assigned: $a(p, d) = (c, n, r) \Rightarrow r \in R_p$.
+\item No professor works more days than allowed: $\forall\ p\ \in P. \sum_{d \in D} \delta_{a(p, d, s) \ne \bot} \le \max_p$, where $\delta$ is the Kronecker delta.
+\item The number of professors working on a given role on a given class are within the $\min$ and $\max$ parameters for that class: $\forall c \forall n \forall r. \min(c, n, r) \le \sum_{p \in P} \delta_{\exists d. a(p, d) = (c, n, r)} \le \max(c, n, r)$.
 \end{itemize}
 
 To a solution $\mathcal{S}$ we associate a value $V(\mathcal{S})$, defined as such:
 \begin{align*}
 V((w, m, a)) &= \sum_{\alpha \in a} V(\alpha)\\
-V(\alpha) &= \sum_{\substack{p \in P \\d \in D \\ w \in W}} Q(p, \alpha(p, d, w))\\
+V(\alpha) &= \sum_{\substack{p \in P \\d \in D}} Q(p, \alpha(p, d))\\
 Q(p, x) &= \begin{cases}
 q_{p, c} & \text{ if } x = (c, n, r)\\
 0 &\text{ if } x = \bot
