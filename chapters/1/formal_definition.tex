@@ -61,6 +61,72 @@ q_{p, c} & \text{ if } x = (c, n, r)\\
 \end{cases}
 \end{align*}
 
+
+Here's a full example:
+
+Let $C = \{\text{Biology}, \text{Computer Science}, \text{Mathematics}\}$, $P = \{\text{Mary}, \text{Bob}, \text{Jane}\}$, $n(\text{Biology}) = 2$, $n(\text{Computer Science}) = 3$, $n(\text{Mathematics}) = 3$. $q$ is defined as
+\begin{align*}
+  q(\text{Mary}, \text{Biolgoy}) &= 3\\
+  q(\text{Mary}, \text{Mathematics}) &= 2\\
+  q(\text{Mary}, \text{Computer Science}) &= 8\\
+  q(\text{Bob}, \text{Biology}) &= 4\\
+  q(\text{Bob}, \text{Mathematics}) &= 4\\
+  q(\text{Bob}, \text{Computer Science}) &= 7\\
+  q(\text{Jane}, \text{Biology}) &= 3\\
+  q(\text{Jane}, \text{Mathematics}) &= 5\\
+  q(\text{Jane}, \text{Computer Science}) &= 8
+\end{align*}
+
+$R = \{\text{Full Professor}, \text{TA}, \text{Lab Assistant}\}$. Mary and Jane are full professors, and Mary can also act as a TA. Bob can act as a lab assistant and a TA.
+
+Mary is available on Tuesdays, Wednesdays, and Fridays; Jane is available on Mondays, Wednesdays, Thursdays, and Fridays, except the 2nd Thursday of the semester; and Bob is available on Mondays, Thursdays, and Fridays. Mary can teach up to 5 classes, Jane can teach up to 6, and Bob can teach up to 6.
+
+The requirements for each class (in this case, the lower bounds are the same as the upper bounds) are as follows:
+
+\begin{itemize}
+  \item For Biology
+    \begin{itemize}
+      \item Class 1: 1 TA, 1 professor
+      \item Class 2: 1 lab assistant
+    \end{itemize}
+  \item For Mathematics
+    \begin{itemize}
+      \item Class 1: 1 professor
+      \item Class 2: 1 TA, 1 lab assistant
+      \item Class 3: 1 professor
+    \end{itemize}
+  \item For Computer Science
+    \begin{itemize}
+      \item Class 1: 1 professor
+      \item Class 2: 1 TA
+      \item Class 3: 1 lab assistant
+    \end{itemize}
+\end{itemize}
+
+Biology has weekly patterns $\{$Monday, Tuesday, Wednesday$\}$ and $\{$Monday, Wednesday, Friday$\}$. Mathematics has weekly patterns $\{$Monday, Wednesday$\}$ and $\{$Thursday, Friday$\}$. Computer science has patterns $\{$Monday, Tuesday, Wednesday$\}$ and $\{$Tuesday, Thursday$\}$. The semester has 14 days, and starts on a Monday. Every course can start the first week or the second week of the semester. Thus $W = W_{\text{Biology}} = W_{\text{Mathematics}} = W_{\text{Computer Science}} = \{1, 8\}$, since those are the two possible start dates for each course: the start of the first week, or the start of the second week.
+
+
+It is not particularly easy to see that an optimal solution to this instance is given by the triple $(w, m, a)$, where:
+
+\begin{itemize}
+  \item $w(\text{Biology}) = 1$
+  \item $w(\text{Mathematics}) = 8$
+  \item $w(\text{Computer Science}) = 8$
+  \item $m(\text{Biology}) = \{\text{Monday}, \text{Tuesday}, \text{Wednesday}\}$
+  \item $m(\text{Mathematics}) = \{\text{Thursday}, \text{Friday}\}$
+  \item $m(\text{Computer Science}) = \{\text{Tuesday}, \text{Thursday}\}$
+  \item $a(\text{Mary}, 12) = (\text{Mathematics}, 2, \text{TA})$
+  \item $a(\text{Mary}, 9) = (\text{Computer Science}, 1, \text{Professor})$
+  \item $a(\text{Jane}, 1) = (\text{Biology}, 1, \text{Professor})$
+  \item $a(\text{Jane}, 8) = (\text{Mathematics}, 1, \text{Professor})$
+  \item $a(\text{Jane}, 11) = (\text{Mathematics}, 3, \text{Professor})$
+  \item $a(\text{Bob}, 1) = (\text{Biology}, 1, \text{TA})$
+  \item $a(\text{Bob}, 5) = (\text{Computer Science}, 2, \text{TA})$
+  \item $a(\text{Bob}, 11) = (\text{Computer Science}, 3, \text{Lab assistant})$
+  \item $a(\text{Bob}, 12) = (\text{Mathematics}, 2, \text{Lab assistant})$
+\end{itemize}
+
+This assignment yields a value of $45$. Since it is infeasible to try every possible combination of weekly pattern, starting week, and professor-class-role assignments, we wish to find efficient algorithms to solve these types of problems.\footnote{In particular, this instance was solved using the polyhedral model we will see in section 3, and its solving took 40 milliseconds on the SCIP software.}
 \newpage
 \subsection{Optimization and feasibility problems}
 
