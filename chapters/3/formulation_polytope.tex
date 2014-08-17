@@ -115,7 +115,7 @@ We also need to make sure that no invalid classes exist in $x$. That is, that th
  &x_{c, l, p, k} = 0
 \end{align}
 
-That's it for the problem's constraints, we now add consistency constraints that arise from our choice of variables for this formulation.
+Those are all the problem's inherent constraints, we now add consistency constraints that arise from our choice of variables for this formulation.
 
 Firstly, we need to make sure that $class\_date$ makes sense. This means that $class\_date_{c, l, d}$ is $1$ exactly when, for some $w \in W$ and $m \in M$, we have $csd_{c, w} = 1, cp_{c, m} = 1,$ and $ds_{m, w, l, d} = 1$. That is, course $c$ has picked starting week $w$, schedule $m$, and we know via $ds$ that choosing those two implies the $l$th class falls on the $d$th date.
 
