@@ -1,0 +1,14 @@
+\section{Introduction}
+The problem is, in its full generality, in \npc, as we showed in the previous chapter. Thus it is not likely that we will easily find a polynomial algorithm that will solve it. In attempting to find useful practical solution to the general case, we present an integer linear programming formulation, or ILP for short. The aim of this formulation is to leverage the power of modern day ILP solvers to quickly find solutions to practical scenarios.
+
+In an ILP formulation we model the problem we are trying to solve as something of the following sort:
+
+\begin{alignat*}{2}
+\text{maximize } & \langle c, x \rangle\\
+\text{subject to } & A x \le b\\
+                   & x \ge 0\\
+                   & x \in \Z^n
+\end{alignat*}
+for some $b, c \in \Z^n$, and $A \in \Z^{n \times n}$.
+
+An ILP solver will use several tools from polyhedral theory in order to speed up the search space for $x$, much faster than brute force. In particular, we will give families of "cuts", which are linear inequalities, that speed up the search process by eliminating some nonintegral solutions to the relaxed problem\footnote{See the appendix on integer linear programming for details}. With these cuts, the performance of an ILP solver on moderate to large sized instances, we'll find, is quite satisfactory.
