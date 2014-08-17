@@ -2,19 +2,19 @@
 We begin by constructing our fixed input data. We start with an instance $\mathcal{I}$ of the timetabling problem. We define the following sets:
 
 \begin{itemize}
-\item $a_{p, d} = 1 \iff d \in A_p$, that is, if professor $p$ is available on day $d$, and $0$ otherwise.
-\item $r_{p, r} = 1 \iff r \in R_p$, that is, if professor $p$ is can fill role $r$, and $0$ otherwise.
-\item $pp_{c, s} = 1 \iff s \in M_c$, that is, if course $c$ can pick the $s$th weekly schedule.
-\item $psd_{c, w} = 1 \iff w \in W_c$, that is, if course $c$ can start on the $w$th week.
-\item $ds_{s, w, l, d} = \iff $ when choosing the $s$th weekly schedule, and starting on the $w$th week, the $l$th class falls on day $d$.
+  \item $a_{p, d} = 1 \iff d \in A_p$, that is, if professor $p$ is available on day $d$, and $0$ otherwise. The name "a" stands for "\textbf{a}vailable".
+  \item $r_{p, r} = 1 \iff r \in R_p$, that is, if professor $p$ is can fill role $r$, and $0$ otherwise. The name "r" stands for "\textbf{r}ole".
+  \item $pp_{c, s} = 1 \iff s \in M_c$, that is, if course $c$ can pick the $s$th weekly schedule. The name "pp" stands for "\textbf{p}ossible \textbf{p}attern".
+  \item $psd_{c, w} = 1 \iff w \in W_c$, that is, if course $c$ can start on the $w$th week. The name "psd" stands for "\textbf{p}ossible \textbf{s}tarting \textbf{d}ate".
+  \item $ds_{s, w, l, d} = \iff $ when choosing the $s$th weekly schedule, and starting on the $w$th week, the $l$th class falls on day $d$. The name "ds" stands for "\textbf{d}aily \textbf{s}chedule".
 \end{itemize}
 
 Note these are not variables in our linear program, but preprocessed input data for it. We will have six sets of variables, although three of them are just for convenience of formulation:
 
 \begin{itemize}
-\item $cp_{c, s}$ is a binary variable indicating whether course $c$ has chosen the $s$th weekly schedule.
-\item $csd_{c, w}$ is a binary variable indicating whether course $c$ has chosen to start on the $w$th week.
-\item $x_{c, l, p, k}$ is a binary variable indicating whether the $p$th professor will teach the $l$th class of the $c$th course, with role $k$.
+  \item $cp_{c, s}$ is a binary variable indicating whether course $c$ has chosen the $s$th weekly schedule. The name "cp" stands for "\textbf{c}hosen \textbf{p}attern".
+  \item $csd_{c, w}$ is a binary variable indicating whether course $c$ has chosen to start on the $w$th week. The name "csd" stands for "\textbf{c}hosen \textbf{s}tarting \textbf{d}ate".
+  \item $x_{c, l, p, k}$ is a binary variable indicating whether the $p$th professor will teach the $l$th class of the $c$th course, with role $k$.
 \end{itemize}
 
 Those are the variables we wish to solve for. The convenience variables will be as follows:
