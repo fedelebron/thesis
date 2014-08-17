@@ -1,17 +1,94 @@
 \section{Type-$(1, 1, 1)$ instances}
 We will show that this restriction falls squarely within the complexity class $\p$.
 
-For convenience, since there is only one weekly schedule and starting week for the single course, we may consider a number $n'_{i, k}$ and $N'_{i, k}$ to be the minimum and maximum number of professors of role $k$ that can be assigned to whichever class falls on the $i$th day, of the single course. Clearly this number may be computed in constant time, recalling that all the parameters we are analyzing the complexity in terms of are constants in this restriction.
+For convenience, since there is only one weekly schedule and starting week for the single course, we may consider a number $n'_{i, k}$ and $N'_{i, k}$ to be the minimum and maximum number of professors of role $k$ that can be assigned to whichever class falls on the $i$th day, of the single course, or $0$ if no class falls on the $i$th day. Clearly this number may be computed in constant time, recalling that all the parameters we are analyzing the complexity in terms of are constants in this restriction.
 
 Also for convenience, we will write $q_i$ for the quality the $i$th professor has in teaching the only course.
 
 We will now see a few different ways of thinking about this reduction.
 \subsection{As a maximum cost maximum flow problem}
 
-One way to model these instances is as a maximum-cost maximum-flow problem. Specifically, we can create the following flow network, where capacities are in blue, and costs are in red:
+One way to model these instances is as a maximum-cost maximum-flow problem. Consider the following scenario:
 
-\begin{center}
-\begin{tikzpicture}
+\begin{itemize}
+  \item 1 week in the semester, and a 3 day week. The week is $\{$Monday, Tuesday, Wednesday$\}$.
+  \item 3 professors: Mary, Jane, and Bob. Mary can work on Monday and Wednesday, Jane can work on Monday and Tuesday, and Bob can work on Tuesday and Wednesday.
+  \item Mary can teach up to 5 classes, Bob can teach up to 2 classes, and Jane can teach up to 3 classes.
+  \item There are 2 roles, lecturer and TA. Mary can act as a lecturer and a TA, Bob can act as a TA, and Jane can act as a lecturer.
+  \item Mary's quality in this course is 6, Bob's is 4, and Jane's is 5.
+  \item The course starts on Monday the $1$st, and it has $2$ classes. Its weekly pattern is $\{$Monday, Wednesday$\}$.
+  \item The first class requires 1 lecturer, the second class requires 1 or 2 TAs.
+\end{itemize}
+
+We can think of a professor "flowing" "teaching units" through a network, and each class requires a certain number of these "teaching units" for each its roles. Thus we can create one node for each professor. These professors will let a certain amount of flow out, the maximum amount of which is given by the number of classes they can teach. These units of flow will go into a node representing "A professor who teaches with role $x$ on day $y$", and there will be a node for each day, which (since a single class falls on that day) will "require" a certain number of teaching units of each role.
+
+A graphical example will hopefully make this clearer. In figure~\ref{fig:exampleflow} we show the construction for the above scenario, where we've omitted the capacity of an edge when it is $1$, and we omit the edge altogether when its capacity is $0$. We also omit its cost when it is $0$. We have colored  edge capacities in blue, and edge costs in red.
+
+In order to find a solution for this instance, we run a maximum-cost maximum-flow algorithm on that graph, which yields a flow of $3$ with a cost of $16$, which is optimal. This is achieved by flowing $2$ units of flow through Mary, who will act as a lecturer on the first class and $TA$ on the second class, and $1$ unit of flow through Bob, who will act as a TA for the second class.
+
+\begin{figure}
+  \begin{tikzpicture}
+    \node[box, fill=gray!20] (source) at (0, 1) {Source};
+    \node[box, fill=blue!20] (Mary) at (3, 1) {Mary};
+    \node[box, fill=blue!20] (Bob) at (3, -1) {Bob};
+    \node[box, fill=blue!20] (Jane) at (3, 3) {Jane};
+    \node[box, fill=red!20] (Mary1) at (5, 0) {Mary, M};
+    \node[box, fill=red!20] (Mary2) at (5, 1) {Mary, T};
+    \node[box, fill=red!20] (Mary3) at (5, 2) {Mary, W};
+    \node[box, fill=red!20] (Bob1) at (5, -3) {Bob, M};
+    \node[box, fill=red!20] (Bob2) at (5, -2) {Bob, T};
+    \node[box, fill=red!20] (Bob3) at (5, -1) {Bob, W};
+    \node[box, fill=red!20] (Jane1) at (5, 3) {Jane, M};
+    \node[box, fill=red!20] (Jane2) at (5, 4) {Jane, T};
+    \node[box, fill=red!20] (Jane3) at (5, 5) {Jane, W};
+    \node[box, fill=green!20] (TA1) at (8, -2) {TA, M};
+    \node[box, fill=green!20] (TA2) at (8, -1) {TA, T};
+    \node[box, fill=green!20] (TA3) at (8, 0) {TA, W};
+    \node[box, fill=green!20] (P1) at (8, 2) {Lecturer, M};
+    \node[box, fill=green!20] (P2) at (8, 3) {Professor, T};
+    \node[box, fill=green!20] (P3) at (8, 4) {Lecturer, W};
+    \node[box, fill=gray!20] (sink) at (13, 1) {Sink};
+    \draw[->] (source) to node[above,blue] {$5$} node[below,red] {$6$} (Mary);
+    \draw[->] (source) to node[above,blue] {$2$} node[below,red] {$4$} (Bob);
+    \draw[->] (source) to node[above,blue] {$3$} node[below,red] {$5$} (Jane);
+    \draw[->] (Mary) to (Mary1);
+    \draw[->] (Mary) to (Mary3);
+    %\draw[->] (Mary) to node[above, blue] {$0$} (Mary2);
+    \draw[->] (Jane) to (Jane1);
+    \draw[->] (Jane) to (Jane2);
+    %\draw[->] (Jane) to node[above, blue] {$0$} (Jane3);
+    \draw[->] (Bob) to (Bob2);
+    \draw[->] (Bob) to (Bob3);
+    %\draw[->] (Bob) to node[below, blue] {$0$} (Bob1);
+    \draw[->] (Mary1) to (TA1);
+    \draw[->] (Mary1) to (P1);
+    \draw[->] (Mary2) to (TA2);
+    \draw[->] (Mary2) to (P2);
+    \draw[->] (Mary3) to (TA3);
+    \draw[->] (Mary3) to (P3);
+    \draw[->] (Jane1) to (P1);
+    \draw[->] (Jane2) to (P2);
+    \draw[->] (Jane3) to (P3);
+    \draw[->] (Bob1) to (TA1);
+    \draw[->] (Bob2) to (TA2);
+    \draw[->] (Bob3) to (TA3);
+    \draw[->] (P1) to node[below, blue] {$(1, 1)$} (sink);
+    %\draw[->] (TA1) to node[below, blue]  {$(0, 0)$} (sink);
+    %\draw[->] (TA2) to node[below, blue]  {$(0, 0)$} (sink);
+    %\draw[->] (P2) to node[below, blue]  {$(0, 0)$} (sink);
+    %\draw[->] (P3) to node[above, blue] {$(0, 0)$} (sink);
+    \draw[->] (TA3) to node[below, blue] {$(1, 2)$} (sink);
+  \end{tikzpicture}
+  \caption{Flow construction for the example type-$(1, 1, 1)$ scenario.}
+  \label{fig:exampleflow}
+\end{figure}
+
+
+
+In general, we can create the flow network in figure~\ref{fig:generalflow111}.
+
+\begin{figure}
+  \begin{tikzpicture}
 \node[v] (s) at (1, 1) {$s$};
 \node[v] (p_j) at (3, 1) {$\alpha_j$};
 \node (d1) at (3, 2) {$\vdots$};
@@ -50,7 +127,9 @@ One way to model these instances is as a maximum-cost maximum-flow problem. Spec
 %\dottedarrows{{d11, d12}}{{t}};
 
 \end{tikzpicture}
-\end{center}
+\caption{The general flow construction for type-$(1, 1, 1)$ instances.}
+\label{fig:generalflow111}
+\end{figure}
 
 Here, when we say that the capacity of an edge is $i \in A_j$, we mean that it is $1$ if $i \in A_j$, and $0$ otherwise. Similarly for $k \in R_j$.
 
