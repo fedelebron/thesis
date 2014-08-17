@@ -127,7 +127,7 @@ We can write this constraint as:
   &\forall m \in M\\
   &\forall 1 \le l \le n(c)\\
   &\forall 1 \le d \le D\\
-  &ds_{m, w, l, d} \Rightarrow csd_{c, w} + cp_{c, m} - 1 \le class\_date_{c, l, d}
+  &(ds_{m, w, l, d} = 1) \Rightarrow csd_{c, w} + cp_{c, m} - 1 \le class\_date_{c, l, d}
 \end{align}
 
 We also require that every class of every course is scheduled to exactly one day:
