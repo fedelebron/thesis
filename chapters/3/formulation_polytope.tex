@@ -182,4 +182,4 @@ If we wanted not to allow $busy$ to have further nonzero entries, we could requi
   &\sum_{d \in D} busy_{p, c, d} = \sum_{1 \le l \le n(c)} busy\_l_{p, c, l}
 \end{align}
 
-These two restrictions would tell us that, in a sense, $busy$ is a shifting of $busy\_l$, via $class\_date$. We choose not to add these restrictions, since they do not change the semantics of the found solutions - extra entries in $busy$ can simply be ignored, and we decrease the number of constraints for the solvers.
+These two constraints would tell us that, in a sense, $busy$ is a shifting of $busy\_l$, via $class\_date$. We choose not to add these restrictions, since they do not change the semantics of the found solutions - extra entries in $busy$ can simply be ignored, and we decrease the number of constraints for the solvers.
