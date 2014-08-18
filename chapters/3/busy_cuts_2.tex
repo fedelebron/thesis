@@ -45,7 +45,7 @@ which is trivial.
 
 The problen here is that since each professor only works "half" the class, the class requirements are satisfied, but not the $busy$ requirements for each of the professors (at least conceptually - clearly the linear constraints themselves are satisfied!). 
 
-We eliminate these vertices by noting that if a professor $p$ teaches the $l$th class of course $c$ with some role, and class $l$ can only fall on a subset $X$ of days, then it must hold that
+We eliminate these fractional solutions by noting that if a professor $p$ teaches the $l$th class of course $c$ with some role, and class $l$ can only fall on a subset $X$ of days, then it must hold that
 
 $$
 busy\_l_{p, c, l} \le \sum_{d \in X} busy_{p, c, d}
