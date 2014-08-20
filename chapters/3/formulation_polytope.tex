@@ -178,7 +178,7 @@ Likewise, we have a convenience set of variables $busy$, which is simply the tra
 
 If we wanted not to allow $busy$ to have further nonzero entries, we could require that the sum of the busy days for professor $p$ and course $c$ is just the number of classes $p$ teaches in course $c$, since a professor is present at most once per every class:
 
-\begin{align}
+\begin{align}\label{eq:noextrabusy}
   &\forall p \in P,\\
   &\forall c \in C,\\
   &\sum_{d \in D} busy_{p, c, d} = \sum_{1 \le l \le n(c)} busy\_l_{p, c, l}

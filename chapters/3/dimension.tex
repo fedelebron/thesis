@@ -78,7 +78,53 @@ More conceptually, we can consider that every starting date we add forms, togeth
 
 \subsection{Chance hyperplanes}
 
-One might hope that the bound given in the previous section is tight. Indeed, in many cases we have seen it turns out this is actually the dimension of the polytope. However, in general, the bound is unfortunately \emph{not} tight, due to what we will call ``chance hyperplanes'', or ``chance equalities''.
+One might hope that the bound given in the previous section is tight. Indeed, in simple cases we have seen it turns out this is actually the dimension of the polytope. For example, let us consider the following simple scenario:
+
+\begin{itemize}
+  \item A single course ($1$), with a single class ($1$), with a single possible weekly pattern ($1$) and possible starting date ($1$). The class requires $0$, $1$, or $2$ professors teaching with the only role there is ($1$).
+  \item Two professors, $1$ and $2$, both able to fill the only role, and available on the day the class must happen.
+\end{itemize}
+
+Let the solution space be described by $7$-tuples of the form $(x_{1, 1, 1, 1}$, $x_{1, 1, 2, 1}$, $class\_date_{1, 1, 1}$, $cp_{1, 1}$, $csd_{1, 1}$, $busy_{1, 1, 1}$, $busy_{2, 1, 1})$. From \ref{eq:chosenstart} we have $csd_{1, 1} = 1$. From \ref{eq:chosenpattern} we obtain $cp_{1, 1} = 1$. From \ref{eq:oneclassdate} we know $class\_date_{1, 1, 1} = 1$. It turns out this is a minimal system for this instance. Namely, the integral solutions to this instance are exactly:
+
+\begin{itemize}
+\item (0, 0, 1, 1, 1, 0, 0)
+\item (0, 0, 1, 1, 1, 0, 1)
+\item (0, 0, 1, 1, 1, 1, 0)
+\item (0, 0, 1, 1, 1, 1, 1)
+\item (0, 1, 1, 1, 1, 0, 1)
+\item (0, 1, 1, 1, 1, 1, 1)
+\item (1, 0, 1, 1, 1, 1, 0)
+\item (1, 0, 1, 1, 1, 1, 1)
+\item (1, 1, 1, 1, 1, 1, 1)
+\end{itemize}
+
+Since for every other dimension than the central $3$ there's a vertex with that coordinate with a $0$ and another vertex with that coordinate with a $1$ in it, the dimension of the polyhedron is $7 - 3 = 4$. This is exactly the bound for this case, since we have
+
+\begin{align*}
+T = Q &= |P| = 2\\
+|C| = N = |S| = |R| &= |W| = |M| = K = 1
+\end{align*}
+
+If we add the constraints in \ref{eq:noextrabusy} (which in the formulation we do not in order to simplify the solver's task, while not losing any information) we obtain two more equalities, namely
+
+\begin{align*}
+x_{1, 1, 1, 1} &= busy_{1, 1, 1}\\
+x_{1, 1, 2, 1} &= busy_{2, 1, 1}
+\end{align*}
+
+Yielding the 4 solutions:
+
+\begin{itemize}
+\item (0, 0, 1, 1, 1, 0, 0)
+\item (0, 1, 1, 1, 1, 0, 1)
+\item (1, 0, 1, 1, 1, 1, 0)
+\item (1, 1, 1, 1, 1, 1, 1)
+\end{itemize}
+
+These being the 4 possible scenarios: Either nobody teaches the class (which is fine given the constraints), $1$ teaches it, $2$ teaches it, or they both do. We notice that the vertices form a 2-cube in ${\Z/2\Z}^7$, and thus their dimension is $2$.
+
+However, in general, the bound is unfortunately \emph{not} tight, due to what we will call "chance hyperplanes", or "chance equalities".
 
 Take, for example, a course $c$ with a class $i$ such that $i$ requires at least 1 instance of a professor with role $j$. Furthermore, assume there is exactly one professor, the $k$th one, who can fulfill that role. Then we will have the following relevant constraints on the polytope:
 
