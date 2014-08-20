@@ -1,5 +1,5 @@
-The construction of a timetable that satisfies a given set of requirements is an important part of course planning, but it is known to be exceedingly hard, both in theory and in practice, in several important cases. For this reason it's been studied by the combinatorial optimization community. In particular, it's been studied using integer linear programming models.
+The course scheduling and professor assignment problem (CSPAP) consists of constructing a timetable and assigning professors to classes, subject to some restrictions. This important part of course planning is known to be exceedingly hard, both in theory and in practice, in several important cases. For this reason it's been studied by the combinatorial optimization community. In particular, it's been studied using integer linear programming models.
 
 In this work we consider one version of the problem and proceed to study it, both from a theoretical and practical standpoint. The restrictions we consider are ones of availability of faculty, course start date, and weekly course pattern. We study the complexity phase change that occurs when some restrictions are lifted or applied, and see how the problem shifts from \p to \npc.
 
-Finally, we consider the problem using polyhedral optimization, and attempt to find effective cuts for a branch-and-cut algorithm.
+For the general problem, we consider a polyhedral approach, and find cuts to increase the efficiency of a branch-and-cut integer linear programming solver.

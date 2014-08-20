@@ -1,5 +1,5 @@
 \section{Formulation}
-We begin by constructing our fixed input data. We start with an instance $\mathcal{I}$ of the timetabling problem. We define the following sets:
+We begin by constructing our fixed input data. We start with an instance $\mathcal{I}$ of CSPAP. We define the following sets:
 
 \begin{itemize}
   \item $a_{p, d} = 1 \iff d \in A_p$, that is, if professor $p$ is available on day $d$, and $0$ otherwise. The name "a" stands for "\textbf{a}vailable".
@@ -185,3 +185,5 @@ If we wanted not to allow $busy$ to have further nonzero entries, we could requi
 \end{align}
 
 These two constraints would tell us that, in a sense, $busy$ is a shifting of $busy\_l$, via $class\_date$. We choose not to add these restrictions, since they do not change the semantics of the found solutions - extra entries in $busy$ can simply be ignored, and we decrease the number of constraints for the solvers.
+
+Lastly, the difference between $P(I)$ and $P_{\R}(I)$ is that, in $P(I)$, we require $x_{c, l, p, k}$, $class\_date_{c, l, d}$, $busy\_l_{p, c, l}$, $busy_{p, c, d}$, $cp_{c, p}$, $csd_{c, sd}$ to all be in $\Z$.

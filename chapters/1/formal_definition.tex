@@ -1,5 +1,5 @@
 \section{Formal definition}
-An instance $\mathcal{T}$ of the timetabling problem consists of several pieces of data:
+An instance $\mathcal{T}$ of CSPAP consists of several pieces of data:
 
 \begin{itemize}
 \item $C$ a set of courses,
@@ -32,9 +32,9 @@ We also have to take into account professor availability, given by the following
 \item For every $p \in P$, we have a number $\max_p \in \Z+$, indicating the maximum number of classes professor $p$ is willing to teach
 \end{itemize}
 
-Given an instance of the timetabling problem, we define $N \subset \mathbb{Z}$ as $N = \{1 \dots \max_{c \in C} n(c)\}$. We will also define $D = W \times WD$, the set of days in the semester.
+Given an instance of CSPAP, we define $N \subset \mathbb{Z}$ as $N = \{1 \dots \max_{c \in C} n(c)\}$. We will also define $D = W \times WD$, the set of days in the semester.
 
-Formally, a solution to a timetabling problem is a triple $\mathcal{S} = (w, m, a)$, where $w: C \to W$ gives the starting week for each course, $m: C \to M$ gives the weekly schedule for each course, and $a: P \times D \to C \times N \times R \cup \{\bot\}$ says, for each $(p, d)$, what professor $p$ does on day $d$:
+Formally, a solution to a CSPAP instance is a triple $\mathcal{S} = (w, m, a)$, where $w: C \to W$ gives the starting week for each course, $m: C \to M$ gives the weekly schedule for each course, and $a: P \times D \to C \times N \times R \cup \{\bot\}$ says, for each $(p, d)$, what professor $p$ does on day $d$:
 \begin{itemize}
 \item If $a(p, d) = (c, n, r)$, then professor $p$ on day $d$ teaches the $n$th class of course $c$, as the $r$th role
 \item If $a(p, d) = \bot$, then professor $p$ on day $d$ does not teach any courses
@@ -132,7 +132,7 @@ This assignment yields a value of $45$. Since it is infeasible to try every poss
 \subsection{Optimization and feasibility problems}
 
 Given the above definitions, we can formulate the following optimization problem:
-\decision{TIMETABLING-OPT}{An instance $\mathcal{T}$ of the timetabling problem.}{What is the largest $k$ such that there exists a solution $\mathcal{S}$ to $\mathcal{T}$, and $V(\mathcal{S}) = k$?}
+\decision{TIMETABLING-OPT}{An instance $\mathcal{T}$ of CSPAP.}{What is the largest $k$ such that there exists a solution $\mathcal{S}$ to $\mathcal{T}$, and $V(\mathcal{S}) = k$?}
 
 We can also formulate the associated feasibility problem:
-\decision{TIMETABLING}{An instance $\mathcal{T}$ of the timetabling problem.}{Does there exist a solution $\mathcal{S}$ to $\mathcal{T}$?}
+\decision{TIMETABLING}{An instance $\mathcal{T}$ of CSPAP.}{Does there exist a solution $\mathcal{S}$ to $\mathcal{T}$?}
