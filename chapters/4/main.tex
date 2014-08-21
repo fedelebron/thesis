@@ -1,3 +1,5 @@
-\chapter{Appendices}
-\appendix
-\input{ilp.tex}
+\chapter{Conclusion}
+
+In this work, we've seen how CSPAP's complexity breaks down according to the number of courses, number of patterns, and number of starting days. We see that for simple cases, including the multiple course, single starting date, single pattern case, the problem has a polynomial time solution. In other cases, the problem is in \npc. An interesting consequence of CSPAP being a very general notion of a matching is that the polynomial algorithms devised are based on flow networks, the same tools frequently used to solve matching problems.
+
+For the general case, in particular the otherwise-unsolved \npc instances, we've provided a polyhedral model that achieves good performance even for large instances. The cuts introduced help improve the performance in all tested cases. This results in a solution that solves practically useful cases in only a few minutes. We also gave analyzed the polytope and seen how its dimension is bounded by an explicitly given number, and saw both cases where the bound is tight, and reasons why it might in some cases not be.
