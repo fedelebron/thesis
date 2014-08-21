@@ -1,3 +1,71 @@
 \section{Integer Linear Programming}
 \label{app:ilp}
-Placeholder for ILP appendix.
+Combinatorial optimization problems are frequently solved as either a linear programming (LP) problem, or an integer linear programming (ILP) problems. An LP problem is of the form
+
+\begin{align*}
+&\text{maximize }  & \langle c, x \rangle\\
+&\text{subject to }& Ax &\le b&\\
+&                  & x &\ge 0&\\
+&                  & x &\in \R^n&
+\end{align*}
+
+where $A \in \R^{m \times n}$, and $b, c \in \R^m$.
+
+Meanwhile, an ILP problem is of the form
+
+\begin{align*}
+&\text{maximize }  & \langle c, x \rangle\\
+&\text{subject to }& Ax &\le b&\\
+&                  & x &\ge 0&\\
+&                  & x &\in \Z^n&
+\end{align*}
+
+where $A \in \Z^{m \times n}$, and $b, c \in \Z^m$.
+
+Given an LP or ILP problem $Q$, we define $P(Q)$ as the convex hull of the set of $x$ that satisfy the constraints of the problem, regardless of whether or not $\langle c, x \rangle$ is maximized. Note thisis a convex hull in $\R^n$, regardless of whether $Q$ was an LP or an ILP.
+
+Given an ILP $Q$, we can consider the LP that results from taking $Q$ and relaxing its integrality condition, that is, allowing $x$ to range over $\R^n$ instead of $\Z^n$. We call this LP $Q_\R$.
+
+It is easily seen that for any ILP $Q$, we have $P(Q) \subseteq P(Q_\R)$.
+
+It is well known that solving an LP can be done in polynomial time in $n$ and $m$\cite{lp}, for example using interior point methods or the ellipsoid method. Solving an ILP problem, however, is not known to be solvable in polynomial time. In fact, it is NP-complete to do so\cite{Garey:1990:CIG:574848}. However, due to the geometrical nature of this problem, one can often use tools from geometry in order to solve ILP instances very quickly.
+
+Specifically, one has an ILP problem $Q$, and one takes advantage that $Q_\R$ is solvable in polynomial time, and is in general, "well-behaved". An optimal solution $x$ to $Q_\R$ need not be even valid for $Q$, but if is, then it is also optimal for $Q$. When it is not valid, one can try "cutting" the polytope $P(Q_\R)$ by adjoining further halfplanes to its formulation, removing $x$ from the new polytope, but not removing any valid integral solution. The goal is to trim $P(Q_\R)$ enough so that it resembles $P(Q)$, and such that a fast LP solver finds an integral optimum in $P(Q_\R)$, thus solving $Q$.
+
+These cutting planes are often introduced as part of a technique known as "branch-and-cut". In this technique one uses the geometry of $Q_\R$ to help solve $Q$. The procedure is as such:
+
+\begin{codebox}
+\Procname{$\proc{Branch-and-cut}(Q)$}
+\li $L \gets \{Q_\R\}$
+\li $x^* \gets \const{null}$
+\li $v* \gets -\infty$
+\li \While ($L \ne \emptyset$)
+ \Do
+\li    Let $l \in L$
+\li    $L \gets L \setminus \{l\}$
+\li    \If $l$ is infeasible
+    \Do
+\li      \Goto 4
+    \End
+\li    Let $x$ be a solution to $l$, with value $v$.
+\li    \If $x$ is integer and $v > v^*$
+    \Do
+\li      $x^* \gets x$
+\li      $v^* \gets v$
+\li      \Goto 4
+    \End
+\li    \If there exists a cutting plane $\pi$ that separates $x$ from $l$
+    \Do
+\li      $l \gets l \cap \pi$.
+\li      \Goto 7
+    \End
+\li    Let $i$ be such that $x_i$ is fractional with value $v$.
+\li    Let $\pi_1 = x_i \ge \lceil v \rceil$
+\li    Let $\pi_2 = x_i \le \lfloor v \rfloor$.
+\li    $L \gets L \cup \{l \cap \pi_1, l \cap \pi_2\}$
+    \End
+\li \Return $(x^*, v^*)$
+\end{codebox}
+
+This procedure is not, in general, polynomial. However, if the cuts $\pi$ we select to separate fractional solutions from $l$ are good, in that they trim away a lot of $l$ and leave few nonintegral solutions, then the program will, in practice, finish quickly, because it will not need to branch on many variables. We can also be smarter and use the dual problem ${Q_\R}^*$ and valid solutions to it will be upper bounds to the values of $v$ we need to explore, such that if we find an integral solution $x$ to an $l$ with value $v$ such that there is a solution $y$ to ${Q_\R}^*$ with value $v$, we need not look any further for solutions, since $x$ will be optimal for $Q$.
+
