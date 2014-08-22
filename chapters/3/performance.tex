@@ -1,14 +1,68 @@
 \newpage
 \section{Performance}
 
-We can analyze the model in terms of its performance when fed to CPLEX, an ILP solver. We analyse the runtime in terms of the different variables of the problem.
+We can analyze the model in terms of its performance when fed to CPLEX, an ILP solver. We analyse the runtime in terms of the different variables of the problem. We run a given instance size 10 times and take the average solving time by CPLEX, both with and without the busy cuts family.
 
-In figure~\ref{bench:courses} we see its behavior when we vary the number of courses, leaving all else constant. We see a linear growth when the number of courses is small, below 50.
+In figure~\ref{bench:courses} we see its behavior when we vary the number of courses, leaving all else constant. We see a linear growth when the number of courses is small, below 50. The same linear behavior is observed as we vary the number of possible start dates for each course in figure~\ref{bench:startdates}, and possible weekly patterns for each course in figure~\ref{bench:patterns}. While these instance sizes are "small", they are reasonable examples of practically ocurring situations.
 
 \begin{figure}
 \begin{center}
 \subimport{../../benchmarks/}{courses.tex}
-\caption{Performance as course number varies}
+\caption{Performance as course count varies}
 \label{bench:courses}
 \end{center}
 \end{figure}
+
+\begin{figure}
+\begin{center}
+\subimport{../../benchmarks/}{startdates.tex}
+\caption{Performance as start date count varies}
+\label{bench:startdates}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\subimport{../../benchmarks/}{patterns.tex}
+\caption{Performance as pattern count varies}
+\label{bench:patterns}
+\end{center}
+\end{figure}
+
+In these small cases, CPLEX informs us that it did not need to branch on fractional variables in order to arrive at a solution. Indeed, it was enough to apply our families of cuts and the standard cuts CPLEX has to arrive at an integral optimal solution to the relaxed problem.
+
+As we increase the number of courses, however, we see in figure~\ref{bench:megacourses} that CPLEX starts to branch out, and the runtime grows exponentially for very large cases. There is still an improvement when using the busy cuts family, although this improvement will, in the limit, be dwarfed by the exponential increase in runtime from the growing number of courses.
+
+\begin{figure}
+  \begin{center}
+    \subimport{../../benchmarks/}{megacourses.tex}
+    \caption{Performance as course count varies, with $300$ professors, $10$ classes per course, $10$ weeks of $10$ days, $2$ roles, $1$ start date, and $3$ total weekly patterns, $1$ per course.}
+    \label{bench:megacourses}
+  \end{center}
+\end{figure}
+
+At these numbers, the limiting factor is the sheer filesize needed to specify these large instances. Instances with $300$ professors, $65$ courses, with $10$ classes each, can reach filesizes of up to 1 gigabyte, using the standard LP format for linear programs. Consider, for example, that the objective function will mention $|C| \times N \times |P| \times |R|$ variables, which with $300$ professors, $10$ classes per course, $60$ courses, and $2$ courses are already $360000$ variables.
+
+\begin{figure}
+  \begin{center}
+    \subimport{../../benchmarks/}{megacourses2.tex}
+    \caption{Performance as course count varies, with $150$ professors, $5$ classes per course, $5$ weeks of $10$ days, $2$ roles, $1$ start date, and $3$ total weekly patterns, $1$ per course.}
+    \label{bench:megacourses2}
+  \end{center}
+\end{figure}
+
+Sheer problem size indeed does seem to be an important factor in determining solving time. In figure~\ref{bench:megacourses2} we see that by considering much smaller semesters and a much lower professor count, the runtime is very favorably affected. This would seem to hint at sheer problem size being an important factor when it comes to solving time. It is thus interesting to explore more compact representations of the problem constraints, with a view to obtaining better runtimes.
+
+Even though we did not analyze the problem's theoretical complexity in terms of the number of professors, we can plot thesolution time in terms of this variable as well. In figure~\ref{bench:profs} we see this plot, suggesting a linear relation, at least in these small cases, between professor count and solution time.
+
+\begin{figure}
+  \begin{center}
+    \subimport{../../benchmarks/}{profs.tex}
+    \caption{Performance as professor count varies, with $50$ courses, $5$ classes per course, $5$ weeks of $10$ days, $2$ roles, $1$ start date, and $3$ total weekly patterns, $1$ per course.}
+    \label{bench:profs}
+  \end{center}
+\end{figure}
+
+Cases where $|P| \simeq 100$, $N \simeq 10$, and $|C| \simeq 50$, seem reasonable for practical work, and we see that for these instances a solution is found in only a few seconds. The data thus suggests this is an effective model for practical work.
+
+
