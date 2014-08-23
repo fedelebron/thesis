@@ -1,5 +1,5 @@
 \section{Type-$(1, 1, 1)$ instances}
-We will show that this restriction falls squarely within the complexity class $\p$.
+We will show that this restriction falls within the complexity class $\p$.
 
 For convenience, since there is only one weekly schedule and starting week for the single course, we may consider a number $n'_{i, k}$ and $N'_{i, k}$ to be the minimum and maximum number of professors of role $k$ that can be assigned to whichever class falls on the $i$th day, of the single course, or $0$ if no class falls on the $i$th day. Clearly this number may be computed in constant time, recalling that all the parameters we are analyzing the complexity in terms of are constants in this restriction.
 
@@ -8,7 +8,7 @@ Also for convenience, we will write $q_i$ for the quality the $i$th professor ha
 We will now see a few different ways of thinking about this reduction.
 \subsection{As a maximum cost maximum flow problem}
 
-One way to model these instances is as a maximum-cost maximum-flow problem. Consider the following scenario:
+One way to model these instances is as a maximum-cost maximum-flow problem. Before we introduce the general solution, we consider a small example scenario:
 
 \begin{itemize}
   \item 1 week in the semester, and a 3 day week. The week is $\{$Monday, Tuesday, Wednesday$\}$.
@@ -85,7 +85,9 @@ In order to find a solution for this instance, we run a maximum-cost maximum-flo
 
 
 
-In general, we can create the flow network in figure~\ref{fig:generalflow111}.
+This example leads us to formulate the general version of this solution. We can create the flow network that appears in figure figure~\ref{fig:generalflow111}, where we say that the capacity of an edge is $i \in A_j$ when we mean that it is $1$ if $i \in A_j$, and $0$ otherwise. Similarly for $k \in R_j$.
+
+
 
 \begin{figure}
   \begin{tikzpicture}
@@ -131,8 +133,6 @@ In general, we can create the flow network in figure~\ref{fig:generalflow111}.
 \label{fig:generalflow111}
 \end{figure}
 
-Here, when we say that the capacity of an edge is $i \in A_j$, we mean that it is $1$ if $i \in A_j$, and $0$ otherwise. Similarly for $k \in R_j$.
-
 Formally, the network is $G = (V, E)$, with
 
 \begin{align*}
@@ -146,7 +146,7 @@ E = &\{(s, \alpha_j)\ \forall\ j\}\\
     &\cup \{(\gamma_{i, k}, t)\ \forall\ i, k \}
 \end{align*}
 
-; capacity function $c:E \to \left(\mathbb{R} \cup \{\infty\}\right)^2$, such that
+We also have a capacity function $c:E \to \left(\mathbb{R} \cup \{\infty\}\right)^2$, such that
 \begin{align*}
   c(s, \alpha_j) &= (0, \textstyle\min_j)\ \forall\ j\\
   c(\alpha_j, \beta_{j, i}) &= (0, i \in A_j)\ \forall\ i, j\\
@@ -164,7 +164,7 @@ q_j &\text{ if } e = (s, \alpha_j) \text{ for some }j\\
 \end{cases}
 $$
 
-We can think of the flow in this network as ``time'' dedicated by a professor at a given day, on a given role. A unit of flow goes from a professor to a given day (only if that professor is available that day), and to a given role (only if the professor could fit that role), and into fulfilling that day's quota for that role.
+We can think of the flow in this network as "time" dedicated by a professor at a given day, on a given role. A unit of flow goes from a professor to a given day (only if that professor is available that day), and to a given role (only if the professor could fit that role), and into fulfilling that day's quota for that role.
 
 A professor cannot teach on an unavailable day, since flow can only go from the $j$th professor to the $i$th day if $i \in A_j$, and only one unit may go through in that case. This last fact ensures a professor cannot work twice in a single day, even under different roles.
 
@@ -181,7 +181,7 @@ Furthermore, to obtain an optimal solution, that is, a maximum sum of the qualit
 Since maximum-cost maximum-flow on $G$ is solvable in $O(poly(|V|, |E|))$ operations, and we can see our $|V|$ and $|E|$ are polynomials in $|P|, |D|, |R|$, we conclude this reduction can be solved in time $O(poly(|P|, |D|, |R|))$, and since we consider these to be constants, we have that $(1, 1, 1)$-TIMETABLING is in \textsc{P}.
 
 \subsection{As a linear program}
-Moreover, this formulation introuces an associated linear programming formulation. Specifically, we can formulate any maximum-cost, integer maximum-flow problem with integer upper and lower bounds and integer edge costs as an ILP with an integral linear relaxation, following ~\cite{Ahuja93}.
+Moreover, this formulation introduces an associated linear programming formulation. Specifically, we can formulate any maximum-cost, integer maximum-flow problem with integer upper and lower bounds and integer edge costs as an ILP with an integral linear relaxation, following ~\cite{Ahuja93}.
 
 Specifically, if we have a network $G = (V, E)$, with $V = \{v_1, \dots, v_N\}, E = \{e_1, \dots, e_M\}$, a weighting $w = (w_1, \dots, w_M) \in \Z^M$, and upper and lower bounds $u = (u_1, \dots, u_M) \in \Z^M, l = (l_1, \dots, l_M) \in \Z^M$, we can consider its incidence matrix $B \in \{0, 1\}^{M \times N}$. We consider then the following linear program:
 
@@ -202,7 +202,7 @@ This linear program's matrix is totally unimodular as proved in ~\cite{Ahuja93},
 
 \subsection{As an assignment problem}
 
-In the specific case where we have no limit on classes taught by a single professor, and we have $\min(c, n, r) = \max(c, n, r)$, we can model this restriction as an assignment problem. For convenience, let us note $x = \sum_{i = 1}^{|P|} |A_i|$, $y = \sum_{k = 1}^{|S|} \sum_{l = 1}^{|R|} n'_{k, l}$, and $z = x - y$. We will see what these mean shortly. Now we create the following bipartite graph:
+In the specific case where we have no limit on classes taught by a single professor, and we have $\min(c, n, r) = \max(c, n, r)$, we can model this version of CSPAP as an assignment problem. For convenience, let us note $x = \sum_{i = 1}^{|P|} |A_i|$, $y = \sum_{k = 1}^{|S|} \sum_{l = 1}^{|R|} n'_{k, l}$, and $z = x - y$. We will see what these mean shortly. Now we create the following bipartite graph:
 
 \begin{center}
 \begin{tikzpicture}
@@ -244,7 +244,7 @@ w(\alpha_{i, j}, h_s) &= 0
 
 Conceptually, $\alpha_{i, j}$ represents professor $i$ teaching on the $j$th day, and $\beta_{k, l, v}$ represents fulfilling the $v$th instance of the class which falls on the $k$th day's requirement for professors of role $l$. There are $n'_{k, l}$ ``copies'' of the pair $(k, l)$, as many as professors needed of the $l$th type. These are $\beta_{k, l, 1}, \dots, \beta_{k, l, n'_{k, l}}$. $x$ is the number of $\alpha$, and $y$ is the number of $\beta$. The $h$ nodes are added to the graph to make both partitions of the graph of the same size, thus allowing for a perfect matching.
 
-Thus we can see that a maximum matching in this graph must attempt to assign professors to instances of role requirements. If indeed a matching has edges incident to every $\beta_{k, l, v}$, then if node $\alpha_{i, j}$ is its matched node, we say that professor $i$ is being assigned on day $j$ to cover role $l$, to the class which falls on the $k$th day. If an $\alpha_{i, j}$ is matched to some $h_s$, it means that the $i$th professor did not teach on the $j$th day (taking the $s$th ``vacation voucher'', if you will). We can see that the requirements of the assignment are satisfied, since
+Thus we can see that a maximum matching in this graph must attempt to assign professors to instances of role requirements. If indeed a matching has edges incident to every $\beta_{k, l, v}$, then if node $\alpha_{i, j}$ is its matched node, we say that professor $i$ is being assigned on day $j$ to cover role $l$, to the class which falls on the $k$th day. If an $\alpha_{i, j}$ is matched to some $h_s$, it means that the $i$th professor did not teach on the $j$th day (taking the $s$th "vacation voucher"). We can see that the requirements of the assignment are satisfied, since
 
 \begin{itemize}
 \item No matching could assign a professor $i$ to teach two classes on day $j$ (since node $\alpha_{i, j}$ would be incident to two edges in the matching),
