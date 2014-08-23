@@ -31,7 +31,7 @@ $$
 
 Now since every class must be allocated to some day, we have a constraint $\sum_{d \in D} class\_date_{c, 1, d} = 1$. So let's say our solution vector places $class\_date_{c, 1, 1} = 1$.
 
-Since schedule $1$ has no day allocated for class $3$, the following inequality must be true
+Since schedule $1$ has no day allocated for class $3$, the following inequality must be true by \ref{eq:coclassdate}
 
 $$
 (1 - cp_{c, 1}) + (1 - csd_{c, 1}) \ge class\_date_{c, 3, 1}

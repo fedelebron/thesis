@@ -134,6 +134,17 @@ We can write this constraint as:
   &(ds_{m, w, l, d} = 1) \Rightarrow csd_{c, w} + cp_{c, m} - 1 \le class\_date_{c, l, d}
 \end{align}
 
+Symmetrically, if we've selected a particular starting week $w$ and a particular pattern $m$ for a course $c$, and this implies a class $l$ does \emph{not} fall on a particular day $d$, then we must have $class\_date_{c, l, d} = 0$. Thus
+
+\begin{align}\label{eq:coclassdate}
+  &\forall\ c \in C\\
+  &\forall w \in W\\
+  &\forall m \in M\\
+  &\forall 1 \le l \le n(c)\\
+  &\forall 1 \le d \le D\\
+  &(ds_{m, w, l, d} = 0) \Rightarrow (1 - csd_{c, w}) + (1 - cp_{c, m}) \ge class\_date_{c, l, d}
+\end{align}
+
 We also require that every class of every course is scheduled to exactly one day:
 
 \begin{align} \label{eq:oneclassdate}
