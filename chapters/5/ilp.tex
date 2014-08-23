@@ -9,7 +9,7 @@ Combinatorial optimization problems are frequently solved as either a linear pro
 &                  & x &\in \R^n&
 \end{align*}
 
-where $A \in \R^{m \times n}$, and $b, c \in \R^m$.
+\noindent where $A \in \R^{m \times n}$, and $b, c \in \R^m$.
 
 Meanwhile, an ILP problem is of the form
 
@@ -20,9 +20,9 @@ Meanwhile, an ILP problem is of the form
 &                  & x &\in \Z^n&
 \end{align*}
 
-where $A \in \Z^{m \times n}$, and $b, c \in \Z^m$.
+\noindent where $A \in \Z^{m \times n}$, and $b, c \in \Z^m$.
 
-Given an LP or ILP problem $Q$, we define $P(Q)$ as the convex hull of the set of $x$ that satisfy the constraints of the problem, regardless of whether or not $\langle c, x \rangle$ is maximized. Note thisis a convex hull in $\R^n$, regardless of whether $Q$ was an LP or an ILP.
+Given an LP or ILP problem $Q$, we define $P(Q)$ as the convex hull of the set of $x$ that satisfy the constraints of the problem, regardless of whether or not $\langle c, x \rangle$ is maximized. Note this is a convex polyhedron in $\R^n$, regardless of whether $Q$ was an LP or an ILP.
 
 Given an ILP $Q$, we can consider the LP that results from taking $Q$ and relaxing its integrality condition, that is, allowing $x$ to range over $\R^n$ instead of $\Z^n$. We call this LP $Q_\R$.
 
@@ -67,5 +67,4 @@ These cutting planes are often introduced as part of a technique known as "branc
 \li \Return $(x^*, v^*)$
 \end{codebox}
 
-This procedure is not, in general, polynomial. However, if the cuts $\pi$ we select to separate fractional solutions from $l$ are good, in that they trim away a lot of $l$ and leave few nonintegral solutions, then the program will, in practice, finish quickly, because it will not need to branch on many variables. We can also be smarter and use the dual problem ${Q_\R}^*$ and valid solutions to it will be upper bounds to the values of $v$ we need to explore, such that if we find an integral solution $x$ to an $l$ with value $v$ such that there is a solution $y$ to ${Q_\R}^*$ with value $v$, we need not look any further for solutions, since $x$ will be optimal for $Q$.
-
+This procedure is not, in general, polynomial. However, if the cuts $\pi$ we select to separate fractional solutions from $l$ are good, in that they trim away a lot of $l$, then the program will, in practice, finish quickly, because it will not need to branch on many variables.
