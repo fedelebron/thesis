@@ -168,7 +168,7 @@ We can think of the flow in this network as "time" dedicated by a professor at a
 
 A professor cannot teach on an unavailable day, since flow can only go from the $j$th professor to the $i$th day if $i \in A_j$, and only one unit may go through in that case. This last fact ensures a professor cannot work twice in a single day, even under different roles.
 
-He also cannot work in a role that is unavailable to him, since in order for flow to go from $\beta_{j, i}$ to $\gamma_{i, k}$, meaning ``the $j$th professor teaches on the $i$th day'' to ``the $i$th day has one $k$th role position covered'', unless $k \in R_j$, so one cannot consider an instance of that role covered for that day unless the professor from which that unit of flow came indeed can work in that role.
+He also cannot work in a role that is unavailable to him, since in order for flow to go from $\beta_{j, i}$ to $\gamma_{i, k}$, meaning "the $j$th professor teaches on the $i$th day" to "the $i$th day has one $k$th role position covered", unless $k \in R_j$, so one cannot consider an instance of that role covered for that day unless the professor from which that unit of flow came indeed can work in that role.
 
 Lastly, the number of instances of the $k$th role that a given $\gamma_{i, k}$ needs for the $i$th day can not be smaller than $n'_{i, k}$, or greater than $N'_{i, k}$.
 
@@ -242,7 +242,7 @@ w(\alpha_{i, j}, \beta_{k, l, v}) &= q_i\\
 w(\alpha_{i, j}, h_s) &= 0
 \end{align*}
 
-Conceptually, $\alpha_{i, j}$ represents professor $i$ teaching on the $j$th day, and $\beta_{k, l, v}$ represents fulfilling the $v$th instance of the class which falls on the $k$th day's requirement for professors of role $l$. There are $n'_{k, l}$ ``copies'' of the pair $(k, l)$, as many as professors needed of the $l$th type. These are $\beta_{k, l, 1}, \dots, \beta_{k, l, n'_{k, l}}$. $x$ is the number of $\alpha$, and $y$ is the number of $\beta$. The $h$ nodes are added to the graph to make both partitions of the graph of the same size, thus allowing for a perfect matching.
+Conceptually, $\alpha_{i, j}$ represents professor $i$ teaching on the $j$th day, and $\beta_{k, l, v}$ represents fulfilling the $v$th instance of the class which falls on the $k$th day's requirement for professors of role $l$. There are $n'_{k, l}$ "copies" of the pair $(k, l)$, as many as professors needed of the $l$th type. These are $\beta_{k, l, 1}, \dots, \beta_{k, l, n'_{k, l}}$. $x$ is the number of $\alpha$, and $y$ is the number of $\beta$. The $h$ nodes are added to the graph to make both partitions of the graph of the same size, thus allowing for a perfect matching.
 
 Thus we can see that a maximum matching in this graph must attempt to assign professors to instances of role requirements. If indeed a matching has edges incident to every $\beta_{k, l, v}$, then if node $\alpha_{i, j}$ is its matched node, we say that professor $i$ is being assigned on day $j$ to cover role $l$, to the class which falls on the $k$th day. If an $\alpha_{i, j}$ is matched to some $h_s$, it means that the $i$th professor did not teach on the $j$th day (taking the $s$th "vacation voucher"). We can see that the requirements of the assignment are satisfied, since
 
