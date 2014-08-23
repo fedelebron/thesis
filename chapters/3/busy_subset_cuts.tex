@@ -4,7 +4,7 @@ There is a particularly interesting extension of the previous family of cuts. Co
 \item A single course, $1$.
 \item The course has two classes, $1$ and $2$.
 \item There's only one role, $1$ and each class requires $1$ professor with that role.
-\item Two available weekly schedule, $1$ and $2$. Schedule $1$ places class $1$ on day $1$, and class $2$ on day $2$. Schedule $2$ places class $1$ on day $2$, and class $2$ on day $3$.
+\item Two available weekly patterns, $1$ and $2$. Pattern $1$ places class $1$ on day $1$, and class $2$ on day $2$. Pattern $2$ places class $1$ on day $2$, and class $2$ on day $3$.
 \item A single starting date, $1$.
 \item Two professors, $1$ and $2$, available both days, and able to fill role $1$.
 \end{itemize}
@@ -33,9 +33,9 @@ Thus we see that classes $\{1, 2\}$ must fall in either days $\{1, 2\}$ or $\{2,
 %\item $busy_{2, 1, 3} = 0$
 \end{itemize}
 
-where all other variables are $0$. One may wonder how it is possible that $busy_{2, 1, 3} = busy_{1, 1, 3} =  0$, when $class\_date_{1, 2, 3} = 0.5$, and $x_{1, 2, 1, 1} = x_{1, 2, 2, 1} = 0.5$. That is, they (professors $1$ and $2$) are both "semi-responsible" for class $2$, and class $2$ semi-falls on day $3$, yet \emph{neither} of them works on day $3$!
+\noindent where all other variables are $0$. One may wonder how it is possible that $busy_{2, 1, 3} = busy_{1, 1, 3} =  0$, when $class\_date_{1, 2, 3} = 0.5$, and $x_{1, 2, 1, 1} = x_{1, 2, 2, 1} = 0.5$. That is, they (professors $1$ and $2$) are both "semi-responsible" for class $2$, and class $2$ semi-falls on day $3$, yet \emph{neither} of them works on day $3$!
 
-The model's restrictions aren't violated in this fractional solution, as this is our lower bound constraint on $busy$:
+The model's constraints aren't violated in this fractional solution, as this is our lower bound constraint on $busy$:
 
 $$
 busy_{p, c, d} \ge busy\_l_{p, c, l} + class\_date_{c, l, d} - 1
@@ -60,12 +60,12 @@ The previous family of cuts, the busy cuts, doesn't separate this vertex either,
 \item $x_{1, 2, 2, 1} \le busy_{2, 1, 2} + busy_{2, 1, 3}$ \greencheck
 \end{itemize}
 
-What is missing, however, is that if professor $p$ works on a set $X$ of classes for course $c$, and the set of possible dates for those classes (i.e. the union, for all possible choices of schedule and starting date, of the days the classes in $X$ fall) is called $Y$, then the sum of the $busy\_l_{p, c, x}$ for $x \in X$ \emph{must} be smaller than or equal to the sum of the days, out of $Y$, that $p$ works on course $c$, because for every class $p$ works on, he works on exactly one day for that course, and we sum over all possible days these classes could fall in. Formally:
+What is missing, however, is that if professor $p$ works on a set $X$ of classes for course $c$, and the set of possible dates for those classes (i.e., the union, for all possible choices of schedule and starting date, of the days the classes in $X$ fall) is called $Y$, then the sum of the $busy\_l_{p, c, x}$ for $x \in X$ \emph{must} be smaller than or equal to the sum of the days, out of $Y$, that $p$ works on course $c$, because for every class $p$ works on, he works on exactly one day for that course, and we sum over all possible days these classes could fall in. Formally:
 
 \begin{align*}
 &\forall c \in C,\\
 &\forall p \in P,\\
-&\forall X \subset \{1 .. n(c)\}\\
+&\forall X \subset \{1, \dots, n(c)\}\\
 &\text{Let }Y = \{d \in D \mid \exists l \in X, p \in M, w \in W \mid ds_{p, w, l, d} = 1\}\\
 &\text{Then, }\\
 &\sum_{l \in X} busy\_l_{p, c, l} \le \sum_{d \in Y} busy_{p, c, d}

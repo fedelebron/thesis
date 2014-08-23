@@ -1,6 +1,6 @@
 \subsection{Professor complement cuts}
 
-Suppose a course $c$ schedules a class $l$ on day $d$, and another course $c'$ schedules a clas $l'$ on day $d$. Then it better be the case that for any professor $p$, $p$ does \emph{not} teach both of these classes. In other words, that \emph{someone else} teaches those classes.
+Suppose a course $c$ schedules a class $l$ on day $d$, and another course $c'$ schedules a clas $l'$ on day $d$. Then it must be the case that for any professor $p$, $p$ does \emph{not} teach both of these classes. In other words, that \emph{someone else} teaches those classes.
 
 And yet, consider the following scenario:
 
@@ -36,7 +36,7 @@ Now consider the following vertex:
 
 So here we have a situation where classes $2$ of both courses are \emph{both} scheduled (in all integral vertices) on the same day ($3$), and yet the same professor ($1$) teaches both of them!
 
-We can fix this by requiring that, since \emph{all} valid choices of a schedule and start date for courses $c = 1$ and $c' = 2$ result in classes $l = 2$ and $l' = 2$ being scheduled on the same day $d = 3$, then for every professor $p$, the following must hold:
+We can fix this by requiring that, since \emph{all} valid choices of a weekly pattern and start date for courses $c = 1$ and $c' = 2$ result in classes $l = 2$ and $l' = 2$ being scheduled on the same day $d = 3$, then for every professor $p$, the following must hold:
 
 $$
 busy\_l_{p, c, l} + busy\_l_{p, c', l'} \le 1

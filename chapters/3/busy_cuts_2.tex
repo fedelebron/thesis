@@ -15,7 +15,7 @@ Then we could have the following fractional vertex:
 
 \begin{itemize}
 \item $csd_{1, 1} = 1$, remembering $csd_{c, sd}$ means course $c$ chooses starting week $sd$
-\item $cp_{1, 1} = 0.5$, remembering $cp_{c, p}$ means course $c$ chooses schedule $p$
+\item $cp_{1, 1} = 0.5$, remembering $cp_{c, p}$ means course $c$ chooses pattern $p$
 \item $cp_{1, 2} = 0.5$
 \item $class\_date_{1, 1, 1} = 0.5$, remembering $class\_date_{c, l, d}$ means the $l$th class of course $c$ is scheduled on day $d$
 \item $class\_date_{1, 1, 2} = 0.5$
@@ -41,9 +41,9 @@ $$
 busy_{1, 1, d} \ge 0
 $$
 
-which is trivial.
+\noindent which is trivial.
 
-The problen here is that since each professor only works "half" the class, the class requirements are satisfied, but not the $busy$ requirements for each of the professors (at least conceptually - clearly the linear constraints themselves are satisfied!). 
+The problen is that since each professor only works "half" the class, the class requirements are satisfied, but not the $busy$ requirements for each of the professors (at least conceptually - clearly the linear constraints themselves are satisfied!). 
 
 We eliminate these fractional solutions by noting that if a professor $p$ teaches the $l$th class of course $c$ with some role, and class $l$ can only fall on a subset $X$ of days, then it must hold that
 
@@ -51,13 +51,13 @@ $$
 busy\_l_{p, c, l} \le \sum_{d \in X} busy_{p, c, d}
 $$
 
-Furthermore, we can always compute at least one such subset $X$: The set $d$ such that there's at least one valid weekly schedule and one valid starting week, such that the $l$th class falls on the $d$th day. This results in the following valid cutting plane:
+Furthermore, we can always compute at least one such subset $X$: The set $d$ such that there's at least one valid weekly pattern and one valid starting week, such that the $l$th class falls on the $d$th day. This results in the following valid inequalities:
 
 \begin{align*}
 &\forall c \in C\\
 &\forall p \in P\\
 &\forall 1 \le l \le n(c)\\
-&busy\_l_{p, c, l} \ge \sum_{\substack{d \in D \\ s \in M\ \mid\ pp_{c, s} = 1\\ w \in W\ \mid\ psd_{c, w} = 1 \\ ds_{s, w, l, d} = 1}} busy_{p, c, d}
+&busy\_l_{p, c, l} \le \sum_{\substack{d \in D \\ s \in M\ \mid\ pp_{c, s} = 1\\ w \in W\ \mid\ psd_{c, w} = 1 \\ ds_{s, w, l, d} = 1}} busy_{p, c, d}
 \end{align*}
 
 The above fractional solution is cut, since this inequality says, for $c = 1, p = 1, l = 1$:
@@ -68,4 +68,4 @@ $$
 
 Where the right hand side is $0$, and the left hand side is $0.5$, rendering this solution invalid.
 
-In practice, we see this family of cuts helps in a branch \& cut algorithm used in CPLEX and SCIP, lowering the solving time by about 10\% on large instances. As an improvement for a branch \& cut strategy, when one wishes to add a cut to a node in the branch \& cut tree, one can drop the terms corresponding to the schedules and starting days that haven't been explicitly zeroed out in the current node by the branching, tightening the bound. We note that this cut is a \emph{local} cut, since it need not be valid for other nodes in the tree, which might have chosen a different weekly schedule and starting date, and thus we cannot remove those terms from the summation.
+In practice, we see this family of cuts helps in the branch \& bound algorithm used in CPLEX\cite{CPLEX} and SCIP\cite{SCIP}, lowering the solving time by about 10\% on large instances. As an improvement for a branch \& cut strategy, when one wishes to add a cut to a node in the branch \& bound tree, one can drop the terms corresponding to the schedules and starting days that have been explicitly zeroed out in the current node by the branching, tightening the bound. We note that in this case the cut is a \emph{local} cut, since it need not be valid for other nodes in the tree, which might have chosen a different weekly pattern and starting date, and thus we cannot remove those terms from the summation.

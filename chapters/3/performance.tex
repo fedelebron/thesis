@@ -5,7 +5,7 @@ We can analyze the model in terms of its performance when fed to CPLEX, an ILP s
 
 In figure~\ref{bench:courses} we see its behavior when we vary the number of courses, leaving all else constant. We see a linear growth when the number of courses is small, below 50. The same linear behavior is observed as we vary the number of possible start dates for each course in figure~\ref{bench:startdates}, and possible weekly patterns for each course in figure~\ref{bench:patterns}. While these instance sizes are "small", they are reasonable examples of practically ocurring situations.
 
-\begin{figure}
+\begin{figure}[b]
 \begin{center}
 \subimport{../../benchmarks/}{courses.tex}
 \caption{Performance as course count varies}
@@ -53,7 +53,7 @@ At these numbers, the limiting factor is the sheer filesize needed to specify th
 
 Sheer problem size indeed does seem to be an important factor in determining solving time. In figure~\ref{bench:megacourses2} we see that by considering much smaller semesters and a much lower professor count, the runtime is very favorably affected. This would seem to hint at sheer problem size being an important factor when it comes to solving time. It is thus interesting to explore more compact representations of the problem constraints, with a view to obtaining better runtimes.
 
-Even though we did not analyze the problem's theoretical complexity in terms of the number of professors, we can plot thesolution time in terms of this variable as well. In figure~\ref{bench:profs} we see this plot, suggesting a linear relation, at least in these small cases, between professor count and solution time.
+Even though we did not analyze the problem's theoretical complexity in terms of the number of professors, we can plot the solution time in terms of this variable as well. In figure~\ref{bench:profs} we see this plot, suggesting a linear relation, at least in these small cases, between professor count and solution time.
 
 \begin{figure}
   \begin{center}
