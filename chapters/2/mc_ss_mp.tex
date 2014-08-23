@@ -1,6 +1,6 @@
 \section{Type-$(n, 1, m)$ instances}
 
-This reduction is in \nph. Hence, we see that the addition of a variable number of patterns appears to significantly increase the complexity of the solution space. The proof will be via reduction from EXACT-COVER.
+This version of CSPAP is in \nph. Hence, we see that the addition of a variable number of patterns appears to significantly increase the complexity of the solution space. The proof will be via reduction from EXACT-COVER.
 
 \subsection{Idea}
 Recall the decision problem EXACT-COVER, the problem of exactly covering a set by subsets:
@@ -27,7 +27,7 @@ C &= \{{\color{BrickRed}C_1}, {\color{NavyBlue}C_2}, {\color{Fuchsia}C_3}, {\col
 {\color{Tan} C_6} &= {\color{Tan} \{2, 7\}}
 \end{align*}
 
-Then we shall have $7$ courses, $1 \dots 7$. For each course, we will have one ``schedule template'', which will be an assignment of each of the course's classes to days. Every schedule for a given course will be equal to its schedule template, save for a single class, which will be assigned a different day.
+Then we shall have $7$ courses, $1 \dots 7$. For each course, we will have one "pattern template", which will be an assignment of each of the course's classes to days. Every pattern for a given course will be equal to its pattern template, save for a single class, which will be assigned a different day. We will use the color {\color{gray}gray} when denoting classes scheduled according to the pattern template.
 
 Let's take {\color{BrickRed}$C_1$} as an example. We will create the following gadget:
 \begin{itemize}
@@ -37,30 +37,31 @@ Let's take {\color{BrickRed}$C_1$} as an example. We will create the following g
 \item An assignment in the default schedule for each course's new class.
 \end{itemize}
 
-Throughout this process, we will keep a counter $k$, which will monotonically increase as we add schedules, and starts at $1$.
+Throughout this process, we will keep a counter $k$, which will monotonically increase as we add patterns, and starts at $1$.
 
 Professor $p_1$ will have a single possible role, which we will denote $1$. He will also be available exactly on the following days of the year: $\{k, k + 1, k + 2\} = \{1, 2, 3\}$.
 
 Courses $1$, $4$, and $7$ will each get a new class added. This class requires one professor with role $1$, and nothing else. Let us call $c_{1, 1}$, $c_{4, 1}$, and $c_{7, 1}$ these new classes.
 
-Now we modify the schedule template:
+Now we modify the pattern template:
 \begin{itemize}
-\item In the schedule template for class $1$, $c_{1, 1}$ will be assigned day $k = 1$.
-\item In the schedule template for class $4$, $c_{4, 1}$ will be assigned day $k + 1 = 2$.
-\item In the schedule template for class $7$, $c_{7, 1}$ will be assigned day $k + 2 = 3$.
+\item In the pattern template for class $1$, $c_{1, 1}$ will be assigned day $k = 1$.
+\item In the pattern template for class $4$, $c_{4, 1}$ will be assigned day $k + 1 = 2$.
+\item In the pattern template for class $7$, $c_{7, 1}$ will be assigned day $k + 2 = 3$.
 \end{itemize}
 
-Next, we add a new schedule for each of these three classes, let us call these schedules $s_{1, 1}$, $s_{4, 1}$, and $s_{7, 1}$.
+Next, we add a new pattern for each of these three classes, let us call these patterns $s_{1, 1}$, $s_{4, 1}$, and $s_{7, 1}$.
 \begin{itemize}
 \item Schedule $s_{1, 1}$ assigns to $c_{1, 1}$ the day $k + 1 = 2$.
 \item Schedule $s_{4, 1}$ assigns to $c_{4, 1}$ the day $k + 2 = 3$.
 \item Schedule $s_{7, 1}$ assigns to $c_{7, 1}$ the day $k = 1$.
 \end{itemize}
 
-Graphically, we have the following schedules, where a {\color{BrickRed}red} background means the new schedules, and a {\color{gray}gray} background means the schedule template:
+Graphically, we have the pattern we see in figure~\ref{tab:sched1}, where a {\color{BrickRed}red} background means the new pattern, and a {\color{gray}gray} background means the pattern template.
 
-\begin{center}
-\resizebox{8cm}{!}{
+\begin{figure}
+  \begin{center}
+    \resizebox{5cm}{!}{
 \begin{tabular}{l||c|c|c}
   \hline
   $3$ & & \cellcolor{BrickRed}$c_{4, 1}$ & \cellcolor{gray}$c_{7, 1}$\\
@@ -72,7 +73,10 @@ Graphically, we have the following schedules, where a {\color{BrickRed}red} back
   & 1 & 4 & 7
 \end{tabular}
 }
+\caption{The {\color{BrickRed}red} pattern for courses 1, 4, and 7.}
+\label{tab:sched1}
 \end{center}
+\end{figure}
 
 Finally, we increment $k$ by $3$, to arrive at $k = 4$. This concludes the work for {\color{BrickRed}$C_1$}.
 
@@ -82,10 +86,11 @@ We add a new professor, $p_2$. $p_2$ has a single role, which we'll denote $2$. 
 
 We add a class for each course in {\color{NavyBlue}$C_2$}. Let us call them $c_{1, 2}$ and $c_{4, 2}$, since they are the second classes of both courses $1$ and $4$. These classes both require a single professor acting with role $2$.
 
-The schedules created will be as follows, where a {\color{NavyBlue}blue} background means the new schedules, and a {\color{gray}gray} background means the schedule template:
+The pattern created will be as in figure~\ref{tab:sched2}, where a {\color{NavyBlue}blue} background means the new patterns, and a {\color{gray}gray} background means the pattern template.
 
+\begin{figure}
 \begin{center}
-\resizebox{8cm}{!}{
+\resizebox{4cm}{!}{
 \begin{tabular}{l||c|c}
   \hline
   $5$ & \cellcolor{NavyBlue}$c_{1, 2}$ &\cellcolor{gray}$c_{4, 2}$ \\
@@ -95,21 +100,23 @@ The schedules created will be as follows, where a {\color{NavyBlue}blue} backgro
   & 1 & 7
 \end{tabular}
 }
+\caption{The {\color{NavyBlue}blue} pattern for courses 1 and 4.}
+\label{tab:sched2}
 \end{center}
-
+\end{figure}
 As before, we now increase $k$ by $2$, and have $k = 6$. This concludes the work for {\color{NavyBlue}$C_2$}.
 
-For {\color{Fuchsia} $C_3$}, we have the elements $4$, $5$, and $7$. 
+For {\color{Fuchsia} $C_3$}, we have the elements $4$, $5$, and $7$.
 
-Again we add a professor $p_3$, with a single possible role, $3$. $p_3$'s availability will be exactly the days $\{k, k + 1, k + 2\} = \{6, 7, 8\}$. 
+Again we add a professor $p_3$, with a single possible role, $3$. $p_3$'s availability will be exactly the days $\{k, k + 1, k + 2\} = \{6, 7, 8\}$.
 
 We add a single class to each of the three courses $4$, $5$, and $7$. We will call these $c_{4, 3}$, $c_{5, 1}$, and $c_{7, 3}$, since they are the third, first, and third classes of their courses respectively.
 
-The schedules will look as follows, where a {\color{Fuchsia}fuchsia} background means the new schedules, and a {\color{gray}gray} background means the schedule template:
+The pattern will look as in figure~\ref{tab:sched3}, where a {\color{Fuchsia}fuchsia} background means the new pattern, and a {\color{gray}gray} background means the pattern template.
 
-
+\begin{figure}
 \begin{center}
-\resizebox{8cm}{!}{
+\resizebox{5cm}{!}{
 \begin{tabular}{l||c|c|c}
   \hline
   $8$ & & \cellcolor{Fuchsia}$c_{5, 1}$ & \cellcolor{gray}$c_{7, 3}$\\
@@ -121,12 +128,15 @@ The schedules will look as follows, where a {\color{Fuchsia}fuchsia} background 
   & 4 & 5 & 7
 \end{tabular}
 }
+\caption{The {\color{Fuchsia}fuchsia} pattern for courses 4, 5, and 7.}
+\label{tab:sched3}
 \end{center}
-
+\end{figure}
 And we increment $k$ by $3$, and have $k = 9$.
 
-If we do the same for every $C_i$, we will obtain the following schedules:
+If we do the same for every $C_i$, we will obtain the schedule in figure~\ref{tab:sched4}.
 
+\begin{figure}
 \begin{center}
 \begin{tabular}{l|c|c|c|c|c|c|c}
   \hline
@@ -167,21 +177,23 @@ If we do the same for every $C_i$, we will obtain the following schedules:
   & 1 & 2 & 3 & 4 & 5 & 6 & 7
 \end{tabular}
 \end{center}
+\caption{The full set of course patterns.}
+\label{tab:sched4}
+\end{figure}
+In this scenario, a week would have $17$ days.
 
-In this scenario, a week would have $14$ days.
-
-Recall that a course can only choose a single schedule. For example, if course $4$ chooses the {\color{Fuchsia}fuchsia} schedule, this means it will have its $1$st class on the $2$nd day, its $2$nd class on the $5$th day, and its $3$rd class on the $7$th day. In essence, choosing a schedule for a course amounts to picking a single color $w$ from its column. Every class except the $w$-colored one will be assigned as in its schedule template (the {\color{gray}gray} squares), and the one colored $w$ will be assigned whichever row the $w$-colored cell belongs to.
+Recall that a course can only choose a single pattern. For example, if course $4$ chooses the {\color{Fuchsia}fuchsia} pattern, this means it will have its $1$st class on the $2$nd day, its $2$nd class on the $5$th day, and its $3$rd class on the $7$th day. In essence, choosing a pattern for a course amounts to picking a single color $w$ from its column. Every class except the $w$-colored one will be assigned as in its pattern template (the {\color{gray}gray} squares), and the one colored $w$ will be assigned whichever row the $w$-colored cell belongs to.
 
 
-Now note that if course $4$ chooses the {\color{Fuchsia}fuchsia} schedule, it \emph{must} be the case that courses $5$ and $7$ do as well:
+Now note that if course $4$ chooses the {\color{Fuchsia}fuchsia} pattern, it \emph{must} be the case that courses $5$ and $7$ do as well:
 \begin{itemize}
-\item If course $5$ had not chosen the {\color{Fuchsia}fuchsia} schedule, then its $1$st class would be on day $7$. But on day $7$ the professor $p_3$, which is the only one who can teach this class due to his unique role, is busy teaching course $4$. Thus course $5$ choose the {\color{Fuchsia}fuchsia} schedule.
-\item Since course $5$ chose the {\color{Fuchsia}fuchsia} schedule, its $1$st class is on day $8$. But then course $7$ cannot schedule its $3$rd class on day $8$, since the only professor which can teach that class, $p_3$, is busy teaching course $5$. Thus course $7$ cannot use any other schedule than the {\color{Fuchsia}fuchsia} one, since all others assign (via the schedule template) the $3$rd class to the $8$th day.
+\item If course $5$ had not chosen the {\color{Fuchsia}fuchsia} pattern, then its $1$st class would be on day $7$. But on day $7$ the professor $p_3$, which is the only one who can teach this class due to his unique role, is busy teaching course $4$. Thus course $5$ choose the {\color{Fuchsia}fuchsia} pattern.
+\item Since course $5$ chose the {\color{Fuchsia}fuchsia} pattern, its $1$st class is on day $8$. But then course $7$ cannot schedule its $3$rd class on day $8$, since the only professor which can teach that class, $p_3$, is busy teaching course $5$. Thus course $7$ cannot use any other pattern than the {\color{Fuchsia}fuchsia} one, since all others assign (via the pattern template) the $3$rd class to the $8$th day.
 \end{itemize}
 
-From this we can see that either \emph{none} of the courses in {\color{Fuchsia}$C_3$} picked the {\color{Fuchsia}fuchsia} schedule, or they \emph{all} did.
+From this we can see that either \emph{none} of the courses in {\color{Fuchsia}$C_3$} picked the {\color{Fuchsia}fuchsia} pattern, or they \emph{all} did.
 
-Thus by considering the schedule colors that were selected, we obtain an exact cover of $X$, the courses, by $C$, the schedules. In this case, we can see that we can choose schedules {\color{NavyBlue} $C_2$}, {\color{ForestGreen} $C_4$}, and {\color{Tan} $C_6$}, which are an exact cover of $X$.
+Thus by considering the pattern colors that were selected, we obtain an exact cover of $X$, the courses, by $C$, the patterns. In this case, we can see that we can choose patterns {\color{NavyBlue} $C_2$}, {\color{ForestGreen} $C_4$}, and {\color{Tan} $C_6$}, which are an exact cover of $X$.
 
 
 
