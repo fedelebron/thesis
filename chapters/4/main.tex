@@ -1,10 +1,10 @@
-\chapter{Conclusion \& Future work}
+\chapter{Conclusions \& Future work}
 
-\section{Conclusion}
+\section{Conclusions}
 
 In this work, we've seen how CSPAP's complexity breaks down according to the number of courses, number of patterns, and number of starting days. We see that for simple cases, including the multiple course, single starting date, single pattern case, the problem has a polynomial time solution. In other cases, the problem is in \npc. An interesting consequence of CSPAP being a very general notion of a matching (indeed, an assignment problem) is that the polynomial algorithms devised are based on flow networks, the same tools frequently used to solve matching problems.
 
-For the general case, in particular the otherwise-unsolved \npc instances, we've provided a polyhedral model that achieves good performance even for large instances. The cuts introduced help improve the performance in all tested cases. This results in a solution that solves practically useful cases in only a few minutes. We also gave analyzed the polytope and seen how its dimension is bounded by an explicitly given number, and saw both cases where the bound is tight, and reasons why it might in some cases not be.
+For the general case, in particular the otherwise-unsolved \npc instances, we've provided an integer linear programming model that achieves good performance even for large instances. The cuts introduced help to slightly improve the performance in all tested cases. This results in a computational approach that solves practically useful cases in only a few minutes. We also analyzed the polytope and saw how its dimension is bounded by an explicitly given number, and saw both cases where the bound is tight, and reasons why it might in some cases not be.
 
 In practically sized cases, in fact, we see that a solver does not even need to branch out on fractional vertices in a branch-and-cut algorithm, since the built-in polyhedral cuts, supplemented with our provided family of cuts, are already enough to find integral solutions in all tested cases of moderate size. At higher, less practical sizes, we observe branching, and an exponential blowup of runtime for the CPLEX solver.
 
@@ -21,10 +21,10 @@ On the other hand, it is also interesting to analyze this problem using other no
 \item Maximum number of classes per course, $N$
 \end{itemize}
 
-Finally, given that the polynomially solvable cases resembly flows and assignment problems, it is perhaps interesting to see if one can model the general case as a generalization of a flow, for example a multiple-commodity flow, or as a generalized assignment problem.
+Finally, given that the polynomially solvable cases resemble flows and assignment problems, it is perhaps interesting to see if one can model the general case as a generalization of a flow, for example a multiple-commodity flow, or as a generalized assignment problem.
 
-On the polyhedral size, we saw that our dimension bound was not always tight. Indeed the "chance hyperplanes" have proven difficult to analyze, arising due to complex relations between the data. It would be interesting to see if there exists a complete characterization of these chance hyperplanes, as a first step in characterizing the convex hull of the integral solutions.
+On the polyhedral size, we saw that our dimension bound was not always tight. Indeed the "chance hyperplanes" have proven difficult to analyze, arising due to complex relations among the data. It would be interesting to see if there exists a complete characterization of these chance hyperplanes, as a first step in characterizing the convex hull of the integral solutions.
 
-We also saw high variability in instance solving time when we used the polyhedral model. This variability would be interesting to explore, and to see if it is related to the chance hyperplanes in the previous point.
+We also saw high variability in instance solving time when we used the integer linear programming model. This variability would be interesting to explore, and to see if it is related to the chance hyperplanes in the previous point.
 
 Finally, given that we saw that solution time was affected greatly by instance filesize, an interesting avenue for exploration would be to try to find more compact data representations for both the constraints and perhaps even the variables used. This, however, is not a particularly pressing issue for practical work, since as we saw, practical instances can be solved in a short time. It is only for large instances that we see a blowup in runtime, coupled with a blowup in filesize.
