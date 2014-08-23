@@ -4,15 +4,15 @@ We begin by constructing our fixed input data. We start with an instance $\mathc
 \begin{itemize}
   \item $a_{p, d} = 1 \iff d \in A_p$, that is, if professor $p$ is available on day $d$, and $0$ otherwise. The name "a" stands for "\textbf{a}vailable".
   \item $r_{p, r} = 1 \iff r \in R_p$, that is, if professor $p$ is can fill role $r$, and $0$ otherwise. The name "r" stands for "\textbf{r}ole".
-  \item $pp_{c, s} = 1 \iff s \in M_c$, that is, if course $c$ can pick the $s$th weekly schedule. The name "pp" stands for "\textbf{p}ossible \textbf{p}attern".
+  \item $pp_{c, s} = 1 \iff s \in M_c$, that is, if course $c$ can pick the $s$th weekly pattern. The name "pp" stands for "\textbf{p}ossible \textbf{p}attern".
   \item $psd_{c, w} = 1 \iff w \in W_c$, that is, if course $c$ can start on the $w$th week. The name "psd" stands for "\textbf{p}ossible \textbf{s}tarting \textbf{d}ate".
-  \item $ds_{s, w, l, d} = \iff $ when choosing the $s$th weekly schedule, and starting on the $w$th week, the $l$th class falls on day $d$. The name "ds" stands for "\textbf{d}aily \textbf{s}chedule".
+  \item $ds_{s, w, l, d} = \iff $ when choosing the $s$th weekly pattern, and starting on the $w$th week, the $l$th class falls on day $d$. The name "ds" stands for "\textbf{d}aily \textbf{s}chedule".
 \end{itemize}
 
 Note these are not variables in our linear program, but preprocessed input data for it. We will have six sets of variables, although three of them are just for convenience of formulation:
 
 \begin{itemize}
-  \item $cp_{c, s}$ is a binary variable indicating whether course $c$ has chosen the $s$th weekly schedule. The name "cp" stands for "\textbf{c}hosen \textbf{p}attern".
+  \item $cp_{c, s}$ is a binary variable indicating whether course $c$ has chosen the $s$th weekly pattern. The name "cp" stands for "\textbf{c}hosen \textbf{p}attern".
   \item $csd_{c, w}$ is a binary variable indicating whether course $c$ has chosen to start on the $w$th week. The name "csd" stands for "\textbf{c}hosen \textbf{s}tarting \textbf{d}ate".
   \item $x_{c, l, p, k}$ is a binary variable indicating whether the $p$th professor will teach the $l$th class of the $c$th course, with role $k$.
 \end{itemize}
@@ -30,7 +30,7 @@ $$
 \textbf{maximize } \sum_{\substack{c \in C\\1 \le l \le n(c)\\p \in P\\k \in R}} x_{c, l, p, k} \times q_{p, c}
 $$
 
-subject to some constraints. Namely, as per the problem definition, we require that each course chooses a valid starting week. Thus we obtain the following constraint:
+\noindent subject to some constraints. Namely, as per the problem definition, we require that each course chooses a valid starting week. Thus we obtain the following constraint:
 
 \begin{align}
   &\forall c \in C,\\
@@ -38,14 +38,14 @@ subject to some constraints. Namely, as per the problem definition, we require t
   &csd_{c, w} \le psd_{c, w}
 \end{align}
 
-and the following constraint, which means exactly one starting week is chosen for each course:
+\noindent and the following constraint, which means exactly one starting week is chosen for each course:
 
 \begin{align} \label{eq:chosenstart}
   &\forall\ c \in C\\
   &\sum_{w \in W} csd_{c, w} = 1
 \end{align}
 
-We also require that each course chooses a valid weekly schedule. Thus we require:
+We also require that each course chooses a valid weekly pattern. Thus we require:
 
 \begin{align}
   &\forall c \in C,\\
@@ -60,7 +60,7 @@ and
   &\sum_{s \in M} cp_{c, s} = 1
 \end{align}
 
-The restrictions that $csd_{c, s} \le pp_{c, s}$ and $csd_{c, w} \le psd_{c, w}$ could simply be stated as "$csd_{c, w}$ exists only when $psd_{c, w} = 1$", since otherwise the variable is given a value of $0$. The reason for writing it this way is to make it as similar as possible to an implementation in a standard modeling language for ILPs, such as ZIMPL.
+The constraints that $csd_{c, s} \le pp_{c, s}$ and $csd_{c, w} \le psd_{c, w}$ could simply be stated as "$csd_{c, w}$ exists only when $psd_{c, w} = 1$", since otherwise the variable is given a value of $0$. The reason for writing it this way is to make it as similar as possible to an implementation in a standard modeling language for ILPs, such as ZIMPL\cite{Koch2004}.
 
 Each professor must be available on the days he teaches. This implies that:
 
@@ -98,7 +98,7 @@ We require that the number of professors for a given class and a given role must
   &\min(c, l, k) \le \sum_{p \in P} x_{c, l, p, k} \le \max(c, l, k)
 \end{align}
 
-Due to our formulation of $x$, we need to ensure that no ``duplicate'' professors exist - that is, that a single professor is not assigned to teach a given class in two different roles. Formally, we require:
+Due to our formulation of $x$, we need to ensure that no "duplicate" professors exist - that is, that a single professor is not assigned to teach a given class in two different roles. Formally, we require:
 
 \begin{align}
   &\forall c \in C,\\
@@ -117,9 +117,11 @@ We also need to make sure that no invalid classes exist in $x$. That is, that th
  &x_{c, l, p, k} = 0
 \end{align}
 
+Again we could simply omit these variables from the formulation, but we've chosen to explicitly set them to $0$ to better translate to usual mathematical modelling languages.
+
 Those are all the problem's inherent constraints, we now add consistency constraints that arise from our choice of variables for this formulation.
 
-Firstly, we need to make sure that $class\_date$ makes sense. This means that $class\_date_{c, l, d}$ is $1$ exactly when, for some $w \in W$ and $m \in M$, we have $csd_{c, w} = 1, cp_{c, m} = 1,$ and $ds_{m, w, l, d} = 1$. That is, course $c$ has picked starting week $w$, schedule $m$, and we know via $ds$ that choosing those two implies the $l$th class falls on the $d$th date.
+Firstly, we need to make sure that $class\_date$ is properly defined in terms of the other variables. This means that $class\_date_{c, l, d}$ is $1$ when, for some $w \in W$ and $m \in M$, we have $csd_{c, w} = 1, cp_{c, m} = 1,$ and $ds_{m, w, l, d} = 1$. That is, course $c$ has picked starting week $w$, schedule $m$, and we know via $ds$ that choosing those two implies the $l$th class falls on the $d$th date.
 
 We can write this constraint as:
 
@@ -140,7 +142,7 @@ We also require that every class of every course is scheduled to exactly one day
   &\sum_{d \in D} class\_date_{c, l, d} = 1
 \end{align}
 
-and that if the course has $k$ classes, no more than $k$ class dates are assigned:
+\noindent and that if the course has $k$ classes, no more than $k$ class dates are assigned:
 
 \begin{align} \label{eq:maxclassdates}
   &\forall c \in C,\\
@@ -149,7 +151,9 @@ and that if the course has $k$ classes, no more than $k$ class dates are assigne
   &class\_date_{c, l, d} = 0
 \end{align}
 
-$busy\_l$ can be uniquely determined given the $x$ vector, and it is used solely for convenience:
+\noindent where we again could have simply omitted these variables from the formulation, but chose to explicitly set them to $0$ to agree with usual mathematical modelling languages.
+
+The variable $busy\_l$ can be uniquely determined given the $x$ vector, and it is used solely for convenience:
 
 \begin{align}
   &\forall p \in P,\\
@@ -186,4 +190,4 @@ If we wanted not to allow $busy$ to have further nonzero entries, we could requi
 
 These two constraints would tell us that, in a sense, $busy$ is a shifting of $busy\_l$, via $class\_date$. We choose not to add these restrictions, since they do not change the semantics of the found solutions - extra entries in $busy$ can simply be ignored, and we decrease the number of constraints for the solvers.
 
-Lastly, the difference between $P(I)$ and $P_{\R}(I)$ is that, in $P(I)$, we require $x_{c, l, p, k}$, $class\_date_{c, l, d}$, $busy\_l_{p, c, l}$, $busy_{p, c, d}$, $cp_{c, p}$, $csd_{c, sd}$ to all be in $\Z$.
+Lastly, the difference between $P(I)$ and $P_{\R}(I)$ is that, in $P(I)$, we require $x_{c, l, p, k}$, $class\_date_{c, l, d}$, $busy\_l_{p, c, l}$, $busy_{p, c, d}$, $cp_{c, p}$, $csd_{c, sd}$ to all be in $\{0, 1\}$.

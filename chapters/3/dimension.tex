@@ -13,7 +13,7 @@ We begin by analyzing the dimension of the polytope $P(I)$ for an instance $I$ o
 This means that the total number of variables is $|C| \times |M| + |C| \times |W| + |C| \times N \times |P| \times |R| + |C| \times N \times |S| + |P| \times |C| \times |S| + |P| \times |C| \times N$. After some simplification, this is $|C| \times |S| \times (|N| + |P|) + |C| \times (|P| \times (N + N \times |R|) +|M| + |W|)$. We will call this number $U$, since it will be an upper bound on the dimension of the polytope.
 
 
-We find several linearly independent families of equalities which allow us to bound the dimension of the problem more tightly:
+We find several linearly independent families of equalities which allow us to bound the dimension of the polytope:
 
 \begin{enumerate}
 \item We have $|C|$ equations from \ref{eq:chosenstart}, each of which refer to different variables, and so are linearly independent and decrease our dimension upper bound by $|C|$.
@@ -33,14 +33,15 @@ Considering these families of equalities, which are both linearly independent an
 By noting $K = \sum_{i=1}^{|C|} n(i)$, we obtain the following result:
 
 \begin{thm}
+  \label{thm:dimbound}
 Let $\dim$ be the dimension of the polytope where there are $|C|$ courses, $|S|$ days in the semester, $|P|$ professors, $|R|$ roles, $|M|$ weekly schedules, $|W|$ starting weeks, $N$ is the maximum number of classes a course has, and $K$ is the sum of the number of classes of each course. Then
 \begin{align*}
-  \dim \le &|C| \times (N \times Q\\
-                      &\hspace{1cm}+ P \times S\\
-                      &\hspace{1cm}- N \times P \times R\\
-                      &\hspace{1cm}+ W\\
-                      &\hspace{1cm}+ M\\
-                      &\hspace{1cm}- 2)\\
+  \dim \le &|C| \times (N \times Q
+                     + P \times S
+                     - N \times P \times R
+                     + W
+                     + M
+                     - 2)\\
            &+ K \times (|P| \times |R| + |S| - 1)\\
            &- |P| \times |S|\\
            &+ T
@@ -67,9 +68,9 @@ We will call the equations coming from the $i$th item, for $1 \le i \le 8$, $E_i
 \item For $E_8$ clearly every $busy\_l$ variable has a unique index, and we have exactly one equation per variable.
 \end{itemize}
 
-Thus each set $E_1, \dots, E_8$ is linearly independent. There could only be a linear dependence between sets $E_3$ and $E_4$, and between $E_5$ and $E_7$, since they seem to refer to the same variables ($class\_date$ and $x$, respectively). However, in both cases the variables they work on are distinguished by having their $l$ coordinate be $\le n(c)$ or $> n(c)$, so the set of variables in these equations really is disjoint.
+Thus each set $E_1, \dots, E_8$ is linearly independent. There could only be a linear dependence between sets $E_3$ and $E_4$, and between $E_5$ and $E_7$, since they seem to refer to the same variables ($class\_date$ and $x$, respectively). However, in both cases the variables they work on are distinguished by having their $l$ coordinate be $\le n(c)$ or $> n(c)$, so the set of variables in these equations is disjoint.
 
-Thus every equation here is linearly independent, and the bound is obtained.
+Thus the identified equations are linearly independent, and the bound is obtained.
 \end{proof}
 
 We note that for the bound we obtain, the $|M|$ and $|W|$ variables are considered equally significant. This can be understood since in our ILP formulation they are treated essentially identically.
@@ -99,7 +100,7 @@ Let the solution space be described by $7$-tuples of the form $(x_{1, 1, 1, 1}$,
 \item (1, 1, 1, 1, 1, 1, 1)
 \end{itemize}
 
-Since for every other dimension than the central $3$ there's a vertex with that coordinate with a $0$ and another vertex with that coordinate with a $1$ in it, the dimension of the polyhedron is $7 - 3 = 4$. This is exactly the bound for this case, since we have
+The dimension is $7 - 3 = 4$. This is exactly the bound for this case, since we have
 
 \begin{align*}
 T = Q &= |P| = 2\\
@@ -122,9 +123,9 @@ Yielding the 4 solutions:
 \item (1, 1, 1, 1, 1, 1, 1)
 \end{itemize}
 
-These being the 4 possible scenarios: Either nobody teaches the class (which is fine given the constraints), $1$ teaches it, $2$ teaches it, or they both do. We notice that the vertices form a 2-cube in ${\Z/2\Z}^7$, and thus their dimension is $2$.
+These being the 4 possible scenarios: Either nobody teaches the class (which is fine given the constraints), $1$ teaches it, $2$ teaches it, or they both do. We notice that the vertices form a 2-cube in $\{0, 1\}^7$, and thus their dimension is $2$.
 
-However, in general, the bound is unfortunately \emph{not} tight, due to what we will call "chance hyperplanes", or "chance equalities".
+However, in general, the bound provided by theorem~\ref{thm:dimbound} is unfortunately \emph{not} tight, due to what we will call "chance hyperplanes", or "chance equalities". The name comes from the highly non obvious circumstances in the input data which can give rise to them, which do not seem to follow a simple pattern.
 
 Take, for example, a course $c$ with a class $i$ such that $i$ requires at least 1 instance of a professor with role $j$. Furthermore, assume there is exactly one professor, the $k$th one, who can fulfill that role. Then we will have the following relevant constraints on the polytope:
 
