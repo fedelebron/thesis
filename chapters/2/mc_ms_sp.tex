@@ -1,14 +1,14 @@
 \section{Type-$(n, m, 1)$ instances}
 \subsection{Idea}
-This reduction is again in \npc, this time via reduction from 3-COLORING\cite{Garey:1990:CIG:574848}.
+This reduction is again in $\npc$, this time via reduction from 3-COLORING\cite{Garey:1990:CIG:574848}.
 
-The idea is to construct an instance where the courses will be the nodes in the graph we wish to color. Each course will have a single class, and the only week will be 3 days long. In addition, each course will have 3 possible starting days (that is, every possible day of that 3-day week).
+The idea is to construct an instance where the courses will be the nodes in the graph we wish to color. Each course will have a single class, and the semester will be 3 weeks long, each week with a single day, Monday, in it. In addition, each course will have 3 possible starting weeks (that is, every possible week of that 3-week semester).
 
 When we see an edge $e_k = (v_i, v_j)$ in $E(G)$, where $G$ is the graph we wish to 3-color, we will add a requirement that the only class of course $v_i$ needs a professor of type $k$. In the same way, the only class of course $v_j$ also needs a professor of type $k$.
 
 For each $1 \le k \le |E(G)|$ we will have a single professor $p_k$ whose only type is $k$, and who is available all three days.
 
-In this way, if we obtain a timetable, if course $v_i$ starts on day $t$, then we will color node $v_i$ with color $t$, where $1 \le t \le 3$. In the same manner, every coloring of the graph's nodes into colors $1$, $2$, and $3$ is a valid timetable, when we interpret node $v_i$ having color $t$ as course $v_i$ starting on day $t$.
+In this way, if we obtain a timetable, if course $v_i$ starts on week $t$, then we will color node $v_i$ with color $t$, where $1 \le t \le 3$. In the same manner, every coloring of the graph's nodes into colors $1$, $2$, and $3$ is a valid timetable, when we interpret node $v_i$ having color $t$ as course $v_i$ starting on week $t$.
 
 \subsection{Example}
 Suppose we have a graph $G$ as follows:
@@ -27,7 +27,7 @@ Suppose we have a graph $G$ as follows:
 \end{tikzpicture}
 \end{center}
 
-We wish to know if it is possible to color $G$ using at most $3$ colors. Thus we make $6$ courses, one for each node in $V(G)$. Each course $v_i$ will have a single class, call it $c_i$, and will have three possible starting dates, $\{1, 2, 3\}$.
+We wish to know if it is possible to color $G$ using at most $3$ colors. Thus we make $6$ courses, one for each node in $V(G)$. Each course $v_i$ will have a single class, call it $c_i$, and will have three possible starting weeks, $\{1, 2, 3\}$.
 
 For every edge in $E(G)$, we will add a single professor. Thus, if we label the edges as such
 
@@ -58,16 +58,16 @@ For readability, we will note $\Gamma(i)$ the types of roles needed for $c_i$'s 
 \restrict{3}{5}{9}
 \end{itemize}
 
-When we solve this instance, we will get a set of starting days, one for each of the courses, each starting day being one of $\{1, 2, 3\}$.
+When we solve this instance, we will get a set of starting weeks, one for each of the courses, each starting week being one of $\{1, 2, 3\}$.
 
-Take $e_9 = (v_3, v_5)$ for example. Since $p_9 \in \Gamma(3) \cap \Gamma(5)$, and there is only one professor with role $9$, it can't be the case that both $c_3$ and $c_5$ fall on the same day, since $p_9$ would have to be teaching them both in the same day, which is not valid. Thus, course $v_3$ and $v_5$ must have different starting dates, making $c_3$ and $c_5$ fall on different days.
+Take $e_9 = (v_3, v_5)$ for example. Since $p_9 \in \Gamma(3) \cap \Gamma(5)$, and there is only one professor with role $9$, it can't be the case that both $c_3$ and $c_5$ fall on the same day, since $p_9$ would have to be teaching them both in the same day, which is not valid. Thus, course $v_3$ and $v_5$ must have different starting weeks, making $c_3$ and $c_5$ fall on different days.
 
-The same holds for every edge in $E(G)$. Thus, if we color a node by its starting date, one valid solution for our instance is the following assignment of starting dates:
+The same holds for every edge in $E(G)$. Thus, if we color a node by its starting week, one valid solution for our instance is the following assignment of starting weeks:
 
 \begin{itemize}
-\item $v_1$ and $v_4$ start on day $1$.
-\item $v_2$ and $v_5$ start on day $2$.
-\item $v_3$ and $v_6$ start on day $3$.
+\item $v_1$ and $v_4$ start on week $1$.
+\item $v_2$ and $v_5$ start on week $2$.
+\item $v_3$ and $v_6$ start on week $3$.
 \end{itemize}
 
 This yields the following coloring:
@@ -99,7 +99,7 @@ This shows that 3-COLORING $\le_P$ TIMETABLING, thus TIMETABLING is in \nph, sin
 \begin{codebox}
 \Procname{$\proc{Reduction}(G = (V, E))$}
 \li $\mathcal{C} \gets V$
-\li $\mathcal{D} = \{1\}$
+\li $\mathcal{WD} = \{1\}$
 \li $\mathcal{M} = \{1\}$
 \li $\mathcal{P} = \{1, \dots, |E|\}$
 \li $\mathcal{R} = \{1 \dots, |E|\}$
@@ -117,5 +117,5 @@ This shows that 3-COLORING $\le_P$ TIMETABLING, thus TIMETABLING is in \nph, sin
 \li     $\max(j, 1, k) = \min(j, 1, k) \gets 1$
     \End
 
-    \li \Return $\langle \mathcal{C}, \mathcal{P}, \mathcal{T}, \mathcal{D}, \mathcal{M}, \mathcal{S}, \mathcal{W}, n, \max, \min, M, T, A, q, \max_{\_} \rangle$
+    \li \Return $\langle \mathcal{C}, \mathcal{P}, \mathcal{T}, \mathcal{WD}, \mathcal{M}, \mathcal{S}, \mathcal{W}, n, \max, \min, M, T, A, q, \max_{\_} \rangle$
 \end{codebox}
