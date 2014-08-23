@@ -5,13 +5,13 @@ An instance $\mathcal{T}$ of CSPAP consists of several pieces of data:
 \item $C$ a set of courses,
 \item $P$ a set of professors,
 \item $n: C \to \Z_+$ a function which assigns each course the number of classes it has
-\item For every $p \in P$, $c \in C$, we have a number $q_{p, c} \in [0 \dots 7]$, indicating the quality of professor $p$ when teaching course $c$
+\item For every $p \in P$, $c \in C$, we have a number $q_{p, c} \in [0, \dots, 7]$, indicating the quality of professor $p$ when teaching course $c$
 \end{itemize}
 
 Our goal will be to satisfy the requirements of each class in each course, and in doing so, attempt to maximize the overall quality of these assignments. To define the requirements, we need the following:
 \begin{itemize}
 \item $R$ a set of professor roles,
-\item For every $c \in C$, $n \in \{1 \dots n(c)\}$, and $r \in R$ we have $\max(c, n, r)$ and $\min(c, n, r): \Z+$, specifying the minimum and maximum number of professors of role $r$ required to teach the $n$th class of course $c$,
+\item For every $c \in C$, $n \in \{1, \dots, n(c)\}$, and $r \in R$ we have $\max(c, n, r)$ and $\min(c, n, r): \Z+$, specifying the minimum and maximum number of professors of role $r$ required to teach the $n$th class of course $c$,
 \item For every $p \in P$, we have $R_p \subset R$, the set of allowed professor roles for professor $p$
 \end{itemize}
 
@@ -32,7 +32,7 @@ We also have to take into account professor availability, given by the following
 \item For every $p \in P$, we have a number $\max_p \in \Z+$, indicating the maximum number of classes professor $p$ is willing to teach
 \end{itemize}
 
-Given an instance of CSPAP, we define $N \subset \mathbb{Z}$ as $N = \{1 \dots \max_{c \in C} n(c)\}$. We will also define $D = W \times WD$, the set of days in the semester.
+Given an instance of CSPAP, we define $N \subset \mathbb{Z}$ as $N = \{1, \dots, \max_{c \in C} n(c)\}$. We will also define $D = W \times WD$, the set of days in the semester.
 
 Formally, a solution to a CSPAP instance is a triple $\mathcal{S} = (w, m, a)$, where $w: C \to W$ gives the starting week for each course, $m: C \to M$ gives the weekly schedule for each course, and $a: P \times D \to C \times N \times R \cup \{\bot\}$ says, for each $(p, d)$, what professor $p$ does on day $d$:
 \begin{itemize}
