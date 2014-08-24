@@ -1,2 +1,22 @@
 \section{Complexity theory}
-Placeholder for complexity theory appendix.
+
+In order to formalize what it means for a problem to be tractable, or to be solvable efficiently, we use computational complexity theory. The underlying vocabulary we use is that of language theory. Thus we speak of languages, and of Turing machines recognizing a certain language. The interested reader can find more information on these topics in\cite{Hopcroft}.
+
+We define $\p$ to be the class of languages $L$ for which there exists a deterministic Turing machine $T$ that recognizes $L$ in polynomial time in its input size. $\np$ is defined analogously, using nondeterministic Turing machines.
+
+We define $\nph$ to be the set of languages $L$ such that for every language $L'$ in $\np$, there exists a function $f:L' \to L$, computable in polynomial time by a deterministic Turing machine, such that for every string $s$, we have $s \in L' \iff f(s) \in L$. This tells us, in a sense, that the membership problem for $L$ is "polynomially at least as hard as" the membership problem for $L'$, since in order to find out of a string $s$ belongs to $L'$, one need only make a polynomial number of steps to compute $f(s)$, and solve the corresponding problem for $L$. Thus if the membership problem for $L$ were easy, the membership problem for $L'$ would be at most polynomially harder than it.
+
+Lastly, we define $\npc$ as $\np \cap \nph$.
+
+It is easily shown that $\p \subseteq \np$. It is not currently known if the inclusion is strict. Importantly, there are several practically useful problems in the class $\np$ (one often speaks of a problem being in a class of languages like $\p$ or $\np$ when it is equivalent to the membership problem for some language in that class of languages.), but which are not known to also be in $\p$. Among them one finds
+
+\begin{itemize}
+\item Satisfiability of boolean formulas
+\item Exact cover of sets
+\item 3-coloring of graphs
+\item Integer linear programming
+\end{itemize}
+
+\noindent and many, many more. For a more extensive list, the interested reader can consult \cite{Garey:1990:CIG:574848}.
+
+Since we have several practically useful problems for which we do not know a polynomial time solution to, we resort to several kinds of approaches to deal with them. Interestingly, due to its geometrical richness and well-understood foundational theory, integer linear programming is often used as a tool to solve other problems which are in $\np$. Its rich underlying theory allows one to take advantage of geometric properties of the input in order to speed up solving of problems which are usually otherwise intractable. Importantly, the problem of linear programming itself, without restricting integrality of solutions, is in $\p$, and there are efficient algorithms to solve this problem. Hence it is often used as an intermediary step when solving the harder, integral version of the problem. More information can be found in \cite{Nemhauser1988}, \cite{garfinkel-nemhauser}, and \cite{grotschel-lovasz-schrijver}.
