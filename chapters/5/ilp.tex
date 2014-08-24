@@ -48,7 +48,7 @@ These cutting planes are often introduced as part of a technique known as "branc
 \li      \Goto 4
     \End
 \li    Let $x$ be a solution to $l$, with value $v$.
-\li    \If $x$ is integer and $v > v^*$
+\li    \If $x$ is integral and $v > v^*$
     \Do
 \li      $x^* \gets x$
 \li      $v^* \gets v$
@@ -68,3 +68,44 @@ These cutting planes are often introduced as part of a technique known as "branc
 \end{codebox}
 
 This procedure is not, in general, polynomial. However, if the cuts $\pi$ we select to separate fractional solutions from $l$ are good, in that they trim away a lot of $l$, then the program will, in practice, finish quickly, because it will not need to branch on many variables.
+
+Another approach one can take is, instead of using cutting planes, use information about other nodes inspected so far in order to avoid inspecting part of the tree. Specifically, one uses the fact that maximizing the objective function over $Q_\R$ must always be as high or higher than maximizing the function over $Q$. Thus if one relaxes a subproblem and finds its objective value is less than the current maximum one knows, one need not branch any further into this subproblem.
+
+The following pseudocode uses this idea.
+
+\begin{codebox}
+\Procname{$\proc{Branch-and-bound}(Q)$}
+\li $L \gets \{Q_\R\}$
+\li $x^* \gets \const{null}$
+\li $v* \gets -\infty$
+\li \While ($L \ne \emptyset$)
+ \Do
+\li    Let $l \in L$
+\li    $L \gets L \setminus \{l\}$
+\li    \If $l$ is infeasible
+    \Do
+\li      \Goto 4
+    \End
+\li    Let $x$ be a solution to $l$, with value $v$.
+\li    \If $x$ is integral
+    \Do
+\li      \If $v > v^*$
+         \Do
+\li        $x^* \gets x$
+\li        $v^* \gets v$
+         \End
+\li      \Goto 4
+    \End
+\li    \If $v > v^*$
+    \Do
+\li    Let $i$ be such that $x_i$ is fractional with value $v$.
+\li    Let $\pi_1 = x_i \ge \lceil v \rceil$
+\li    Let $\pi_2 = x_i \le \lfloor v \rfloor$.
+\li    $L \gets L \cup \{l \cap \pi_1, l \cap \pi_2\}$
+    \End
+  \End
+
+\li \Return $(x^*, v^*)$
+\end{codebox}
+
+In practice, one often uses both of these methods at the same time, using cuts to strengthn the relaxation, and bounds to avoid looking at parts of the branching tree.
