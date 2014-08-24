@@ -22,7 +22,7 @@ set style line 2 lc rgb '#5e9c36' pt 6 ps 1 lt 1 lw 2 # --- green
 
 set key at graph 0.7,0.95
 
-set xlabel 'Patterns'
+set xlabel 'Start weeks'
 set ylabel 'Seconds'
 set xrange [10:45]
 set yrange [0:100]
