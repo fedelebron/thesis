@@ -9,9 +9,9 @@ For each instance, course and professor information is generated randomly. Each 
 
 In figure~\ref{bench:courses} we see the model's behavior when we vary the number of courses, leaving all else constant. We see a linear growth when the number of courses is small, below 50. The same linear behavior is observed as we vary the number of possible start dates for each course in figure~\ref{bench:startdates}, and possible weekly patterns for each course in figure~\ref{bench:patterns}. While these instance sizes are "small", they are reasonable examples of practically ocurring situations.
 
-\begin{figure}[b]
+\begin{figure}
 \begin{center}
-\subimport{../../benchmarks/}{courses.tex}
+  \scalebox{.9}{\subimport{../../benchmarks/}{courses.tex}}
 \caption{Performance as course count varies}
 \label{bench:courses}
 \end{center}
@@ -19,15 +19,15 @@ In figure~\ref{bench:courses} we see the model's behavior when we vary the numbe
 
 \begin{figure}
 \begin{center}
-\subimport{../../benchmarks/}{startdates.tex}
-\caption{Performance as start date count varies}
+  \scalebox{.9}{\subimport{../../benchmarks/}{startdates.tex}}
+\caption{Performance as start week count varies}
 \label{bench:startdates}
 \end{center}
 \end{figure}
 
 \begin{figure}
 \begin{center}
-\subimport{../../benchmarks/}{patterns.tex}
+  \scalebox{.9}{\subimport{../../benchmarks/}{patterns.tex}}
 \caption{Performance as pattern count varies}
 \label{bench:patterns}
 \end{center}
@@ -39,7 +39,7 @@ As we increase the number of courses, however, we see in figure~\ref{bench:megac
 
 \begin{figure}
   \begin{center}
-    \subimport{../../benchmarks/}{megacourses.tex}
+    \scalebox{.9}{\subimport{../../benchmarks/}{megacourses.tex}}
     \caption{Performance as course count varies, with $300$ professors, $10$ classes per course, $10$ weeks of $10$ days, $2$ roles, $1$ start date, and $3$ total weekly patterns, $1$ per course.}
     \label{bench:megacourses}
   \end{center}
@@ -49,7 +49,7 @@ At these numbers, the limiting factor is the sheer filesize needed to specify th
 
 \begin{figure}
   \begin{center}
-    \subimport{../../benchmarks/}{megacourses2.tex}
+    \scalebox{.9}{\subimport{../../benchmarks/}{megacourses2.tex}}
     \caption{Performance as course count varies, with $150$ professors, $5$ classes per course, $5$ weeks of $10$ days, $2$ roles, $1$ start date, and $3$ total weekly patterns, $1$ per course.}
     \label{bench:megacourses2}
   \end{center}
@@ -61,7 +61,7 @@ Even though we did not analyze the problem's theoretical complexity in terms of 
 
 \begin{figure}
   \begin{center}
-    \subimport{../../benchmarks/}{profs.tex}
+    \scalebox{.9}{\subimport{../../benchmarks/}{profs.tex}}
     \caption{Performance as professor count varies, with $50$ courses, $5$ classes per course, $5$ weeks of $10$ days, $2$ roles, $1$ start date, and $3$ total weekly patterns, $1$ per course.}
     \label{bench:profs}
   \end{center}
