@@ -1,9 +1,13 @@
 \newpage
 \section{Performance}
 
-We can analyze the model in terms of its performance when fed to CPLEX, an ILP solver. We analyse the runtime in terms of the different variables of the problem. We run a given instance size 10 times and take the average solving time by CPLEX, both with and without the busy cuts family.
+In order to judge how good this polyhedral model is in practice, we implemented it in the ZIMPL mathematical modelling language, a high-level constraint modelling language. We then convert it into the LP format, a standard file format for linear programming and integer linear programming models. Lastly, we feed this into the CPLEX program, which is a standard integer linear programming solver.
 
-In figure~\ref{bench:courses} we see its behavior when we vary the number of courses, leaving all else constant. We see a linear growth when the number of courses is small, below 50. The same linear behavior is observed as we vary the number of possible start dates for each course in figure~\ref{bench:startdates}, and possible weekly patterns for each course in figure~\ref{bench:patterns}. While these instance sizes are "small", they are reasonable examples of practically ocurring situations.
+We can analyze the model in terms of its performance when fed to CPLEX. We analyse the runtime in terms of the different variables of the problem. We run a given instance size 10 times and take the average solving time by CPLEX, both with and without the busy cuts family. The instances were generated using an ad-hoc program which writes instances out as ZIMPL files. CPLEX was run on a machine with two Intel Xeon ES-2680 CPUs, each clocked at 2.80GHz, and 2GB of RAM. The version of CPLEX used was 12.5, on 64-bit Gentoo Linux. The version of ZIMPL used was 3.3.2.
+
+For each instance, course and professor information is generated randomly. Each professor is given a randomly generated set of days when she's available, a randomly generated set of roles he can fill, and a quality function which takes a course and returns the quality of that professor when teaching that course. For each course, the number of and requirements for each class is generated randomly, and a set of starting weeks and weekly patterns is selected from a global pool of both. For more information see appendix \ref{app:generate}.
+
+In figure~\ref{bench:courses} we see the model's behavior when we vary the number of courses, leaving all else constant. We see a linear growth when the number of courses is small, below 50. The same linear behavior is observed as we vary the number of possible start dates for each course in figure~\ref{bench:startdates}, and possible weekly patterns for each course in figure~\ref{bench:patterns}. While these instance sizes are "small", they are reasonable examples of practically ocurring situations.
 
 \begin{figure}[b]
 \begin{center}
@@ -29,7 +33,7 @@ In figure~\ref{bench:courses} we see its behavior when we vary the number of cou
 \end{center}
 \end{figure}
 
-In these small cases, CPLEX informs us that it did not need to branch on fractional variables in order to arrive at a solution. Indeed, it was enough to apply our families of cuts and the standard cuts CPLEX has to arrive at an integral optimal solution to the relaxed problem.
+In these small cases, CPLEX informs us that it did not need to branch on fractional variables in order to arrive at a solution. Indeed, it was enough to apply our families of cuts and the standard cuts CPLEX has to arrive at an integral optimal solution to the relaxed problem. The cuts were applied simply by adding them as constraints to the polyhedral formulation.
 
 As we increase the number of courses, however, we see in figure~\ref{bench:megacourses} that CPLEX starts to branch out, and the runtime grows exponentially for very large cases. There is still an improvement when using the busy cuts family, although this improvement will, in the limit, be dwarfed by the exponential increase in runtime from the growing number of courses.
 
