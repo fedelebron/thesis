@@ -1,3 +1,12 @@
 \section{Instance generation}
 \label{app:generate}
-Placeholder for instance generation appendix. Should include source code of the Haskell program that generates the instances.
+
+The way instances were generated was via an ad-hoc program. Instance options were either passed through command line arguments, or defaulted.
+
+Before we construct courses, we create a set of weekly patterns, randomly sampling the days in a week to create each pattern. We also create a set of starting weeks, using the same method. For each pair of (starting week, weekly pattern), we compute on what day each class will fall for a course which adopts that starting week and weekly pattern. This is what will later become the "ds" table in the ILP formulation.
+
+Each course selects a certain (configurable) number of starting weeks and weekly patterns. It also creates a set of classes, each class with some set of requirements.
+
+Professors are cerated with a set of available dates, computed by taking the set of days in the semester and an availability probability, and for each day, drawing a random binary variable with that probability, and making the professor available on that day if the variable is true. The professor is also given a set of roles she can fill. In order to do this, if there are $r$ roles, a random integer $k$ is created between 0 and $r$, and we say that the professor can fill the roles $\{1, \dots, k\}$.
+
+This information is then writen out as parameters in a ZIMPL\cite{Koch2004} file, along with the set of constraints of the ILP. The ZIMPL file, which contains constraints in a high-level language, is then processed by the ZIMPL program to produce an LP file, which is a standard input format for LP and ILP solvers.
