@@ -9,6 +9,8 @@ For each instance, course and professor information is generated randomly. Each 
 
 In figure~\ref{bench:courses} we see the model's behavior when we vary the number of courses, leaving all else constant. We see a linear growth when the number of courses is small, below 50. The same linear behavior is observed as we vary the number of possible start dates for each course in figure~\ref{bench:startdates}, and possible weekly patterns for each course in figure~\ref{bench:patterns}. While these instance sizes are "small", they are reasonable examples of practically ocurring situations.
 
+In each of these plots we compare the performance of the model with the performance of the model coupled with the busy cuts family. The family is added to the formulation as an extra set of inequalities that the solutions should meet. We choose to show the busy cuts family since it reasonably small and, for large cases, improves the performance consistently. Other families of inequalities are either too large to apply for very large instances (decreasing the performance due to their sheer number), or we saw little improvement for these large instances. They remain useful since, for small instance sizes, we often saw them generate all the facets of the polytope.
+
 \begin{figure}
 \begin{center}
   \scalebox{.9}{\subimport{../../benchmarks/}{courses.tex}}
