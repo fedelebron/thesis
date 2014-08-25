@@ -12,7 +12,7 @@ In practically sized cases, in fact, we see that a solver does not even need to 
 
 On the complexity side, the reader will notice that our proofs' results can be tightened up somewhat. Indeed what we prove is that for a number of patterns per course of at least $3$, or a number of starting days per course of at least $3$, when course number is variable, we can reduce $\npc$ problems to our instances. This leaves open the question of $2$ patterns per course, $2$ starting dates per course, and their conjunction. It is conceivable that these remaining cases will be in $\p$, but further work is needed to show this.
 
-On the other hand, it is also interesting to analyze this problem using other notions of input size. In experimental work, we see that a polyhedral model's solution time is highly affected by the filesize of the instances. It is thus interesting to analyze the problem in terms of the other factors which contribute highly to the size of this ILP formulation:
+On the other hand, it is also interesting to analyze this problem using other notions of input size. In experimental work, we see that the integer linear programming model's solution time is highly affected by the filesize of the instances. It is thus interesting to analyze the problem in terms of the other factors which contribute highly to the size of this ILP formulation:
 
 \begin{itemize}
 \item Number of professors, $|P|$
