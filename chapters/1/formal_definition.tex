@@ -47,8 +47,14 @@ A solution must also meet the requirements specified in the instance. Formally, 
 \item Every weekly schedule is valid: $\forall\ c\ \in C. m(c) \in M_c$.
 \item Every professor is available on days where he works: $a(p, d) \ne \bot \Rightarrow d \in A_p$.
 \item Every professor can fulfil roles to which he is assigned: $a(p, d) = (c, n, r) \Rightarrow r \in R_p$.
-\item No professor works more days than allowed: $\forall\ p\ \in P. \sum_{d \in D} \delta_{a(p, d, s) \ne \bot} \le \max_p$, where $\delta$ is the Kronecker delta.
-\item The number of professors working on a given role on a given class are within the $\min$ and $\max$ parameters for that class: $\forall c \forall n \forall r. \min(c, n, r) \le \sum_{p \in P} \delta_{\exists d. a(p, d) = (c, n, r)} \le \max(c, n, r)$.
+\item No professor works more days than allowed:
+  $$
+  \forall\ p\ \in P. \sum_{d \in D} \delta_{a(p, d, s) \ne \bot} \le \max_p
+  $$
+\noindent where $\delta$ is the Kronecker delta.
+\item The number of professors working on a given role on a given class are within the $\min$ and $\max$ parameters for that class: $$
+  \forall c \forall n \forall r. \min(c, n, r) \le \sum_{p \in P} \delta_{\exists d. a(p, d) = (c, n, r)} \le \max(c, n, r)
+  $$
 \end{itemize}
 
 To a solution $\mathcal{S}$ we associate a value $V(\mathcal{S})$, defined as such:
